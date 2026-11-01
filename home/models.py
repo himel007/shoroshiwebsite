@@ -6,13 +6,31 @@ from wagtail.images import get_image_model_string
 
 
 class HomePage(Page):
-    hero_eyebrow = models.CharField(max_length=80, default="Shoroshi Bangladesh")
+    hero_eyebrow = models.CharField(
+        max_length=80,
+        default="CELEBRATING THE BEAUTY OF TRADITION",
+    )
     hero_description = models.TextField(
         blank=True,
-        default="Furniture for the spaces you call home.",
+        default=(
+            "Discover the beauty of traditional Bengali fashion with Shoroshi. "
+            "Explore our thoughtfully curated collection of luxurious sarees, "
+            "elegant three-piece outfits, and timeless accessories."
+        ),
     )
-    hero_cta_text = models.CharField(max_length=40, default="Explore collection")
-    hero_cta_url = models.CharField(max_length=200, default="#collections", blank=True)
+    hero_cta_text = models.CharField(max_length=40, default="SHOP NOW")
+    hero_cta_url = models.CharField(max_length=200, default="#new-arrivals", blank=True)
+    hero_secondary_cta_text = models.CharField(
+        max_length=40,
+        default="EXPLORE COLLECTION",
+        blank=True,
+    )
+    hero_secondary_cta_url = models.CharField(
+        max_length=200,
+        default="#collections",
+        blank=True,
+    )
+    instagram_url = models.URLField(blank=True)
     hero_image = models.ForeignKey(
         get_image_model_string(),
         null=True,
@@ -28,8 +46,14 @@ class HomePage(Page):
                 FieldPanel("hero_description"),
                 FieldPanel("hero_cta_text"),
                 FieldPanel("hero_cta_url"),
+                FieldPanel("hero_secondary_cta_text"),
+                FieldPanel("hero_secondary_cta_url"),
                 FieldPanel("hero_image"),
             ],
             heading="Homepage hero",
+        ),
+        MultiFieldPanel(
+            [FieldPanel("instagram_url")],
+            heading="Social links",
         ),
     ]

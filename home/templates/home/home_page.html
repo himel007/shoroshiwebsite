@@ -7,54 +7,126 @@
 <link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
 <link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-fashion.css' %}">
 {% endblock %}
 
 {% block content %}
 <header class="shoroshi-header">
-	<a class="shoroshi-brand" href="/" aria-label="Shoroshi home">
+	<a class="shoroshi-brand" href="/" aria-label="SHOROSHI home">
 		<img src="{% static 'images/shoroshi-logo.png' %}" alt="Shoroshi Bangladesh">
+		<span class="shoroshi-wordmark"><strong>SHOROSHI</strong><small lang="bn">ষোড়শী</small></span>
 	</a>
 	<nav class="shoroshi-nav" aria-label="Main navigation">
-		<a href="#collections">Collections</a>
-		<a href="#story">Our story</a>
-		<a href="{% url 'search' %}">Search</a>
+		<a href="#collections">Shop</a>
+		<a href="#about">About Us</a>
+		<a href="#new-arrivals">New Arrivals</a>
 	</nav>
-	<a class="shoroshi-header-link" href="#collections">Discover</a>
+	<a class="shoroshi-header-link" href="#collections">SHOP NOW</a>
 </header>
 
 <main>
-	<section class="shoroshi-hero{% if page.hero_image %} shoroshi-hero--with-image{% endif %}">
+	<section class="shoroshi-hero{% if page.hero_image %} shoroshi-hero--with-image{% endif %}" aria-labelledby="hero-title">
 		{% if page.hero_image %}
 			{% image page.hero_image fill-2000x1200 as hero_image %}
 			<img class="shoroshi-hero-image" src="{{ hero_image.url }}" alt="{{ page.hero_image.title }}">
 		{% endif %}
 		<div class="shoroshi-hero-content">
 			<p class="shoroshi-eyebrow">{{ page.hero_eyebrow }}</p>
-			<h1>{{ page.title }}</h1>
+			<h1 id="hero-title">{{ page.title }}</h1>
 			<p class="shoroshi-hero-description">{{ page.hero_description }}</p>
-			{% if page.hero_cta_text and page.hero_cta_url %}
-				<a class="shoroshi-cta" href="{{ page.hero_cta_url }}">{{ page.hero_cta_text }}</a>
-			{% endif %}
+			<div class="shoroshi-hero-actions">
+				{% if page.hero_cta_text and page.hero_cta_url %}
+					<a class="shoroshi-cta" href="{{ page.hero_cta_url }}">{{ page.hero_cta_text }}</a>
+				{% endif %}
+				{% if page.hero_secondary_cta_text and page.hero_secondary_cta_url %}
+					<a class="shoroshi-cta shoroshi-cta--quiet" href="{{ page.hero_secondary_cta_url }}">{{ page.hero_secondary_cta_text }}</a>
+				{% endif %}
+			</div>
 		</div>
-		<span class="shoroshi-hero-index" aria-hidden="true">01 / 04</span>
+		<div class="shoroshi-hero-mark" aria-hidden="true">
+			<img src="{% static 'images/shoroshi-logo.png' %}" alt="">
+			<span lang="bn">ষোড়শী</span>
+		</div>
 	</section>
 
-	<section class="shoroshi-collections" id="collections">
-		<div>
-			<p class="shoroshi-eyebrow">Made for living</p>
-			<h2>Explore the collection</h2>
+	<section class="shoroshi-section shoroshi-collections" id="collections" aria-labelledby="collections-title">
+		<div class="shoroshi-section-heading">
+			<p class="shoroshi-eyebrow">For every occasion</p>
+			<h2 id="collections-title">Explore Our Collections</h2>
+			<p>Discover something beautiful for every occasion.</p>
 		</div>
-		<nav class="shoroshi-collection-links" aria-label="Furniture categories">
-			<span>Living</span>
-			<span>Dining</span>
-			<span>Bedroom</span>
-			<span>Workspace</span>
-		</nav>
+		<div class="shoroshi-category-grid">
+			<article class="shoroshi-category">
+				<span class="shoroshi-category-number">01</span>
+				<h3>Silk Sarees</h3>
+				<p>Discover timeless silk elegance.</p>
+			</article>
+			<article class="shoroshi-category">
+				<span class="shoroshi-category-number">02</span>
+				<h3>Hand-Stitched Sarees</h3>
+				<p>Craftsmanship in every detail.</p>
+			</article>
+			<article class="shoroshi-category">
+				<span class="shoroshi-category-number">03</span>
+				<h3>Three-Piece Collections</h3>
+				<p>Graceful looks for every occasion.</p>
+			</article>
+			<article class="shoroshi-category">
+				<span class="shoroshi-category-number">04</span>
+				<h3>Orna &amp; Accessories</h3>
+				<p>Complete your traditional look.</p>
+			</article>
+		</div>
 	</section>
 
-	<footer class="shoroshi-story" id="story">
-		<img src="{% static 'images/shoroshi-logo.png' %}" alt="Shoroshi Bangladesh logo" loading="lazy">
-		<p>© {% now "Y" %} Shoroshi Bangladesh</p>
-	</footer>
+	<section class="shoroshi-about" id="about" aria-labelledby="about-title">
+		<p class="shoroshi-eyebrow">Our story</p>
+		<h2 id="about-title">A Story Woven with Elegance</h2>
+		<p>At Shoroshi, we believe that traditional fashion is more than just clothing — it is an expression of identity, culture, and individuality. Inspired by the timeless beauty of Bengali heritage, we bring you carefully curated collections that celebrate craftsmanship, elegance, and personal style. From luxurious silk sarees to beautifully detailed hand-stitched designs, every collection reflects our passion for making traditional fashion a part of your everyday story.</p>
+	</section>
+
+	<section class="shoroshi-new-arrivals" id="new-arrivals" aria-labelledby="arrivals-title">
+		<p class="shoroshi-eyebrow">The latest edit</p>
+		<h2 id="arrivals-title">Fresh from Our Collection</h2>
+		<p>Explore our latest arrivals and discover your next favourite piece.</p>
+	</section>
+
+	<section class="shoroshi-difference" aria-labelledby="difference-title">
+		<div class="shoroshi-section-heading">
+			<p class="shoroshi-eyebrow">Thoughtfully chosen</p>
+			<h2 id="difference-title">The Shoroshi Difference</h2>
+		</div>
+		<div class="shoroshi-values-grid">
+			<article><h3>Carefully Curated</h3><p>Thoughtfully selected collections with attention to design and quality.</p></article>
+			<article><h3>Traditional Craftsmanship</h3><p>Designs inspired by the richness of Bengali textile heritage.</p></article>
+			<article><h3>Quality Focused</h3><p>We value fabric quality, finishing, and beautiful details.</p></article>
+			<article><h3>Customer Care</h3><p>Dedicated support to make your shopping experience convenient.</p></article>
+			<article><h3>Nationwide Delivery</h3><p>Convenient delivery across Bangladesh, subject to delivery coverage.</p></article>
+		</div>
+	</section>
+
+	<section class="shoroshi-statement" aria-labelledby="statement-title">
+		<p class="shoroshi-eyebrow">SHOROSHI | ষোড়শী</p>
+		<h2 id="statement-title">Wear Your Heritage.<br>Express Your Elegance.</h2>
+		<p>Celebrate every moment with timeless designs inspired by the beauty of Bengali tradition.</p>
+		<a class="shoroshi-cta shoroshi-cta--light" href="#collections">SHOP THE COLLECTION</a>
+	</section>
+
+	<section class="shoroshi-instagram" id="instagram" aria-labelledby="instagram-title">
+		<p class="shoroshi-eyebrow">Style, stories, and new arrivals</p>
+		<h2 id="instagram-title">Follow the World of Shoroshi</h2>
+		<p>Discover new arrivals, styling inspiration, and the latest updates from our collections.</p>
+		{% if page.instagram_url %}
+			<a class="shoroshi-text-link" href="{{ page.instagram_url }}" rel="noopener noreferrer" target="_blank">FOLLOW US ON INSTAGRAM <span aria-hidden="true">→</span></a>
+		{% endif %}
+	</section>
 </main>
+<footer class="shoroshi-footer">
+	<a class="shoroshi-brand" href="/" aria-label="SHOROSHI home">
+		<img src="{% static 'images/shoroshi-logo.png' %}" alt="">
+		<span class="shoroshi-wordmark"><strong>SHOROSHI</strong><small lang="bn">ষোড়শী</small></span>
+	</a>
+	<p>Where Tradition Meets Timeless Elegance.</p>
+	<small>© {% now "Y" %} Shoroshi. All Rights Reserved.</small>
+</footer>
 {% endblock %}

@@ -1,8 +1,9 @@
 # Shoroshi Storefront
 
-A Django and Wagtail foundation for Shoroshi's furniture e-commerce website.
-The initial setup provides the CMS and local development environment; payments,
-customer accounts, and order placement are not implemented yet.
+A Django and Wagtail foundation for SHOROSHI (ষোড়শী), a premium Bangladeshi
+traditional fashion brand. The homepage is being adapted from the supplied
+Helendo template. Product catalog, customer accounts, checkout, and payments
+are not implemented yet.
 
 ## Requirements
 
@@ -27,8 +28,10 @@ for Wagtail CMS.
 ## Template and brand assets
 
 The supplied Helendo ThemeForest archive is kept outside Git because it is a
-commercial template. Adapt only the assets permitted by its license. The Shoroshi
-logo is stored in `home/static/images/shoroshi-logo.png`.
+commercial template. Adapt only assets permitted by its license. The Shoroshi
+logo is in `home/static/images/shoroshi-logo.png`. Brand copy and colors follow
+the supplied Shoroshi website brief; unconfirmed business details and products
+must not be invented.
 
 ## GitHub
 
