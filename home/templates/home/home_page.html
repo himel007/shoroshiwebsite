@@ -1,21 +1,60 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static wagtailimages_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
 {% block extra_css %}
-
-{% comment %}
-Delete the line below if you're just getting started and want to remove the welcome screen!
-{% endcomment %}
-<link rel="stylesheet" href="{% static 'css/welcome_page.css' %}">
-{% endblock extra_css %}
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
+{% endblock %}
 
 {% block content %}
+<header class="shoroshi-header">
+	<a class="shoroshi-brand" href="/" aria-label="Shoroshi home">
+		<img src="{% static 'images/shoroshi-logo.png' %}" alt="Shoroshi Bangladesh">
+	</a>
+	<nav class="shoroshi-nav" aria-label="Main navigation">
+		<a href="#collections">Collections</a>
+		<a href="#story">Our story</a>
+		<a href="{% url 'search' %}">Search</a>
+	</nav>
+	<a class="shoroshi-header-link" href="#collections">Discover</a>
+</header>
 
-{% comment %}
-Delete the line below if you're just getting started and want to remove the welcome screen!
-{% endcomment %}
-{% include 'home/welcome_page.html' %}
+<main>
+	<section class="shoroshi-hero{% if page.hero_image %} shoroshi-hero--with-image{% endif %}">
+		{% if page.hero_image %}
+			{% image page.hero_image fill-2000x1200 as hero_image %}
+			<img class="shoroshi-hero-image" src="{{ hero_image.url }}" alt="{{ page.hero_image.title }}">
+		{% endif %}
+		<div class="shoroshi-hero-content">
+			<p class="shoroshi-eyebrow">{{ page.hero_eyebrow }}</p>
+			<h1>{{ page.title }}</h1>
+			<p class="shoroshi-hero-description">{{ page.hero_description }}</p>
+			{% if page.hero_cta_text and page.hero_cta_url %}
+				<a class="shoroshi-cta" href="{{ page.hero_cta_url }}">{{ page.hero_cta_text }}</a>
+			{% endif %}
+		</div>
+		<span class="shoroshi-hero-index" aria-hidden="true">01 / 04</span>
+	</section>
 
-{% endblock content %}
+	<section class="shoroshi-collections" id="collections">
+		<div>
+			<p class="shoroshi-eyebrow">Made for living</p>
+			<h2>Explore the collection</h2>
+		</div>
+		<nav class="shoroshi-collection-links" aria-label="Furniture categories">
+			<span>Living</span>
+			<span>Dining</span>
+			<span>Bedroom</span>
+			<span>Workspace</span>
+		</nav>
+	</section>
+
+	<footer class="shoroshi-story" id="story">
+		<img src="{% static 'images/shoroshi-logo.png' %}" alt="Shoroshi Bangladesh logo" loading="lazy">
+		<p>© {% now "Y" %} Shoroshi Bangladesh</p>
+	</footer>
+</main>
+{% endblock %}
