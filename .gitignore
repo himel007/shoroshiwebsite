@@ -1,0 +1,22 @@
+# Python environments and generated files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+
+# Django local data and secrets
+*.sqlite3
+.env
+.env.*
+!.env.example
+
+# User uploads and collected assets
+/media/
+/static/
+
+# Original commercial template source; do not redistribute accidentally
+/theme-source/
+
+.DS_Store
