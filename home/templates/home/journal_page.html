@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}template-journal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+{% endblock %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block content %}
+<header class="shoroshi-header"><a class="shoroshi-brand" href="/" aria-label="SHOROSHI home"><img src="{% static 'images/shoroshi-logo.png' %}" alt="SHOROSHI | ষোড়শী"></a><a href="/#new-products" class="shoroshi-back-link">← Back to shop</a></header>
+<main class="shoroshi-journal-detail container">
+    {% if page.cover_image %}{% image page.cover_image width-1200 as cover_image %}<img class="shoroshi-journal-cover" src="{{ cover_image.url }}" alt="{{ page.cover_image.title }}">{% endif %}
+    <p class="shoroshi-product-category">{{ page.first_published_at|date:"F j, Y" }}</p>
+    <h1>{{ page.title }}</h1>
+    <p class="shoroshi-journal-excerpt">{{ page.excerpt }}</p>
+    <div class="shoroshi-journal-body">{{ page.body|linebreaks }}</div>
+</main>
+{% endblock %}

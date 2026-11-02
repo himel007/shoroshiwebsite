@@ -41,7 +41,7 @@ class HomePage(Page):
         related_name="+",
     )
 
-    subpage_types = ["home.ProductPage"]
+    subpage_types = ["home.ProductPage", "home.JournalPage"]
 
     content_panels = Page.content_panels + [
         MultiFieldPanel(
@@ -80,17 +80,40 @@ class HomePage(Page):
                 "value": value,
                 "label": label,
                 "number": "{:02d}".format(index),
+                "count": all_products.filter(category=value).count(),
                 "product": all_products.filter(category=value).first(),
             }
             for index, (value, label) in enumerate(PRODUCT_CATEGORIES, start=1)
         ]
         context["hero_products"] = hero_products
+        context["hero_slides"] = [
+            {
+                "eyebrow": self.hero_eyebrow,
+                "title": self.title,
+                "description": self.hero_description,
+            },
+            {
+                "eyebrow": "SHOROSHI | ষোড়শী",
+                "title": "Where Tradition Meets Timeless Elegance.",
+                "description": "Sarees, three-piece collections, and traditional accessories.",
+            },
+        ]
         context["selected_category"] = selected_category
         context["selected_category_label"] = dict(PRODUCT_CATEGORIES).get(
             selected_category,
             "Shop the collection",
         )
-        context["products"] = products.order_by("-first_published_at")[:12]
+        context["products"] = products.order_by("-first_published_at")[:8]
+        context["featured_products"] = (
+            all_products.filter(is_featured=True)
+            .order_by("-first_published_at")[:8]
+        )
+        context["journal_posts"] = (
+            JournalPage.objects.live()
+            .public()
+            .child_of(self)
+            .order_by("-first_published_at")[:3]
+        )
         return context
 
 
@@ -118,11 +141,13 @@ class ProductPage(Page):
     measurements = models.CharField(max_length=120, blank=True)
     care_instructions = models.TextField(max_length=300)
     is_available = models.BooleanField(default=False)
+    is_featured = models.BooleanField(default=False)
 
     search_fields = Page.search_fields + [
         index.SearchField("description"),
         index.SearchField("sku"),
         index.FilterField("category"),
+        index.FilterField("is_featured"),
     ]
 
     content_panels = Page.content_panels + [
@@ -139,7 +164,32 @@ class ProductPage(Page):
                 FieldPanel("measurements"),
                 FieldPanel("care_instructions"),
                 FieldPanel("is_available"),
+                FieldPanel("is_featured"),
             ],
             heading="Product information",
         ),
+    ]
+
+
+class JournalPage(Page):
+    parent_page_types = ["home.HomePage"]
+    subpage_types = []
+    template = "home/journal_page.html"
+
+    excerpt = models.CharField(max_length=280)
+    body = models.TextField(blank=True)
+    cover_image = models.ForeignKey(
+        get_image_model_string(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+
+    search_fields = Page.search_fields + [index.SearchField("excerpt"), index.SearchField("body")]
+
+    content_panels = Page.content_panels + [
+        FieldPanel("excerpt"),
+        FieldPanel("cover_image"),
+        FieldPanel("body"),
     ]

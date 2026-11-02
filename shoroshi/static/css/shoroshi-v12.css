@@ -22,6 +22,67 @@
     padding: 24px 0;
 }
 
+.shoroshi-template-header {
+    position: sticky !important;
+    top: 0;
+    z-index: 20;
+    background: var(--shoroshi-paper);
+}
+
+.shoroshi-template-logo img {
+    display: block;
+    width: 74px;
+    height: 74px;
+    object-fit: contain;
+}
+
+.shoroshi-template-search {
+    position: relative;
+    display: flex;
+    width: min(230px, 100%);
+    align-items: center;
+    margin-left: auto;
+}
+
+.shoroshi-template-search input {
+    width: 100%;
+    min-width: 0;
+    padding-right: 32px;
+    border: 0;
+    border-bottom: 1px solid rgba(48, 37, 31, 0.25);
+    color: var(--shoroshi-brown);
+    background: transparent;
+    font-size: 12px;
+}
+
+.shoroshi-template-search button {
+    position: absolute;
+    right: 0;
+    border: 0;
+    color: var(--shoroshi-brown);
+    background: transparent;
+}
+
+.shoroshi-mobile-nav {
+    display: none;
+}
+
+.shoroshi-mobile-nav ul {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    margin: 0;
+    padding: 10px 0;
+    list-style: none;
+    white-space: nowrap;
+}
+
+.shoroshi-mobile-nav a {
+    color: var(--shoroshi-brown);
+    font-size: 11px;
+    text-decoration: none;
+}
+
 .single-hero-slider-nine.shoroshi-v12-hero .shoroshi-eyebrow {
     margin: 0 0 18px;
     color: var(--shoroshi-wine);
@@ -152,6 +213,68 @@
     letter-spacing: 0.14em;
 }
 
+.shoroshi-v12-offer {
+    background: var(--shoroshi-ivory);
+}
+
+.shoroshi-v12-offer-visual {
+    display: grid;
+    min-height: 340px;
+    align-items: center;
+    justify-items: center;
+}
+
+.shoroshi-v12-offer-visual > img {
+    display: block;
+    width: min(100%, 420px);
+    max-height: 430px;
+    object-fit: cover;
+}
+
+.shoroshi-v12-offer-mark {
+    position: relative;
+    display: grid;
+    width: min(100%, 340px);
+    aspect-ratio: 1;
+    align-items: center;
+    justify-items: center;
+    border: 1px solid rgba(179, 138, 85, 0.65);
+    border-radius: 50%;
+    background: var(--shoroshi-brown);
+}
+
+.shoroshi-v12-offer-mark img {
+    width: 72%;
+    height: 72%;
+    object-fit: contain;
+    opacity: 0.22;
+}
+
+.shoroshi-v12-offer-mark span {
+    position: absolute;
+    color: var(--shoroshi-gold);
+    font-family: "Noto Serif Bengali", "Noto Sans Bengali", serif;
+    font-size: 46px;
+}
+
+.shoroshi-v12-category-section .single-category-item img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.shoroshi-category-placeholder {
+    display: grid;
+    width: 100%;
+    aspect-ratio: 1;
+    align-items: center;
+    justify-items: center;
+    color: var(--shoroshi-gold);
+    background: var(--shoroshi-brown);
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 42px;
+}
+
 .shoroshi-categories {
     padding: 30px clamp(18px, 5vw, 72px);
     background: var(--shoroshi-paper);
@@ -220,6 +343,10 @@
 
     .single-hero-slider-nine.shoroshi-v12-hero .inner-images .shoroshi-v12-brand-tile--large {
         min-height: 320px !important;
+    }
+
+    .shoroshi-mobile-nav {
+        display: block;
     }
 }
 
