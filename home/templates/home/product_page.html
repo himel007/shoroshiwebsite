@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load humanize static wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}template-product{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+{% endblock %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block content %}
+<header class="shoroshi-header">
+    <a class="shoroshi-brand" href="/" aria-label="SHOROSHI home">
+        <img src="{% static 'images/shoroshi-logo.png' %}" alt="Shoroshi Bangladesh">
+        <span class="shoroshi-wordmark"><strong>SHOROSHI</strong><small lang="bn">ষোড়শী</small></span>
+    </a>
+    <nav class="shoroshi-nav" aria-label="Main navigation">
+        <a href="/#products">Shop</a>
+        <a href="/?category=muslin-silk#products">Muslin Silk</a>
+        <a href="/?category=balaka-silk#products">Balaka Silk</a>
+        <a href="/?category=endi-silk#products">Endi Silk</a>
+        <a href="/?category=joyosree-silk#products">Joyosree Silk</a>
+    </nav>
+</header>
+
+<main class="shoroshi-product-detail">
+    <a class="shoroshi-back-link" href="/#products">← Back to shop</a>
+    <div class="shoroshi-product-detail-grid">
+        <div class="shoroshi-detail-image">
+            {% image page.product_image fill-900x1100 as detail_image %}
+            <img src="{{ detail_image.url }}" alt="{{ page.product_image.title }}">
+        </div>
+        <section class="shoroshi-detail-info" aria-labelledby="product-title">
+            <p class="shoroshi-product-category">{{ page.get_category_display }} · {{ page.sku }}</p>
+            <h1 id="product-title">{{ page.title }}</h1>
+            <p class="shoroshi-detail-price">৳{{ page.price|floatformat:2|intcomma }}</p>
+            <p class="shoroshi-detail-description">{{ page.description }}</p>
+            <p class="shoroshi-availability">{% if page.is_available %}Available{% else %}Currently unavailable{% endif %}</p>
+            <dl class="shoroshi-product-specs">
+                <dt>Fabric</dt><dd>{{ page.fabric_details }}</dd>
+                <dt>Colour</dt><dd>{{ page.colour }}</dd>
+                <dt>Work / design</dt><dd>{{ page.work_details }}</dd>
+                {% if page.measurements %}<dt>Measurements</dt><dd>{{ page.measurements }}</dd>{% endif %}
+                <dt>Care</dt><dd>{{ page.care_instructions }}</dd>
+            </dl>
+        </section>
+    </div>
+</main>
+
+<footer class="shoroshi-footer">
+    <a class="shoroshi-brand" href="/" aria-label="SHOROSHI home">
+        <img src="{% static 'images/shoroshi-logo.png' %}" alt="">
+        <span class="shoroshi-wordmark"><strong>SHOROSHI</strong><small lang="bn">ষোড়শী</small></span>
+    </a>
+    <p>Where Tradition Meets Timeless Elegance.</p>
+</footer>
+{% endblock %}

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static wagtailimages_tags %}
+{% load humanize static wagtailcore_tags wagtailimages_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
 <link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
-<link rel="stylesheet" href="{% static 'css/shoroshi-fashion.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -17,11 +17,17 @@
 		<span class="shoroshi-wordmark"><strong>SHOROSHI</strong><small lang="bn">ষোড়শী</small></span>
 	</a>
 	<nav class="shoroshi-nav" aria-label="Main navigation">
-		<a href="#collections">Shop</a>
-		<a href="#about">About Us</a>
-		<a href="#new-arrivals">New Arrivals</a>
+		<a href="#products">Shop</a>
+		<a href="?category=muslin-silk#products">Muslin Silk</a>
+		<a href="?category=balaka-silk#products">Balaka Silk</a>
+		<a href="?category=endi-silk#products">Endi Silk</a>
+		<a href="?category=joyosree-silk#products">Joyosree Silk</a>
 	</nav>
-	<a class="shoroshi-header-link" href="#collections">SHOP NOW</a>
+	<form class="shoroshi-search" action="{% url 'search' %}" method="get" role="search">
+		<label class="visually-hidden" for="store-search">Search products</label>
+		<input id="store-search" type="search" name="query" placeholder="Search products">
+		<button type="submit" aria-label="Search"><i class="icon-magnifier" aria-hidden="true"></i></button>
+	</form>
 </header>
 
 <main>
@@ -49,76 +55,42 @@
 		</div>
 	</section>
 
-	<section class="shoroshi-section shoroshi-collections" id="collections" aria-labelledby="collections-title">
-		<div class="shoroshi-section-heading">
-			<p class="shoroshi-eyebrow">For every occasion</p>
-			<h2 id="collections-title">Explore Our Collections</h2>
-			<p>Discover something beautiful for every occasion.</p>
+	<section class="shoroshi-categories" id="categories" aria-label="Shop by silk collection">
+		{% for value, label in product_categories %}
+			<a class="shoroshi-category{% if selected_category == value %} is-active{% endif %}" href="?category={{ value }}#products"{% if selected_category == value %} aria-current="page"{% endif %}>
+				<span>{{ label }}</span><span class="category-arrow" aria-hidden="true">↗</span>
+			</a>
+		{% endfor %}
+	</section>
+
+	<section class="shoroshi-products" id="products" aria-labelledby="products-title">
+		<div class="shoroshi-products-heading">
+			<div>
+				<p class="shoroshi-eyebrow">SHOROSHI COLLECTION</p>
+				<h2 id="products-title">{{ selected_category_label }}</h2>
+			</div>
+			<a class="shoroshi-view-all" href="/#products">VIEW ALL</a>
 		</div>
-		<div class="shoroshi-category-grid">
-			<article class="shoroshi-category">
-				<span class="shoroshi-category-number">01</span>
-				<h3>Silk Sarees</h3>
-				<p>Discover timeless silk elegance.</p>
-			</article>
-			<article class="shoroshi-category">
-				<span class="shoroshi-category-number">02</span>
-				<h3>Hand-Stitched Sarees</h3>
-				<p>Craftsmanship in every detail.</p>
-			</article>
-			<article class="shoroshi-category">
-				<span class="shoroshi-category-number">03</span>
-				<h3>Three-Piece Collections</h3>
-				<p>Graceful looks for every occasion.</p>
-			</article>
-			<article class="shoroshi-category">
-				<span class="shoroshi-category-number">04</span>
-				<h3>Orna &amp; Accessories</h3>
-				<p>Complete your traditional look.</p>
-			</article>
+		<div class="shoroshi-product-grid">
+			{% for product in products %}
+				<article class="shoroshi-product-card">
+					<a class="shoroshi-product-image" href="{% pageurl product %}">
+						{% image product.product_image fill-640x760 as card_image %}
+						<img src="{{ card_image.url }}" alt="{{ product.product_image.title }}" loading="lazy">
+					</a>
+					<div class="shoroshi-product-info">
+						<p class="shoroshi-product-category">{{ product.get_category_display }}</p>
+						<h3><a href="{% pageurl product %}">{{ product.title }}</a></h3>
+						<div class="shoroshi-product-meta">
+							<strong>৳{{ product.price|floatformat:2|intcomma }}</strong>
+							<span>{% if product.is_available %}Available{% else %}Unavailable{% endif %}</span>
+						</div>
+					</div>
+				</article>
+			{% empty %}
+				<p class="shoroshi-empty-state">No products have been added yet.</p>
+			{% endfor %}
 		</div>
-	</section>
-
-	<section class="shoroshi-about" id="about" aria-labelledby="about-title">
-		<p class="shoroshi-eyebrow">Our story</p>
-		<h2 id="about-title">A Story Woven with Elegance</h2>
-		<p>At Shoroshi, we believe that traditional fashion is more than just clothing — it is an expression of identity, culture, and individuality. Inspired by the timeless beauty of Bengali heritage, we bring you carefully curated collections that celebrate craftsmanship, elegance, and personal style. From luxurious silk sarees to beautifully detailed hand-stitched designs, every collection reflects our passion for making traditional fashion a part of your everyday story.</p>
-	</section>
-
-	<section class="shoroshi-new-arrivals" id="new-arrivals" aria-labelledby="arrivals-title">
-		<p class="shoroshi-eyebrow">The latest edit</p>
-		<h2 id="arrivals-title">Fresh from Our Collection</h2>
-		<p>Explore our latest arrivals and discover your next favourite piece.</p>
-	</section>
-
-	<section class="shoroshi-difference" aria-labelledby="difference-title">
-		<div class="shoroshi-section-heading">
-			<p class="shoroshi-eyebrow">Thoughtfully chosen</p>
-			<h2 id="difference-title">The Shoroshi Difference</h2>
-		</div>
-		<div class="shoroshi-values-grid">
-			<article><h3>Carefully Curated</h3><p>Thoughtfully selected collections with attention to design and quality.</p></article>
-			<article><h3>Traditional Craftsmanship</h3><p>Designs inspired by the richness of Bengali textile heritage.</p></article>
-			<article><h3>Quality Focused</h3><p>We value fabric quality, finishing, and beautiful details.</p></article>
-			<article><h3>Customer Care</h3><p>Dedicated support to make your shopping experience convenient.</p></article>
-			<article><h3>Nationwide Delivery</h3><p>Convenient delivery across Bangladesh, subject to delivery coverage.</p></article>
-		</div>
-	</section>
-
-	<section class="shoroshi-statement" aria-labelledby="statement-title">
-		<p class="shoroshi-eyebrow">SHOROSHI | ষোড়শী</p>
-		<h2 id="statement-title">Wear Your Heritage.<br>Express Your Elegance.</h2>
-		<p>Celebrate every moment with timeless designs inspired by the beauty of Bengali tradition.</p>
-		<a class="shoroshi-cta shoroshi-cta--light" href="#collections">SHOP THE COLLECTION</a>
-	</section>
-
-	<section class="shoroshi-instagram" id="instagram" aria-labelledby="instagram-title">
-		<p class="shoroshi-eyebrow">Style, stories, and new arrivals</p>
-		<h2 id="instagram-title">Follow the World of Shoroshi</h2>
-		<p>Discover new arrivals, styling inspiration, and the latest updates from our collections.</p>
-		{% if page.instagram_url %}
-			<a class="shoroshi-text-link" href="{{ page.instagram_url }}" rel="noopener noreferrer" target="_blank">FOLLOW US ON INSTAGRAM <span aria-hidden="true">→</span></a>
-		{% endif %}
 	</section>
 </main>
 <footer class="shoroshi-footer">

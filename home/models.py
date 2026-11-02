@@ -1,8 +1,18 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.models import Page
 from wagtail.images import get_image_model_string
+from wagtail.search import index
+
+
+PRODUCT_CATEGORIES = [
+    ("muslin-silk", "Muslin Silk"),
+    ("balaka-silk", "Balaka Silk"),
+    ("endi-silk", "Endi Silk"),
+    ("joyosree-silk", "Joyosree Silk"),
+]
 
 
 class HomePage(Page):
@@ -12,24 +22,16 @@ class HomePage(Page):
     )
     hero_description = models.TextField(
         blank=True,
-        default=(
-            "Discover the beauty of traditional Bengali fashion with Shoroshi. "
-            "Explore our thoughtfully curated collection of luxurious sarees, "
-            "elegant three-piece outfits, and timeless accessories."
-        ),
+        default="Traditional sarees, chosen for your next occasion.",
     )
     hero_cta_text = models.CharField(max_length=40, default="SHOP NOW")
-    hero_cta_url = models.CharField(max_length=200, default="#new-arrivals", blank=True)
+    hero_cta_url = models.CharField(max_length=200, default="#products", blank=True)
     hero_secondary_cta_text = models.CharField(
         max_length=40,
         default="EXPLORE COLLECTION",
         blank=True,
     )
-    hero_secondary_cta_url = models.CharField(
-        max_length=200,
-        default="#collections",
-        blank=True,
-    )
+    hero_secondary_cta_url = models.CharField(max_length=200, default="#categories", blank=True)
     instagram_url = models.URLField(blank=True)
     hero_image = models.ForeignKey(
         get_image_model_string(),
@@ -38,6 +40,8 @@ class HomePage(Page):
         on_delete=models.SET_NULL,
         related_name="+",
     )
+
+    subpage_types = ["home.ProductPage"]
 
     content_panels = Page.content_panels + [
         MultiFieldPanel(
@@ -55,5 +59,76 @@ class HomePage(Page):
         MultiFieldPanel(
             [FieldPanel("instagram_url")],
             heading="Social links",
+        ),
+    ]
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        selected_category = request.GET.get("category", "")
+        valid_categories = {value for value, _ in PRODUCT_CATEGORIES}
+        products = ProductPage.objects.live().public().child_of(self)
+
+        if selected_category in valid_categories:
+            products = products.filter(category=selected_category)
+        else:
+            selected_category = ""
+
+        context["product_categories"] = PRODUCT_CATEGORIES
+        context["selected_category"] = selected_category
+        context["selected_category_label"] = dict(PRODUCT_CATEGORIES).get(
+            selected_category,
+            "Shop the collection",
+        )
+        context["products"] = products.order_by("-first_published_at")[:12]
+        return context
+
+
+class ProductPage(Page):
+    parent_page_types = ["home.HomePage"]
+    subpage_types = []
+    template = "home/product_page.html"
+
+    category = models.CharField(max_length=32, choices=PRODUCT_CATEGORIES)
+    sku = models.CharField(max_length=40, unique=True)
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0.01)],
+    )
+    product_image = models.ForeignKey(
+        get_image_model_string(),
+        on_delete=models.PROTECT,
+        related_name="+",
+    )
+    description = models.TextField(max_length=600)
+    fabric_details = models.CharField(max_length=120)
+    colour = models.CharField(max_length=60)
+    work_details = models.CharField(max_length=160)
+    measurements = models.CharField(max_length=120, blank=True)
+    care_instructions = models.TextField(max_length=300)
+    is_available = models.BooleanField(default=False)
+
+    search_fields = Page.search_fields + [
+        index.SearchField("description"),
+        index.SearchField("sku"),
+        index.FilterField("category"),
+    ]
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                FieldPanel("category"),
+                FieldPanel("sku"),
+                FieldPanel("price"),
+                FieldPanel("product_image"),
+                FieldPanel("description"),
+                FieldPanel("fabric_details"),
+                FieldPanel("colour"),
+                FieldPanel("work_details"),
+                FieldPanel("measurements"),
+                FieldPanel("care_instructions"),
+                FieldPanel("is_available"),
+            ],
+            heading="Product information",
         ),
     ]

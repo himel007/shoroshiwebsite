@@ -2,8 +2,9 @@
 
 A Django and Wagtail foundation for SHOROSHI (ষোড়শী), a premium Bangladeshi
 traditional fashion brand. The homepage is being adapted from the supplied
-Helendo template. Product catalog, customer accounts, checkout, and payments
-are not implemented yet.
+Helendo template and now includes a Wagtail-managed product catalog, category
+filters, and product detail pages. Cart, checkout, customer accounts, and
+payments are not implemented yet.
 
 ## Requirements
 
@@ -24,6 +25,13 @@ python manage.py runserver
 
 Open `http://127.0.0.1:8000/` for the site and `http://127.0.0.1:8000/admin/`
 for Wagtail CMS.
+
+## Add products
+
+In Wagtail, create a Product page under the homepage. Add a verified product
+name, category, SKU, price in BDT, product image, fabric and design details,
+care instructions, and availability, then publish it. Published products appear
+in the homepage grid and category filters. No sample products are preloaded.
 
 ## Template and brand assets
 
