@@ -16,6 +16,8 @@ class WagtailSetupSmokeTests(TestCase):
     def test_homepage_renders_shoroshi_brand_and_collection_section(self):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "single-hero-slider-nine")
+        self.assertContains(response, "shoroshi-v12-collage")
         self.assertContains(response, "SHOROSHI")
         self.assertContains(response, "ষোড়শী")
         self.assertContains(response, "Muslin Silk")
@@ -58,11 +60,36 @@ class WagtailSetupSmokeTests(TestCase):
         homepage.add_child(instance=product)
         product.save_revision().publish()
 
+        second_product = ProductPage(
+            title="Test Balaka Saree",
+            slug="test-balaka-saree",
+            category="balaka-silk",
+            sku="TEST-002",
+            price=Decimal("15000.00"),
+            product_image=image,
+            description="Second verified test product description.",
+            fabric_details="Test fabric",
+            colour="Gold",
+            work_details="Test detailing",
+            care_instructions="Test care instructions",
+            is_available=True,
+        )
+        homepage.add_child(instance=second_product)
+        second_product.save_revision().publish()
+        self.assertEqual(
+            ProductPage.objects.live().public().child_of(homepage).count(),
+            2,
+        )
+
         response = self.client.get("/", {"category": "muslin-silk"})
 
+        self.assertEqual(len(response.context["hero_products"]), 2)
         self.assertContains(response, "Test Muslin Saree")
         self.assertContains(response, "৳12,500.00")
         self.assertContains(response, 'id="products-title">Muslin Silk')
+        self.assertContains(response, "shoroshi-v12-feature-image--1")
+        self.assertContains(response, "image-two shoroshi-v12-feature-image shoroshi-v12-feature-image--2")
+        self.assertNotContains(response, "Test Balaka Saree")
         self.assertNotContains(response, "No products have been added yet")
 
         detail_response = self.client.get(product.url)

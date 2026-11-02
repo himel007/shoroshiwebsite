@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
 <link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
 <link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-v12.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -31,34 +32,59 @@
 </header>
 
 <main>
-	<section class="shoroshi-hero{% if page.hero_image %} shoroshi-hero--with-image{% endif %}" aria-labelledby="hero-title">
-		{% if page.hero_image %}
-			{% image page.hero_image fill-2000x1200 as hero_image %}
-			<img class="shoroshi-hero-image" src="{{ hero_image.url }}" alt="{{ page.hero_image.title }}">
-		{% endif %}
-		<div class="shoroshi-hero-content">
-			<p class="shoroshi-eyebrow">{{ page.hero_eyebrow }}</p>
-			<h1 id="hero-title">{{ page.title }}</h1>
-			<p class="shoroshi-hero-description">{{ page.hero_description }}</p>
-			<div class="shoroshi-hero-actions">
-				{% if page.hero_cta_text and page.hero_cta_url %}
-					<a class="shoroshi-cta" href="{{ page.hero_cta_url }}">{{ page.hero_cta_text }}</a>
-				{% endif %}
-				{% if page.hero_secondary_cta_text and page.hero_secondary_cta_url %}
-					<a class="shoroshi-cta shoroshi-cta--quiet" href="{{ page.hero_secondary_cta_url }}">{{ page.hero_secondary_cta_text }}</a>
-				{% endif %}
+	<section class="single-hero-slider-nine shoroshi-v12-hero" aria-labelledby="hero-title">
+		<div class="container">
+			<div class="hero-content-wrap">
+				<div class="hero-text-five">
+					<p class="shoroshi-eyebrow">{{ page.hero_eyebrow }}</p>
+					<h1 class="hero-title" id="hero-title">{{ page.title }}</h1>
+					<p class="shoroshi-hero-description">{{ page.hero_description }}</p>
+					<div class="shoroshi-hero-actions">
+						{% if page.hero_cta_text and page.hero_cta_url %}
+							<a class="shoroshi-cta" href="{{ page.hero_cta_url }}">{{ page.hero_cta_text }} <span aria-hidden="true">→</span></a>
+						{% endif %}
+						{% if page.hero_secondary_cta_text and page.hero_secondary_cta_url %}
+							<a class="shoroshi-v12-text-link" href="{{ page.hero_secondary_cta_url }}">{{ page.hero_secondary_cta_text }}</a>
+						{% endif %}
+					</div>
+				</div>
+				<div class="inner-images shoroshi-v12-collage" aria-label="Shoroshi collection highlights">
+					{% if hero_products %}
+						{% for product in hero_products %}
+							<a class="{% if forloop.first %}image-one{% else %}image-two{% endif %} shoroshi-v12-feature-image shoroshi-v12-feature-image--{{ forloop.counter }}" href="{% pageurl product %}">
+								{% image product.product_image fill-640x760 as hero_product_image %}
+								<img src="{{ hero_product_image.url }}" alt="{{ product.product_image.title }}">
+							</a>
+							{% if forloop.first and hero_products|length == 1 %}
+								<div class="image-two shoroshi-v12-brand-tile"><span lang="bn">ষোড়শী</span></div>
+							{% endif %}
+						{% endfor %}
+					{% elif page.hero_image %}
+						{% image page.hero_image fill-640x760 as hero_product_image %}
+						<div class="image-one shoroshi-v12-feature-image"><img src="{{ hero_product_image.url }}" alt="{{ page.hero_image.title }}"></div>
+						<div class="image-two shoroshi-v12-brand-tile"><span lang="bn">ষোড়শী</span></div>
+					{% else %}
+						<div class="image-one shoroshi-v12-brand-tile shoroshi-v12-brand-tile--large">
+							<img src="{% static 'images/shoroshi-logo.png' %}" alt="">
+							<span>SHOROSHI</span>
+						</div>
+						<div class="image-two shoroshi-v12-brand-tile"><span lang="bn">ষোড়শী</span></div>
+					{% endif %}
+				</div>
 			</div>
-		</div>
-		<div class="shoroshi-hero-mark" aria-hidden="true">
-			<img src="{% static 'images/shoroshi-logo.png' %}" alt="">
-			<span lang="bn">ষোড়শী</span>
 		</div>
 	</section>
 
 	<section class="shoroshi-categories" id="categories" aria-label="Shop by silk collection">
-		{% for value, label in product_categories %}
-			<a class="shoroshi-category{% if selected_category == value %} is-active{% endif %}" href="?category={{ value }}#products"{% if selected_category == value %} aria-current="page"{% endif %}>
-				<span>{{ label }}</span><span class="category-arrow" aria-hidden="true">↗</span>
+		{% for category in product_categories %}
+			<a class="shoroshi-category{% if selected_category == category.value %} is-active{% endif %}" href="?category={{ category.value }}#products"{% if selected_category == category.value %} aria-current="page"{% endif %}>
+				{% if category.product %}
+					{% image category.product.product_image fill-520x520 as category_image %}
+					<span class="shoroshi-category-image"><img src="{{ category_image.url }}" alt="{{ category.product.product_image.title }}" loading="lazy"></span>
+				{% else %}
+					<span class="shoroshi-category-index">{{ category.number }}</span>
+				{% endif %}
+				<span>{{ category.label }}</span><span class="category-arrow" aria-hidden="true">↗</span>
 			</a>
 		{% endfor %}
 	</section>

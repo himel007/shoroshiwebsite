@@ -66,14 +66,25 @@ class HomePage(Page):
         context = super().get_context(request, *args, **kwargs)
         selected_category = request.GET.get("category", "")
         valid_categories = {value for value, _ in PRODUCT_CATEGORIES}
-        products = ProductPage.objects.live().public().child_of(self)
+        all_products = ProductPage.objects.live().public().child_of(self)
+        hero_products = all_products.order_by("-first_published_at")[:2]
+        products = all_products
 
         if selected_category in valid_categories:
             products = products.filter(category=selected_category)
         else:
             selected_category = ""
 
-        context["product_categories"] = PRODUCT_CATEGORIES
+        context["product_categories"] = [
+            {
+                "value": value,
+                "label": label,
+                "number": "{:02d}".format(index),
+                "product": all_products.filter(category=value).first(),
+            }
+            for index, (value, label) in enumerate(PRODUCT_CATEGORIES, start=1)
+        ]
+        context["hero_products"] = hero_products
         context["selected_category"] = selected_category
         context["selected_category_label"] = dict(PRODUCT_CATEGORIES).get(
             selected_category,
