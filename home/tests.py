@@ -44,6 +44,8 @@ class WagtailSetupSmokeTests(TestCase):
         self.assertContains(response, 'href="#new-products"')
         self.assertContains(response, 'href="#category-section"')
         self.assertContains(response, "No products have been added yet")
+        self.assertContains(response, "images/featured/shoroshi-outfit-01.jpeg")
+        self.assertContains(response, "images/featured/shoroshi-outfit-02.jpeg")
         self.assertNotContains(response, "About Us")
         self.assertNotContains(response, "New Arrivals")
         self.assertNotContains(response, "A Story Woven with Elegance")

@@ -79,14 +79,14 @@
 											<img src="{{ hero_product_image.url }}" alt="{{ product.product_image.title }}">
 										</a>
 									{% endfor %}
-									{% if hero_products|length == 1 %}<div class="image-two shoroshi-v12-brand-tile"><span lang="bn">ষোড়শী</span></div>{% endif %}
+									{% if hero_products|length == 1 %}<div class="image-two shoroshi-v12-feature-image"><img src="{% static 'images/featured/shoroshi-outfit-02.jpeg' %}" alt="Shoroshi traditional outfit"></div>{% endif %}
 								{% elif page.hero_image %}
 									{% image page.hero_image fill-640x760 as hero_product_image %}
 									<div class="image-one shoroshi-v12-feature-image"><img src="{{ hero_product_image.url }}" alt="{{ page.hero_image.title }}"></div>
-									<div class="image-two shoroshi-v12-brand-tile"><span lang="bn">ষোড়শী</span></div>
+									<div class="image-two shoroshi-v12-feature-image"><img src="{% static 'images/featured/shoroshi-outfit-02.jpeg' %}" alt="Shoroshi traditional outfit"></div>
 								{% else %}
-									<div class="image-one shoroshi-v12-brand-tile shoroshi-v12-brand-tile--large"><img src="{% static 'images/shoroshi-logo.png' %}" alt=""><span>SHOROSHI</span></div>
-									<div class="image-two shoroshi-v12-brand-tile"><span lang="bn">ষোড়শী</span></div>
+									<div class="image-one shoroshi-v12-feature-image"><img src="{% static 'images/featured/shoroshi-outfit-01.jpeg' %}" alt="Shoroshi traditional outfit"></div>
+									<div class="image-two shoroshi-v12-feature-image"><img src="{% static 'images/featured/shoroshi-outfit-02.jpeg' %}" alt="Shoroshi traditional outfit detail"></div>
 								{% endif %}
 							</div>
 						</div>
@@ -142,7 +142,7 @@
 			</div><div class="col-lg-5 col-md-5 shoroshi-v12-offer-visual">
 				{% if featured_products %}{% image featured_products.0.product_image fill-700x800 as offer_image %}<img src="{{ offer_image.url }}" alt="{{ featured_products.0.product_image.title }}" loading="lazy">
 				{% elif page.hero_image %}{% image page.hero_image fill-700x800 as offer_image %}<img src="{{ offer_image.url }}" alt="{{ page.hero_image.title }}" loading="lazy">
-				{% else %}<div class="shoroshi-v12-offer-mark"><img src="{% static 'images/shoroshi-logo.png' %}" alt=""><span lang="bn">ষোড়শী</span></div>{% endif %}
+				{% else %}<img src="{% static 'images/featured/shoroshi-outfit-02.jpeg' %}" alt="Shoroshi traditional outfit detail" loading="lazy">{% endif %}
 			</div></div></div></div>
 		</section>
 
