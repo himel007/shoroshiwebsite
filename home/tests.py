@@ -1,6 +1,7 @@
 from decimal import Decimal
 from io import BytesIO
 
+from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from PIL import Image as PillowImage
@@ -13,25 +14,52 @@ class WagtailSetupSmokeTests(TestCase):
         response = self.client.get("/admin/login/")
         self.assertEqual(response.status_code, 200)
 
+    def test_homepage_editor_exposes_hero_slide_content(self):
+        user = get_user_model().objects.create_superuser(
+            username="hero-editor",
+            email="hero-editor@example.com",
+            password="test-password",
+        )
+        self.client.force_login(user)
+        homepage = HomePage.objects.get(depth=2)
+
+        response = self.client.get(f"/admin/pages/{homepage.id}/edit/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Hero slide")
+        self.assertContains(response, "Elegance That Lives Beyond Time.")
+        self.assertContains(response, "SHOROSHI | ষোড়শী")
+
     def test_homepage_renders_shoroshi_brand_and_collection_section(self):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
         response_html = response.content.decode("utf-8")
-        self.assertEqual(response_html.count("single-hero-slider-nine"), 2)
+        self.assertEqual(response_html.count("single-hero-slider-7"), 2)
+        self.assertEqual(response_html.count('class="shoroshi-service-item"'), 3)
+        self.assertEqual(response_html.count('class="shoroshi-circle-category"'), 4)
         template_sections = [
-            '<section class="hero-area hero-slider-five"',
-            '<section class="shopping-support-area',
-            'id="category-section"',
-            'class="product-wrapper section-space--ptb_120 shoroshi-v12-product-section new-products-section"',
-            "offer-colection-area",
-            'id="featured-products"',
-            "our-blog-area",
-            "footer-area-wrapper",
+            '<section class="hero-area hero-slider-7 shoroshi-hero-slider"',
+            '<section class="shoroshi-service-strip"',
+            '<section class="shoroshi-circle-categories"',
+            '<section class="shoroshi-featured-collections"',
+            'id="best-selling"',
+            'class="offer-colection-area container-fluid shoroshi-home-banner"',
+            'id="journal"',
+            'class="footer-area-wrapper shoroshi-home-footer"',
         ]
         section_positions = [response_html.index(section) for section in template_sections]
         self.assertEqual(section_positions, sorted(section_positions))
-        self.assertContains(response, "single-hero-slider-nine")
-        self.assertContains(response, "shoroshi-v12-collage")
+        self.assertContains(response, "single-hero-slider-7")
+        self.assertContains(response, "featuted-product-wrap")
+        self.assertContains(response, 'aria-label="Main navigation"')
+        self.assertContains(response, 'id="shoroshi-mobile-menu"')
+        self.assertContains(response, 'aria-label="Account"')
+        self.assertContains(response, 'aria-label="Wishlist"')
+        self.assertContains(response, 'aria-label="Shopping bag"')
+        self.assertContains(response, "Blog")
+        self.assertContains(response, "Shoroshi Collections")
+        self.assertContains(response, "Product Information")
+        self.assertContains(response, "Shop by category")
         self.assertContains(response, "SHOROSHI")
         self.assertContains(response, "ষোড়শী")
         self.assertContains(response, "Muslin Silk")
@@ -41,8 +69,9 @@ class WagtailSetupSmokeTests(TestCase):
         self.assertContains(response, "SHOP NOW")
         self.assertContains(response, "Traditional sarees, chosen for your next occasion.")
         self.assertContains(response, "Shoroshi stories will appear here.")
-        self.assertContains(response, 'href="#new-products"')
-        self.assertContains(response, 'href="#category-section"')
+        self.assertContains(response, 'href="#best-selling"')
+        self.assertContains(response, 'href="#collections"')
+        self.assertNotContains(response, 'href="#products"')
         self.assertContains(response, "No products have been added yet")
         self.assertContains(response, "images/featured/shoroshi-outfit-01.jpeg")
         self.assertContains(response, "images/featured/shoroshi-outfit-02.jpeg")
@@ -106,9 +135,8 @@ class WagtailSetupSmokeTests(TestCase):
         self.assertEqual(len(response.context["products"]), 1)
         self.assertContains(response, "Test Muslin Saree")
         self.assertContains(response, "৳12,500.00")
-        self.assertContains(response, "<h2>New Products</h2>")
-        self.assertContains(response, "image-one shoroshi-v12-feature-image")
-        self.assertContains(response, "image-two shoroshi-v12-feature-image")
+        self.assertContains(response, "Shoroshi Collection")
+        self.assertContains(response, "product-slider-active shoroshi-home-products")
         self.assertNotContains(response, "No products have been added yet")
 
         detail_response = self.client.get(product.url)

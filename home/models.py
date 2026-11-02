@@ -1,8 +1,9 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.models import Page
+from modelcluster.fields import ParentalKey
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
+from wagtail.models import Orderable, Page
 from wagtail.images import get_image_model_string
 from wagtail.search import index
 
@@ -44,18 +45,7 @@ class HomePage(Page):
     subpage_types = ["home.ProductPage", "home.JournalPage"]
 
     content_panels = Page.content_panels + [
-        MultiFieldPanel(
-            [
-                FieldPanel("hero_eyebrow"),
-                FieldPanel("hero_description"),
-                FieldPanel("hero_cta_text"),
-                FieldPanel("hero_cta_url"),
-                FieldPanel("hero_secondary_cta_text"),
-                FieldPanel("hero_secondary_cta_url"),
-                FieldPanel("hero_image"),
-            ],
-            heading="Homepage hero",
-        ),
+        InlinePanel("hero_items", label="Hero slide"),
         MultiFieldPanel(
             [FieldPanel("instagram_url")],
             heading="Social links",
@@ -86,18 +76,7 @@ class HomePage(Page):
             for index, (value, label) in enumerate(PRODUCT_CATEGORIES, start=1)
         ]
         context["hero_products"] = hero_products
-        context["hero_slides"] = [
-            {
-                "eyebrow": self.hero_eyebrow,
-                "title": self.title,
-                "description": self.hero_description,
-            },
-            {
-                "eyebrow": "SHOROSHI | ষোড়শী",
-                "title": "Where Tradition Meets Timeless Elegance.",
-                "description": "Sarees, three-piece collections, and traditional accessories.",
-            },
-        ]
+        context["hero_slides"] = self.hero_items.all()
         context["selected_category"] = selected_category
         context["selected_category_label"] = dict(PRODUCT_CATEGORIES).get(
             selected_category,
@@ -115,6 +94,36 @@ class HomePage(Page):
             .order_by("-first_published_at")[:3]
         )
         return context
+
+
+class HomePageHeroSlide(Orderable):
+    id = models.AutoField(primary_key=True)
+    page = ParentalKey(
+        HomePage,
+        on_delete=models.CASCADE,
+        related_name="hero_items",
+    )
+    eyebrow = models.CharField(max_length=80, blank=True)
+    title = models.CharField(max_length=160)
+    description = models.TextField(blank=True)
+    image = models.ForeignKey(
+        get_image_model_string(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    cta_text = models.CharField(max_length=40, default="Discover collection")
+    cta_url = models.CharField(max_length=200, default="#best-selling", blank=True)
+
+    panels = [
+        FieldPanel("eyebrow"),
+        FieldPanel("title"),
+        FieldPanel("description"),
+        FieldPanel("image"),
+        FieldPanel("cta_text"),
+        FieldPanel("cta_url"),
+    ]
 
 
 class ProductPage(Page):

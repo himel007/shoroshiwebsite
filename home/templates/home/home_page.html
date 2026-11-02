@@ -13,42 +13,56 @@
 <link rel="stylesheet" href="{% static 'helendo/assets/css/plugins/easyzoom.css' %}">
 <link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
 <link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
-<link rel="stylesheet" href="{% static 'css/shoroshi-v12.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-home.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="header-area header-area--default bg-white">
-	<header class="header-area header_absolute header_height-90 header-sticky shoroshi-template-header">
+<div class="header-area header-area--default">
+	<header class="header-area header_absolute header_height-90 header-sticky">
 		<div class="container">
 			<div class="row align-items-center">
-				<div class="col-lg-3 col-6">
-					<a class="shoroshi-template-logo" href="/" aria-label="SHOROSHI home">
-						<img src="{% static 'images/shoroshi-logo.png' %}" alt="SHOROSHI | ষোড়শী">
-					</a>
+				<div class="col-lg-3 col-md-3 col-5">
+					<div class="logo shoroshi-home-logo">
+						<a href="/" aria-label="SHOROSHI home"><img src="{% static 'images/shoroshi-logo.png' %}" alt="SHOROSHI | ষোড়শী"></a>
+					</div>
 				</div>
 				<div class="col-lg-6 d-none d-lg-block">
-					<nav class="header__navigation navigation-menu" aria-label="Main navigation">
+					<nav class="header__navigation navigation-menu shoroshi-home-nav" aria-label="Main navigation">
 						<ul class="justify-content-center">
-							<li><a href="#new-products"><span>Shop</span></a></li>
-							<li class="has-children has-children--multilevel-submenu">
-								<a href="#category-section"><span>Collections</span></a>
-								<ul class="submenu">
-									{% for category in product_categories %}<li><a href="?category={{ category.value }}#new-products"><span>{{ category.label }}</span></a></li>{% endfor %}
+							<li><a href="/"><span>Home</span></a></li>
+							<li><a href="#best-selling"><span>Shop</span></a></li>
+							<li class="has-children has-children--multilevel-submenu"><a href="#collections"><span>Pages</span></a>
+								<ul class="submenu">{% for category in product_categories %}<li><a href="?category={{ category.value }}#best-selling"><span>{{ category.label }}</span></a></li>{% endfor %}</ul>
+								</li>
+								<li><a href="#journal"><span>Blog</span></a></li>
+							</ul>
+						</nav>
+				</div>
+				<div class="col-lg-3 col-md-9 col-7">
+					<div class="shoroshi-header-tools">
+						<details class="shoroshi-search-control">
+							<summary aria-label="Search collection" title="Search collection"><i class="icon-magnifier"></i></summary>
+							<form action="{% url 'search' %}" method="get" role="search">
+								<label class="visually-hidden" for="store-search">Search collection</label>
+								<input id="store-search" type="search" name="query" placeholder="Search collection">
+								<button type="submit" aria-label="Search"><i class="icon-arrow-right"></i></button>
+							</form>
+						</details>
+						<button class="shoroshi-header-icon" type="button" aria-label="Account" title="Account"><i class="icon-user"></i></button>
+						<button class="shoroshi-header-icon" type="button" aria-label="Wishlist" title="Wishlist"><i class="icon-heart"></i></button>
+						<button class="shoroshi-header-icon" type="button" aria-label="Shopping bag" title="Shopping bag"><i class="icon-bag2"></i></button>
+						<details class="shoroshi-mobile-navigation">
+							<summary aria-label="Browse menu" title="Browse menu"><i class="icon-menu"></i></summary>
+							<nav id="shoroshi-mobile-menu" class="shoroshi-mobile-menu" aria-label="More navigation">
+								<ul>
+									<li><a href="/">Home</a></li>
+									<li><a href="#best-selling">Shop</a></li>
+									<li><a href="#collections">Collections</a></li>
+									{% for category in product_categories %}<li><a href="?category={{ category.value }}#best-selling">{{ category.label }}</a></li>{% endfor %}
+									<li><a href="#journal">Blog</a></li>
 								</ul>
-							</li>
-						</ul>
-					</nav>
-				</div>
-				<div class="col-12 d-lg-none shoroshi-mobile-nav">
-					<nav aria-label="Shop collections"><ul><li><a href="#new-products">Shop</a></li>{% for category in product_categories %}<li><a href="?category={{ category.value }}#new-products">{{ category.label }}</a></li>{% endfor %}</ul></nav>
-				</div>
-				<div class="col-lg-3 col-6">
-					<div class="header-right-side text-end">
-						<form class="header-left-search shoroshi-template-search" action="{% url 'search' %}" method="get" role="search">
-							<label class="visually-hidden" for="store-search">Search products</label>
-							<input id="store-search" type="search" name="query" placeholder="Search collection">
-							<button class="search-icon" type="submit" aria-label="Search"><i class="icon-magnifier"></i></button>
-						</form>
+							</nav>
+						</details>
 					</div>
 				</div>
 			</div>
@@ -58,111 +72,146 @@
 
 <main id="main-wrapper">
 	<div class="site-wrapper-reveal">
-		<section class="hero-area hero-slider-five" aria-label="Shoroshi featured collections">
-			{% for slide in hero_slides %}
-				<div class="single-hero-slider-nine shoroshi-v12-hero">
-					<div class="container"><div class="row"><div class="col-lg-12">
-						<div class="hero-content-wrap">
-							<div class="hero-text-five">
-								<h6 class="small-title shoroshi-eyebrow">{{ slide.eyebrow }}</h6>
-								<h1 class="hero-title">{{ slide.title }}</h1>
-								<p class="shoroshi-hero-description">{{ slide.description }}</p>
-								<div class="button-box shoroshi-template-hero-actions">
-									<a class="text-btn-normal font-weight--reguler font-lg-p" href="#new-products">SHOP NOW <i class="icon-arrow-right"></i></a>
+		<div class="hero-box-area mt-md-0 mt-lg-3">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-lg-12 ps-0 ps-lg-3 pe-0 pe-lg-3">
+						<section class="hero-area hero-slider-7 shoroshi-hero-slider" aria-label="Shoroshi featured collection">
+							{% for slide in hero_slides %}
+								<div class="single-hero-slider-7 shoroshi-hero-slide">
+									<div class="container">
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="hero-content-wrap">
+													<div class="hero-text-7 mt-lg-5">
+														{% if slide.eyebrow %}<h6 class="mb-20">{{ slide.eyebrow }}</h6>{% endif %}
+														<h1>{{ slide.title|linebreaksbr }}</h1>
+														{% if slide.description %}<p class="mt-20 shoroshi-hero-description">{{ slide.description }}</p>{% endif %}
+														<div class="button-box section-space--mt_60">
+															<a href="{{ slide.cta_url }}" class="text-btn-normal font-weight--reguler font-lg-p">{{ slide.cta_text }} <i class="icon-arrow-right"></i></a>
+														</div>
+													</div>
+														<div class="inner-images shoroshi-hero-visual">
+														<div class="image-one">
+															{% if slide.image %}{% image slide.image fill-800x800 as slide_image %}<img src="{{ slide_image.url }}" class="img-fluid" alt="{{ slide.image.title }}">
+															{% elif forloop.first %}<img src="{% static 'images/featured/shoroshi-outfit-01.jpeg' %}" class="img-fluid" alt="Shoroshi traditional clothing collection">
+															{% else %}<img src="{% static 'images/featured/shoroshi-outfit-02.jpeg' %}" class="img-fluid" alt="Shoroshi clothing detail">{% endif %}
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
-							</div>
-							<div class="inner-images shoroshi-v12-collage" aria-label="Shoroshi collection highlights">
-								{% if hero_products %}
-									{% for product in hero_products %}
-										<a class="{% if forloop.first %}image-one{% else %}image-two{% endif %} shoroshi-v12-feature-image" href="{% pageurl product %}">
-											{% image product.product_image fill-640x760 as hero_product_image %}
-											<img src="{{ hero_product_image.url }}" alt="{{ product.product_image.title }}">
-										</a>
-									{% endfor %}
-									{% if hero_products|length == 1 %}<div class="image-two shoroshi-v12-feature-image"><img src="{% static 'images/featured/shoroshi-outfit-02.jpeg' %}" alt="Shoroshi traditional outfit"></div>{% endif %}
-								{% elif page.hero_image %}
-									{% image page.hero_image fill-640x760 as hero_product_image %}
-									<div class="image-one shoroshi-v12-feature-image"><img src="{{ hero_product_image.url }}" alt="{{ page.hero_image.title }}"></div>
-									<div class="image-two shoroshi-v12-feature-image"><img src="{% static 'images/featured/shoroshi-outfit-02.jpeg' %}" alt="Shoroshi traditional outfit"></div>
-								{% else %}
-									<div class="image-one shoroshi-v12-feature-image"><img src="{% static 'images/featured/shoroshi-outfit-01.jpeg' %}" alt="Shoroshi traditional outfit"></div>
-									<div class="image-two shoroshi-v12-feature-image"><img src="{% static 'images/featured/shoroshi-outfit-02.jpeg' %}" alt="Shoroshi traditional outfit detail"></div>
-								{% endif %}
-							</div>
-						</div>
-					</div></div></div>
+							{% endfor %}
+						</section>
+					</div>
 				</div>
-			{% endfor %}
-		</section>
+			</div>
+		</div>
 
-		<section class="shopping-support-area border-bottom section-space--pt_60 shoroshi-v12-support">
+		<section class="shoroshi-service-strip" aria-label="Shoroshi service details">
 			<div class="container"><div class="row">
-				<div class="col-lg-4 col-md-6"><div class="single-shopping-support"><div class="icon"><i class="icon-heart"></i></div><div class="content"><h6>Carefully Curated</h6><p>Thoughtful collections, selected with care.</p></div></div></div>
-				<div class="col-lg-4 col-md-6"><div class="single-shopping-support"><div class="icon"><i class="icon-star"></i></div><div class="content"><h6>Bengali Craftsmanship</h6><p>Inspired by the richness of Bengali textiles.</p></div></div></div>
-				<div class="col-lg-4 col-md-6"><div class="single-shopping-support"><div class="icon"><i class="icon-tag"></i></div><div class="content"><h6>Quality Focused</h6><p>Attention to fabric, finishing, and detail.</p></div></div></div>
+				<div class="col-lg-4 col-md-6"><article class="shoroshi-service-item"><i class="icon-heart" aria-hidden="true"></i><div><h2>Shoroshi Collections</h2><p>Explore traditional styles across four collections.</p></div></article></div>
+				<div class="col-lg-4 col-md-6"><article class="shoroshi-service-item"><i class="icon-star" aria-hidden="true"></i><div><h2>Product Information</h2><p>See fabric, design, availability, and care details on product pages.</p></div></article></div>
+				<div class="col-lg-4 col-md-6"><article class="shoroshi-service-item"><i class="icon-tag" aria-hidden="true"></i><div><h2>Shoroshi Journal</h2><p>Read stories and updates from Shoroshi.</p></div></article></div>
 			</div></div>
 		</section>
 
-		<section class="category-section shoroshi-v12-category-section" id="category-section">
-			<div class="container"><div class="row">
+		<section class="shoroshi-circle-categories" aria-label="Shop by category">
+			<div class="container"><div class="shoroshi-circle-category-grid">
 				{% for category in product_categories %}
-					<div class="col-lg-3 col-md-3 col-6"><article class="single-category-item">
-						<a href="?category={{ category.value }}#new-products" class="category-item-thum">
-							{% if category.product %}{% image category.product.product_image fill-480x480 as category_image %}<img src="{{ category_image.url }}" width="240" height="240" alt="{{ category.product.product_image.title }}" loading="lazy">
-							{% else %}<span class="shoroshi-category-placeholder" aria-hidden="true">{{ category.number }}</span>{% endif %}
-						</a>
-						<div class="content"><h6 class="title"><a href="?category={{ category.value }}#new-products">{{ category.label }}</a></h6>{% if category.count %}<span class="number">{{ category.count }} items</span>{% endif %}</div>
-					</article></div>
+					<a class="shoroshi-circle-category" href="?category={{ category.value }}#best-selling">
+						<span class="shoroshi-circle-category-image">
+							{% if category.product %}{% image category.product.product_image fill-480x480 as circle_category_image %}<img src="{{ circle_category_image.url }}" alt="{{ category.product.product_image.title }}" loading="lazy">
+							{% elif forloop.counter|divisibleby:2 %}<img src="{% static 'images/featured/shoroshi-outfit-02.jpeg' %}" alt="Shoroshi traditional clothing detail" loading="lazy">
+							{% else %}<img src="{% static 'images/featured/shoroshi-outfit-01.jpeg' %}" alt="Shoroshi traditional clothing collection" loading="lazy">{% endif %}
+						</span>
+						<strong>{{ category.label }}</strong>
+						{% if category.count %}<span class="shoroshi-circle-category-count">{{ category.count|stringformat:"02d" }} Items</span>{% endif %}
+					</a>
 				{% endfor %}
 			</div></div>
 		</section>
 
-		<section class="product-wrapper section-space--ptb_120 shoroshi-v12-product-section new-products-section" id="new-products">
-			<div class="container">
-				<div class="row align-items-center"><div class="col-sm-12"><div class="section-title text-center mb-30"><h2>New Products</h2></div></div>
-					<div class="col-lg-12"><ul class="nav product-tab-menu justify-content-center" role="tablist">
-						<li class="tab__item nav-item"><a class="nav-link{% if not selected_category %} active{% endif %}" href="/#new-products">All Products</a></li>
-						{% for category in product_categories %}<li class="tab__item nav-item"><a class="nav-link{% if selected_category == category.value %} active{% endif %}" href="?category={{ category.value }}#new-products">{{ category.label }}</a></li>{% endfor %}
-					</ul></div>
+		<section class="shoroshi-featured-collections" id="collections" aria-label="Shoroshi collections">
+			{% for category in product_categories|slice:":3" %}
+				<div class="featuted-product-wrap section-space--pt_120">
+					<div class="container">
+						<div class="row align-items-center featuted-product-one">
+							<div class="col-lg-6 col-md-6{% if forloop.counter|divisibleby:2 %} order-md-2{% endif %}">
+								<div class="product-thumbnail">
+									<a href="?category={{ category.value }}#best-selling" aria-label="Browse {{ category.label }}">
+										{% if category.product %}{% image category.product.product_image fill-700x700 as collection_image %}<img src="{{ collection_image.url }}" class="img-fluid" alt="{{ category.product.product_image.title }}" loading="lazy">
+										{% elif forloop.first %}<img src="{% static 'images/featured/shoroshi-outfit-01.jpeg' %}" class="img-fluid" alt="Shoroshi clothing collection" loading="lazy">
+										{% else %}<img src="{% static 'images/featured/shoroshi-outfit-02.jpeg' %}" class="img-fluid" alt="Shoroshi clothing detail" loading="lazy">{% endif %}
+									</a>
+								</div>
+							</div>
+							<div class="col-lg-6 col-md-6{% if forloop.counter|divisibleby:2 %} order-md-1{% endif %}">
+								<div class="featured-product-contect shoroshi-feature-copy">
+									<h6 class="sub-heading mb-2">SHOROSHI COLLECTION</h6>
+									{% if category.product %}
+										<h2 class="section-title--one"><a href="{% pageurl category.product %}">{{ category.product.title }}</a></h2>
+										<p class="mt-30">{{ category.product.description }}</p>
+										<div class="button-box section-space--mt_60"><a href="{% pageurl category.product %}" class="btn btn--md btn--border_1">৳{{ category.product.price|floatformat:2|intcomma }} <i class="icon-arrow-right"></i></a></div>
+									{% else %}
+										<h2 class="section-title--one"><a href="?category={{ category.value }}#best-selling">{{ category.label }}</a></h2>
+										<p class="mt-30">{{ page.hero_description }}</p>
+										<div class="button-box section-space--mt_60"><a href="?category={{ category.value }}#best-selling" class="btn btn--md btn--border_1">Explore collection <i class="icon-arrow-right"></i></a></div>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
-				{% if products %}<div class="tab-content mt-30"><div class="tab-pane fade show active"><div class="product-slider-active">
-					{% for product in products %}
-						<article class="single-product-item text-center">
-							<div class="products-images"><a href="{% pageurl product %}" class="product-thumbnail">{% image product.product_image fill-520x620 as product_image %}<img src="{{ product_image.url }}" class="img-fluid" alt="{{ product.product_image.title }}" width="300" height="360" loading="lazy"></a></div>
-							<div class="product-content"><p class="shoroshi-product-category">{{ product.get_category_display }}</p><h6 class="prodect-title"><a href="{% pageurl product %}">{{ product.title }}</a></h6><div class="prodect-price"><span class="new-price">৳{{ product.price|floatformat:2|intcomma }}</span></div></div>
-						</article>
-					{% endfor %}
-				</div></div></div>{% else %}<p class="shoroshi-empty-state">No products have been added yet.</p>{% endif %}
-			</div>
+			{% endfor %}
 		</section>
 
-		<section class="offer-colection-area container-fluid shoroshi-v12-offer">
-			<div class="section-space--ptb_120 bg-img"><div class="container"><div class="row align-items-center"><div class="col-lg-7 col-md-7">
-				<div class="colection-info-wrap"><div class="section-title mb-30"><h2 class="section-title--one">Wear Your Heritage. Express Your Elegance.</h2></div><p>Celebrate every moment with timeless designs inspired by Bengali tradition.</p><div class="button-box section-space--mt_60"><a href="#category-section" class="btn--md btn--black btn">Explore collections <i class="icon-arrow-right"></i></a></div></div>
-			</div><div class="col-lg-5 col-md-5 shoroshi-v12-offer-visual">
-				{% if featured_products %}{% image featured_products.0.product_image fill-700x800 as offer_image %}<img src="{{ offer_image.url }}" alt="{{ featured_products.0.product_image.title }}" loading="lazy">
-				{% elif page.hero_image %}{% image page.hero_image fill-700x800 as offer_image %}<img src="{{ offer_image.url }}" alt="{{ page.hero_image.title }}" loading="lazy">
-				{% else %}<img src="{% static 'images/featured/shoroshi-outfit-02.jpeg' %}" alt="Shoroshi traditional outfit detail" loading="lazy">{% endif %}
-			</div></div></div></div>
-		</section>
-
-		<section class="product-wrapper section-space--ptb_120 shoroshi-v12-product-section featured-products-section" id="featured-products">
-			<div class="container"><div class="row"><div class="col-lg-12"><div class="section-title text-center mb-30"><h3 class="section-title">Featured Collection</h3></div></div></div>
-				{% if featured_products %}<div class="row">
-					{% for product in featured_products %}<div class="col-lg-3 col-md-4 col-sm-6"><article class="single-product-item text-center"><div class="products-images"><a href="{% pageurl product %}" class="product-thumbnail">{% image product.product_image fill-520x620 as product_image %}<img src="{{ product_image.url }}" class="img-fluid" alt="{{ product.product_image.title }}" loading="lazy"></a></div><div class="product-content"><p class="shoroshi-product-category">{{ product.get_category_display }}</p><h6 class="prodect-title"><a href="{% pageurl product %}">{{ product.title }}</a></h6><div class="prodect-price"><span class="new-price">৳{{ product.price|floatformat:2|intcomma }}</span></div></div></article></div>{% endfor %}
-				</div>{% else %}<p class="shoroshi-empty-state">Featured products will appear here when selected in Wagtail.</p>{% endif %}
-			</div>
-		</section>
-
-		<section class="our-blog-area section-space--pb_90 shoroshi-v12-journal">
+		<section class="product-wrapper section-space--ptb_120" id="best-selling">
 			<div class="container">
-				<div class="row align-items-center"><div class="col-md-12"><div class="section-title text-center mb-20"><h2 class="section-title">Latest from Shoroshi</h2></div></div></div>
+				<div class="row">
+					<div class="col-lg-12"><div class="section-title text-center mb-20"><h2 class="section-title--one section-title--center">Shoroshi Collection</h2></div></div>
+				</div>
+				<ul class="nav product-tab-menu justify-content-center shoroshi-home-filters" aria-label="Filter by collection">
+					<li class="tab__item nav-item"><a class="nav-link{% if not selected_category %} active{% endif %}" href="/#best-selling">All collections</a></li>
+					{% for category in product_categories %}<li class="tab__item nav-item"><a class="nav-link{% if selected_category == category.value %} active{% endif %}" href="?category={{ category.value }}#best-selling">{{ category.label }}</a></li>{% endfor %}
+				</ul>
+				{% if products %}
+					<div class="product-slider-active shoroshi-home-products">
+						{% for product in products %}
+							<article class="single-product-item text-center">
+								<div class="products-images">
+									<a href="{% pageurl product %}" class="product-thumbnail">{% image product.product_image fill-520x620 as product_image %}<img src="{{ product_image.url }}" class="img-fluid" alt="{{ product.product_image.title }}" loading="lazy"></a>
+									<div class="product-actions"><a href="{% pageurl product %}" aria-label="View {{ product.title }}"><i class="p-icon icon-arrow-right"></i><span class="tool-tip">View details</span></a></div>
+								</div>
+								<div class="product-content"><p class="shoroshi-product-category">{{ product.get_category_display }}</p><h6 class="prodect-title"><a href="{% pageurl product %}">{{ product.title }}</a></h6><div class="prodect-price"><span class="new-price">৳{{ product.price|floatformat:2|intcomma }}</span></div></div>
+							</article>
+						{% endfor %}
+					</div>
+				{% else %}
+					<p class="shoroshi-empty-state">No products have been added yet.</p>
+				{% endif %}
+			</div>
+		</section>
+
+		<section class="offer-colection-area container-fluid shoroshi-home-banner">
+			<div class="section-space--ptb_120 bg-img" data-bg="{% static 'images/featured/shoroshi-outfit-02.jpeg' %}">
+				<div class="container"><div class="row"><div class="col-lg-7 col-md-7">
+					<div class="colection-info-wrap"><div class="section-title mb-30"><h2 class="section-title--one">Where Tradition Meets Timeless Elegance</h2></div><p>{{ page.hero_description }}</p><div class="button-box section-space--mt_60"><a href="#collections" class="btn--md btn--black btn">Explore collections <i class="icon-arrow-right"></i></a></div></div>
+				</div></div></div>
+			</div>
+		</section>
+
+		<section class="our-blog-area section-space--ptb_90" id="journal">
+			<div class="container">
+				<div class="row"><div class="col-lg-12"><div class="section-title text-center mb-20"><h2 class="section-title--one section-title--center">Stories from Shoroshi</h2></div></div></div>
 				{% if journal_posts %}
 					<div class="row">
 						{% for post in journal_posts %}
 							<div class="col-lg-4 col-md-6 col-sm-6 col-12"><article class="single-blog-item mt-30">
 								<div class="blog-thumbnail-box">
-									{% if post.cover_image %}{% image post.cover_image fill-570x370 as journal_image %}<a href="{% pageurl post %}" class="thumbnail"><img src="{{ journal_image.url }}" width="366" height="238" class="img-fluid" alt="{{ post.cover_image.title }}" loading="lazy"></a>
+									{% if post.cover_image %}{% image post.cover_image fill-570x370 as journal_image %}<a href="{% pageurl post %}" class="thumbnail"><img src="{{ journal_image.url }}" class="img-fluid" alt="{{ post.cover_image.title }}" loading="lazy"></a>
 									{% else %}<a href="{% pageurl post %}" class="thumbnail shoroshi-journal-placeholder"><span lang="bn">ষোড়শী</span></a>{% endif %}
 									<a href="{% pageurl post %}" class="btn-blog">Read more</a>
 								</div>
@@ -173,20 +222,20 @@
 				{% else %}
 					<p class="shoroshi-empty-state">Shoroshi stories will appear here.</p>
 				{% endif %}
-				{% if page.instagram_url %}<div class="text-center section-space--mt_30"><a class="text-btn-normal" href="{{ page.instagram_url }}" rel="noopener noreferrer" target="_blank">Follow us on Instagram <i class="icon-arrow-right"></i></a></div>{% endif %}
 			</div>
 		</section>
 	</div>
 </main>
 
-<footer class="footer-area-wrapper reveal-footer bg-gray shoroshi-v12-footer">
-	<div class="footer-area section-space--ptb_90"><div class="container"><div class="row footer-widget-wrapper">
-		<div class="col-lg-4 col-md-6 footer-widget"><div class="footer-widget__logo mb-20"><a href="/" aria-label="SHOROSHI home"><img src="{% static 'images/shoroshi-logo.png' %}" alt="SHOROSHI | ষোড়শী"></a></div><p>Where Tradition Meets Timeless Elegance.</p></div>
-		<div class="col-lg-4 col-md-6 footer-widget"><h6 class="footer-widget__title mb-20">Shop collections</h6><ul class="footer-widget__list">{% for category in product_categories %}<li><a href="?category={{ category.value }}#new-products" class="hover-style-link">{{ category.label }}</a></li>{% endfor %}</ul></div>
-		<div class="col-lg-4 col-md-6 footer-widget"><h6 class="footer-widget__title mb-20">SHOROSHI | ষোড়শী</h6><p>Premium Bangladeshi traditional fashion.</p></div>
+<footer class="footer-area-wrapper shoroshi-home-footer">
+	<div class="footer-area section-space--ptb_120"><div class="container"><div class="row footer-widget-wrapper">
+		<div class="col-lg-4 col-md-4 col-sm-6 footer-widget"><div class="footer-widget__logo mb-20"><a href="/" aria-label="SHOROSHI home"><img src="{% static 'images/shoroshi-logo.png' %}" alt="SHOROSHI | ষোড়শী"></a></div><p>Where Tradition Meets Timeless Elegance.</p></div>
+		<div class="col-lg-4 col-md-4 col-sm-6 footer-widget"><h6 class="footer-widget__title mb-20">Shop collections</h6><ul class="footer-widget__list">{% for category in product_categories %}<li><a href="?category={{ category.value }}#best-selling" class="hover-style-link">{{ category.label }}</a></li>{% endfor %}</ul></div>
+		<div class="col-lg-4 col-md-4 col-sm-6 footer-widget"><h6 class="footer-widget__title mb-20">SHOROSHI | ষোড়শী</h6><p>Premium Bangladeshi traditional fashion.</p>{% if page.instagram_url %}<a href="{{ page.instagram_url }}" rel="noopener noreferrer" target="_blank" class="hover-style-link">Follow on Instagram <i class="icon-arrow-right"></i></a>{% endif %}</div>
 	</div></div></div>
-	<div class="footer-copyright-area section-space--ptb_30"><div class="container"><div class="row align-items-center"><div class="col-lg-12 col-md-12"><span class="copyright-text text-center">© {% now "Y" %} Shoroshi. All Rights Reserved.</span></div></div></div></div>
+	<div class="footer-copyright-area section-space--pb_30"><div class="container"><div class="row"><div class="col-lg-12"><span class="copyright-text text-center">© {% now "Y" %} Shoroshi. All Rights Reserved.</span></div></div></div></div>
 </footer>
+{% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'helendo/assets/js/vendor/jquery-3.5.1.min.js' %}"></script>
@@ -203,5 +252,4 @@
 <script src="{% static 'helendo/assets/js/plugins/ajax.mail.js' %}"></script>
 <script src="{% static 'helendo/assets/js/plugins/wow.min.js' %}"></script>
 <script src="{% static 'helendo/assets/js/main.js' %}"></script>
-{% endblock %}
 {% endblock %}

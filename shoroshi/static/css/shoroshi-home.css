@@ -1,0 +1,568 @@
+:root {
+	--shoroshi-ivory: #f5efe5;
+	--shoroshi-brown: #30251f;
+	--shoroshi-gold: #b38a55;
+	--shoroshi-wine: #7b303b;
+	--shoroshi-paper: #fbf9f5;
+}
+
+body.template-homepage {
+	color: var(--shoroshi-brown);
+	background: var(--shoroshi-paper);
+}
+
+.shoroshi-home-logo img,
+.footer-widget__logo img {
+	display: inline-block;
+	width: 72px;
+	height: 72px;
+	object-fit: contain;
+}
+
+.shoroshi-home-logo {
+	text-align: left;
+}
+
+.shoroshi-home-nav ul {
+	gap: 0 clamp(16px, 2vw, 32px);
+}
+
+.shoroshi-home-nav a,
+.shoroshi-mobile-menu a {
+	color: var(--shoroshi-brown);
+	font-size: 12px;
+	text-decoration: none;
+}
+
+.shoroshi-home-nav a:hover,
+.shoroshi-mobile-menu a:hover {
+	color: var(--shoroshi-wine);
+}
+
+.shoroshi-header-tools {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
+.shoroshi-header-icon,
+.shoroshi-search-control summary,
+.shoroshi-mobile-navigation summary {
+	display: grid;
+	width: 34px;
+	height: 36px;
+	place-items: center;
+	border: 0;
+	color: var(--shoroshi-brown);
+	background: transparent;
+	font-size: 19px;
+	list-style: none;
+}
+
+.shoroshi-header-icon {
+	padding: 0;
+	cursor: pointer;
+}
+
+.shoroshi-search-control,
+.shoroshi-mobile-navigation {
+	position: relative;
+	text-align: left;
+}
+
+.shoroshi-search-control summary,
+.shoroshi-mobile-navigation summary {
+	cursor: pointer;
+}
+
+.shoroshi-search-control summary::-webkit-details-marker,
+.shoroshi-mobile-navigation summary::-webkit-details-marker {
+	display: none;
+}
+
+.shoroshi-search-control form,
+.shoroshi-mobile-menu {
+	position: absolute;
+	z-index: 30;
+	top: calc(100% + 12px);
+	right: 0;
+	width: min(320px, calc(100vw - 32px));
+	border: 1px solid rgba(48, 37, 31, 0.16);
+	background: var(--shoroshi-paper);
+	box-shadow: 0 12px 28px rgba(48, 37, 31, 0.12);
+}
+
+.shoroshi-search-control form {
+	display: flex;
+	padding: 10px;
+}
+
+.shoroshi-search-control input {
+	width: 100%;
+	min-width: 0;
+	border: 0;
+	border-bottom: 1px solid rgba(48, 37, 31, 0.2);
+	color: var(--shoroshi-brown);
+	background: transparent;
+	font: inherit;
+	font-size: 12px;
+}
+
+.shoroshi-search-control form button {
+	width: 36px;
+	flex: 0 0 36px;
+	border: 0;
+	color: var(--shoroshi-brown);
+	background: transparent;
+}
+
+.shoroshi-mobile-menu ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px 20px;
+	margin: 0;
+	padding: 14px 0;
+	list-style: none;
+}
+
+.shoroshi-feature-copy .section-title--one a:hover,
+.footer-widget__list a:hover {
+	color: var(--shoroshi-wine);
+}
+
+.shoroshi-home-hero {
+	position: relative;
+	isolation: isolate;
+	background-position: center;
+	background-size: cover;
+}
+
+.shoroshi-home-hero::before {
+	position: absolute;
+	z-index: 0;
+	inset: 0;
+	background: linear-gradient(90deg, rgba(48, 37, 31, 0.62), rgba(48, 37, 31, 0.12));
+	content: "";
+}
+
+.shoroshi-home-hero .container {
+	position: relative;
+	z-index: 1;
+}
+
+.shoroshi-home-hero .hero-text-one h6 {
+	color: var(--shoroshi-gold);
+}
+
+.shoroshi-home-hero .hero-text-one h1,
+.shoroshi-home-hero .hero-text-one p {
+	color: var(--shoroshi-paper);
+}
+
+.shoroshi-home-hero .hero-btn-one {
+	border-color: var(--shoroshi-gold);
+	color: var(--shoroshi-paper);
+	background: var(--shoroshi-wine);
+}
+
+.shoroshi-home-hero .hero-btn-one:hover {
+	color: var(--shoroshi-brown);
+	background: var(--shoroshi-gold);
+}
+
+.single-hero-slider-7.shoroshi-hero-slide {
+	height: 600px;
+	background: var(--shoroshi-ivory);
+}
+
+.hero-box-area.mt-lg-3 {
+	margin-top: 0 !important;
+}
+
+.hero-box-area > .container-fluid > .row > .col-lg-12 {
+	padding-right: 0 !important;
+	padding-left: 0 !important;
+}
+
+.single-hero-slider-7.shoroshi-hero-slide > .container,
+.single-hero-slider-7.shoroshi-hero-slide > .container > .row,
+.single-hero-slider-7.shoroshi-hero-slide > .container > .row > .col-lg-12,
+.single-hero-slider-7.shoroshi-hero-slide .hero-content-wrap {
+	height: 100%;
+}
+
+.single-hero-slider-7.shoroshi-hero-slide .hero-content-wrap {
+	width: 100%;
+	align-items: center;
+	margin-left: 0;
+}
+
+.shoroshi-hero-slide .hero-text-7 {
+	width: 52%;
+	max-width: 620px;
+}
+
+.shoroshi-hero-slide .hero-text-7 h6 {
+	width: 160px;
+	padding-left: 18px;
+	border-left: 1px solid var(--shoroshi-gold);
+	color: var(--shoroshi-wine);
+	font-size: 15px;
+	line-height: 1.5;
+}
+
+.shoroshi-hero-slide .hero-text-7 h1 {
+	max-width: 650px;
+	margin: 0;
+	color: var(--shoroshi-brown);
+	font-size: 64px;
+	font-weight: 500;
+	line-height: 1.15;
+}
+
+.shoroshi-hero-slide .shoroshi-hero-description {
+	max-width: 470px;
+	color: #695b50;
+	font-size: 15px;
+	line-height: 1.7;
+}
+
+.shoroshi-hero-slide .hero-text-7 .text-btn-normal {
+	color: var(--shoroshi-brown);
+	font-size: 15px;
+}
+
+.shoroshi-hero-slide .hero-text-7 .text-btn-normal:hover {
+	color: var(--shoroshi-wine);
+}
+
+.single-hero-slider-7.shoroshi-hero-slide .inner-images.shoroshi-hero-visual {
+	display: grid;
+	width: min(48%, 560px);
+	height: 88%;
+	align-items: center;
+	justify-items: center;
+	top: 50%;
+	right: 0;
+	transform: translateY(-50%);
+}
+
+.shoroshi-hero-visual::before {
+	position: absolute;
+	width: 88%;
+	max-width: 500px;
+	border-radius: 50%;
+	background: #e3e9e9;
+	aspect-ratio: 1;
+	content: "";
+}
+
+.shoroshi-hero-visual .image-one {
+	position: relative;
+	z-index: 1;
+	display: grid;
+	width: 84%;
+	aspect-ratio: 1;
+	align-items: center;
+	justify-items: center;
+	overflow: hidden;
+	border-radius: 50%;
+}
+
+.shoroshi-hero-visual .image-one img {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	object-fit: cover;
+	mix-blend-mode: multiply;
+}
+
+.shoroshi-feature-copy .sub-heading,
+.shoroshi-product-category {
+	color: var(--shoroshi-wine);
+}
+
+.shoroshi-feature-copy .section-title--one a {
+	color: var(--shoroshi-brown);
+}
+
+.shoroshi-feature-copy .btn--border_1 {
+	border-color: var(--shoroshi-gold);
+	color: var(--shoroshi-brown);
+}
+
+.shoroshi-feature-copy .btn--border_1:hover {
+	color: var(--shoroshi-paper);
+	background: var(--shoroshi-wine);
+}
+
+.shoroshi-home-filters {
+	flex-wrap: wrap;
+	gap: 4px 14px;
+}
+
+.shoroshi-home-filters .nav-link.active,
+.shoroshi-home-filters .nav-link:hover {
+	color: var(--shoroshi-wine);
+}
+
+.shoroshi-home-products .products-images img {
+	width: 100%;
+	aspect-ratio: 4 / 5;
+	object-fit: cover;
+}
+
+.shoroshi-empty-state {
+	padding: 36px 0;
+	color: var(--shoroshi-brown);
+	text-align: center;
+}
+
+.shoroshi-home-banner {
+	background: var(--shoroshi-brown);
+}
+
+.shoroshi-home-banner .section-space--ptb_120 {
+	position: relative;
+	isolation: isolate;
+	background-position: center;
+	background-size: cover;
+}
+
+.shoroshi-home-banner .section-space--ptb_120::before {
+	position: absolute;
+	z-index: 0;
+	inset: 0;
+	background: linear-gradient(90deg, rgba(48, 37, 31, 0.76), rgba(48, 37, 31, 0.12));
+	content: "";
+}
+
+.shoroshi-home-banner .container {
+	position: relative;
+	z-index: 1;
+}
+
+.shoroshi-home-banner .section-title--one,
+.shoroshi-home-banner p {
+	color: var(--shoroshi-paper);
+}
+
+.shoroshi-home-banner .btn--black {
+	color: var(--shoroshi-paper);
+	background: var(--shoroshi-wine);
+}
+
+.shoroshi-home-banner .btn--black:hover {
+	background: var(--shoroshi-brown);
+}
+
+.shoroshi-journal-placeholder {
+	display: grid;
+	min-height: 238px;
+	place-items: center;
+	color: var(--shoroshi-gold);
+	background: var(--shoroshi-brown);
+	font-family: Georgia, serif;
+	font-size: 42px;
+}
+
+.shoroshi-home-footer {
+	background: var(--shoroshi-ivory);
+}
+
+.shoroshi-service-strip {
+	padding: 62px 0;
+	border-bottom: 1px solid rgba(48, 37, 31, 0.1);
+	background: #fff;
+}
+
+.shoroshi-service-item {
+	display: flex;
+	min-height: 82px;
+	align-items: center;
+	gap: 24px;
+}
+
+.shoroshi-service-item > i {
+	flex: 0 0 52px;
+	color: var(--shoroshi-gold);
+	font-size: 46px;
+}
+
+.shoroshi-service-item h2 {
+	margin: 0 0 8px;
+	color: var(--shoroshi-brown);
+	font-family: inherit;
+	font-size: 19px;
+	font-weight: 600;
+}
+
+.shoroshi-service-item p {
+	margin: 0;
+	color: #695b50;
+	font-size: 16px;
+	line-height: 1.55;
+}
+
+.shoroshi-circle-categories {
+	padding: 110px 0 70px;
+	background: #fff;
+}
+
+.shoroshi-circle-category-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 34px;
+}
+
+.shoroshi-circle-category {
+	display: grid;
+	justify-items: center;
+	gap: 18px;
+	color: var(--shoroshi-brown);
+	text-align: center;
+	text-decoration: none;
+}
+
+.shoroshi-circle-category-image {
+	display: grid;
+	width: min(100%, 280px);
+	aspect-ratio: 1;
+	place-items: center;
+	border-radius: 50%;
+	background: #f2f1f3;
+}
+
+.shoroshi-circle-category-image img {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.shoroshi-circle-category strong {
+	font-size: 17px;
+	font-weight: 600;
+}
+
+.shoroshi-circle-category-count {
+	margin-top: -12px;
+	color: #8c8782;
+	font-size: 14px;
+}
+
+.shoroshi-circle-category:hover {
+	color: var(--shoroshi-wine);
+}
+
+@media (max-width: 767px) {
+	.shoroshi-service-strip {
+		padding: 30px 0;
+	}
+
+	.shoroshi-service-item {
+		min-height: 72px;
+		gap: 18px;
+		padding: 14px 0;
+	}
+
+	.shoroshi-service-item > i {
+		flex-basis: 40px;
+		font-size: 34px;
+	}
+
+	.shoroshi-service-item h2 {
+		font-size: 16px;
+	}
+
+	.shoroshi-service-item p {
+		font-size: 13px;
+	}
+
+	.shoroshi-circle-categories {
+		padding: 60px 0 40px;
+	}
+
+	.shoroshi-circle-category-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 28px 16px;
+	}
+
+	.shoroshi-circle-category-image {
+		width: min(100%, 180px);
+	}
+
+	.shoroshi-circle-category strong {
+		font-size: 14px;
+	}
+
+	.shoroshi-circle-category-count {
+		font-size: 12px;
+	}
+
+	.shoroshi-header-tools {
+		gap: 2px;
+	}
+
+	.shoroshi-header-icon,
+	.shoroshi-search-control summary,
+	.shoroshi-mobile-navigation summary {
+		width: 28px;
+		font-size: 17px;
+	}
+
+	.shoroshi-mobile-menu a {
+		font-size: 11px;
+	}
+
+	.shoroshi-home-logo img,
+	.footer-widget__logo img {
+		width: 60px;
+		height: 60px;
+	}
+
+	.shoroshi-home-hero .hero-text-one {
+		padding: 24px 0;
+	}
+
+	.single-hero-slider-7.shoroshi-hero-slide {
+		height: 650px;
+	}
+
+	.single-hero-slider-7.shoroshi-hero-slide .hero-content-wrap {
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+		gap: 16px;
+	}
+
+	.shoroshi-hero-slide .hero-text-7 {
+		width: 100%;
+		max-width: none;
+		margin-top: 0 !important;
+	}
+
+	.shoroshi-hero-slide .hero-text-7 h1 {
+		font-size: 42px;
+	}
+
+	.shoroshi-hero-slide .hero-text-7 .button-box {
+		margin-top: 24px !important;
+	}
+
+	.single-hero-slider-7.shoroshi-hero-slide .inner-images.shoroshi-hero-visual {
+		position: relative;
+		right: auto;
+		top: auto;
+		width: min(78vw, 340px);
+		height: 310px;
+		align-self: center;
+		transform: none;
+	}
+
+	.shoroshi-home-banner .section-space--ptb_120 {
+		padding-top: 72px;
+		padding-bottom: 72px;
+	}
+}
