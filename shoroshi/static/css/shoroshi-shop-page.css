@@ -1,0 +1,336 @@
+body.template-shop {
+	color: var(--shoroshi-brown);
+	background: var(--shoroshi-paper);
+}
+
+.shoroshi-shop-header .shoroshi-nav {
+	flex-wrap: wrap;
+}
+
+.shoroshi-shop-header .shoroshi-nav a[aria-current="page"] {
+	color: var(--shoroshi-wine);
+}
+
+.shoroshi-shop-breadcrumb {
+	padding: 20px 0;
+	border-bottom: 1px solid var(--shoroshi-line);
+	background: var(--shoroshi-paper);
+}
+
+.shoroshi-shop-breadcrumb .breadcrumb-title {
+	margin: 0;
+	color: var(--shoroshi-brown);
+	font-size: 24px;
+}
+
+.shoroshi-shop-breadcrumb .breadcrumb-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.shoroshi-shop-section-heading {
+	margin: 42px 0 22px;
+}
+
+.shoroshi-shop-section-heading p {
+	margin: 0 0 8px;
+	color: var(--shoroshi-wine);
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.shoroshi-shop-section-heading h2 {
+	margin: 0;
+	color: var(--shoroshi-brown);
+	font-size: 30px;
+	font-weight: 500;
+}
+
+.shoroshi-shop-category-grid {
+	margin-top: 20px;
+}
+
+.shoroshi-shop-category {
+	position: relative;
+	display: block;
+	min-width: 0;
+	min-height: 260px;
+	overflow: hidden;
+	color: var(--shoroshi-paper);
+	background: var(--shoroshi-ivory);
+	aspect-ratio: 0.9;
+}
+
+.shoroshi-shop-category--wide {
+	aspect-ratio: 1.75;
+}
+
+.shoroshi-shop-category::after {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(180deg, transparent 38%, rgba(32, 24, 20, 0.72));
+	content: "";
+}
+
+.shoroshi-shop-category > img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 300ms ease;
+}
+
+.shoroshi-shop-category:hover > img {
+	transform: scale(1.035);
+}
+
+.shoroshi-shop-category .product-banner-title {
+	top: auto;
+	right: 18px;
+	bottom: 20px;
+	left: 20px;
+	color: var(--shoroshi-paper);
+}
+
+.shoroshi-shop-category .product-banner-title strong,
+.shoroshi-shop-category .product-banner-title small {
+	display: block;
+	color: inherit;
+}
+
+.shoroshi-shop-category .product-banner-title strong {
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.shoroshi-shop-category .product-banner-title small {
+	margin-top: 5px;
+	font-size: 12px;
+}
+
+.shoroshi-shop-products {
+	scroll-margin-top: 90px;
+}
+
+.shoroshi-shop-toolbar {
+	margin-bottom: 20px;
+	padding-bottom: 16px;
+	border-bottom: 1px solid var(--shoroshi-line);
+}
+
+.shoroshi-shop-result-count {
+	margin: 0;
+	color: #695b50;
+	font-size: 13px;
+}
+
+.shoroshi-shop-sort {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 10px;
+}
+
+.shoroshi-shop-toolbar-tools {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 18px;
+	flex-wrap: wrap;
+}
+
+.shoroshi-shop-sort label {
+	margin: 0;
+	color: #695b50;
+	font-size: 12px;
+}
+
+.shoroshi-shop-sort select {
+	max-width: 220px;
+	padding: 8px 26px 8px 10px;
+	border: 1px solid var(--shoroshi-line);
+	color: var(--shoroshi-brown);
+	background: #fff;
+	font: inherit;
+	font-size: 12px;
+}
+
+.shoroshi-shop-sort button {
+	width: 36px;
+	height: 36px;
+	border: 0;
+	color: var(--shoroshi-paper);
+	background: var(--shoroshi-brown);
+}
+
+.shoroshi-shop-view-menu {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.shoroshi-shop-view-menu a {
+	display: grid;
+	width: 32px;
+	height: 32px;
+	place-items: center;
+	border: 1px solid transparent;
+	color: var(--shoroshi-brown);
+}
+
+.shoroshi-shop-view-menu a.is-active,
+.shoroshi-shop-view-menu a:hover {
+	border-color: var(--shoroshi-gold);
+}
+
+.shoroshi-shop-view-menu img {
+	width: 18px;
+	height: 18px;
+}
+
+.shoroshi-shop-filter {
+	position: relative;
+}
+
+.shoroshi-shop-filter summary {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--shoroshi-brown);
+	cursor: pointer;
+	font-size: 12px;
+	list-style: none;
+}
+
+.shoroshi-shop-filter summary::-webkit-details-marker {
+	display: none;
+}
+
+.shoroshi-shop-filter-panel {
+	position: absolute;
+	z-index: 20;
+	top: calc(100% + 12px);
+	right: 0;
+	display: grid;
+	min-width: 220px;
+	gap: 8px;
+	padding: 16px;
+	border: 1px solid var(--shoroshi-line);
+	background: #fff;
+	box-shadow: 0 12px 28px rgba(48, 37, 31, 0.12);
+}
+
+.shoroshi-shop-filter-panel a {
+	color: var(--shoroshi-brown);
+	font-size: 12px;
+	text-decoration: none;
+}
+
+.shoroshi-shop-filter-panel a:hover {
+	color: var(--shoroshi-wine);
+}
+
+.shoroshi-shop-product-grid {
+	display: grid;
+	gap: 36px 22px;
+}
+
+.shoroshi-shop-product-grid.cols-3 {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.shoroshi-shop-product-grid.cols-4 {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.shoroshi-shop-product-grid.cols-5 {
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.shoroshi-shop-product-grid .products-images img {
+	width: 100%;
+	aspect-ratio: 4 / 5;
+	object-fit: cover;
+}
+
+.shoroshi-shop-product-grid .prodect-title {
+	font-size: 14px;
+}
+
+.shoroshi-shop-empty {
+	margin: 0;
+	padding: 48px 20px;
+	border: 1px solid var(--shoroshi-line);
+	color: #695b50;
+	background: #fff;
+	text-align: center;
+}
+
+.shoroshi-shop-pagination {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 20px;
+	margin-top: 36px;
+	font-size: 12px;
+}
+
+.shoroshi-shop-pagination a {
+	color: var(--shoroshi-wine);
+}
+
+@media (max-width: 900px) {
+	.shoroshi-shop-product-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 600px) {
+	.shoroshi-shop-breadcrumb {
+		padding: 16px 0;
+	}
+
+	.shoroshi-shop-section-heading {
+		margin-top: 30px;
+	}
+
+	.shoroshi-shop-section-heading h2 {
+		font-size: 24px;
+	}
+
+	.shoroshi-shop-category {
+		min-height: 190px;
+	}
+
+	.shoroshi-shop-category .product-banner-title {
+		bottom: 14px;
+		left: 12px;
+	}
+
+	.shoroshi-shop-category .product-banner-title strong {
+		font-size: 14px;
+	}
+
+	.shoroshi-shop-category .product-banner-title small {
+		font-size: 10px;
+	}
+
+	.shoroshi-shop-toolbar {
+		gap: 12px;
+	}
+
+	.shoroshi-shop-toolbar-tools {
+		justify-content: flex-start;
+		gap: 12px;
+	}
+
+	.shoroshi-shop-sort {
+		justify-content: flex-start;
+	}
+
+	.shoroshi-shop-product-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 28px 12px;
+	}
+}

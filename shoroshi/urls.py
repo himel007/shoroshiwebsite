@@ -6,6 +6,7 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
+from home import views as home_views
 from search import views as search_views
 
 urlpatterns = [
@@ -13,6 +14,11 @@ urlpatterns = [
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
+    path("shop/", home_views.shop, name="shop"),
+    path("cart/", home_views.cart, name="cart"),
+    path("cart/add/<int:product_id>/", home_views.cart_add, name="cart_add"),
+    path("cart/update/<int:product_id>/", home_views.cart_update, name="cart_update"),
+    path("cart/remove/<int:product_id>/", home_views.cart_remove, name="cart_remove"),
 ]
 
 

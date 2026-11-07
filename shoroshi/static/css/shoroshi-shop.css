@@ -419,7 +419,36 @@ body.template-product {
 
 .shoroshi-product-detail {
     min-height: 70vh;
-    padding: 26px clamp(20px, 6vw, 88px) 72px;
+    padding: 0 0 72px;
+}
+
+.shoroshi-product-breadcrumb {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--shoroshi-line);
+    background: var(--shoroshi-ivory);
+}
+
+.shoroshi-product-breadcrumb .breadcrumb-title {
+    margin: 0;
+    color: var(--shoroshi-brown);
+    font-size: 24px;
+}
+
+.shoroshi-product-breadcrumb .breadcrumb-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.shoroshi-product-detail-main {
+    padding: 72px 0 80px;
+    border-bottom: 1px solid var(--shoroshi-line);
+}
+
+.shoroshi-product-gallery {
+    float: none;
+    width: 100%;
+    padding: 0;
 }
 
 .shoroshi-back-link {
@@ -447,6 +476,126 @@ body.template-product {
 .shoroshi-detail-info h1 {
     color: var(--shoroshi-brown);
     font-size: clamp(28px, 3.6vw, 42px);
+}
+
+.shoroshi-product-details-content {
+    max-width: 500px;
+    margin-left: auto;
+}
+
+.shoroshi-product-details-content h2 {
+    color: var(--shoroshi-brown);
+    font-size: 36px;
+    line-height: 1.2;
+}
+
+.shoroshi-product-details-content .shoroshi-detail-price {
+    margin: 14px 0;
+    color: var(--shoroshi-wine);
+    font-size: 28px;
+}
+
+.shoroshi-product-details-content .quickview-peragraph p {
+    color: #5d5148;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.shoroshi-add-to-bag {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.shoroshi-add-to-bag label {
+    margin: 0;
+    color: #695b50;
+    font-size: 12px;
+}
+
+.shoroshi-add-to-bag input {
+    width: 76px;
+    height: 44px;
+    padding: 8px;
+    border: 1px solid var(--shoroshi-line);
+    color: var(--shoroshi-brown);
+    background: #fff;
+}
+
+.shoroshi-add-to-bag button {
+    min-height: 44px;
+    padding: 0 24px;
+    border: 0;
+    color: var(--shoroshi-paper);
+    background: var(--shoroshi-wine);
+}
+
+.shoroshi-add-to-bag button:hover {
+    background: var(--shoroshi-brown);
+}
+
+.shoroshi-product-details-content .product_meta {
+    display: grid;
+    gap: 8px;
+    color: #695b50;
+    font-size: 12px;
+}
+
+.shoroshi-product-details-content .product_meta a {
+    color: var(--shoroshi-wine);
+}
+
+.shoroshi-product-tabs {
+    gap: 28px;
+    border-bottom: 1px solid var(--shoroshi-line);
+}
+
+.shoroshi-product-tabs a {
+    display: block;
+    padding: 0 0 14px;
+    border-bottom: 2px solid transparent;
+    color: #695b50;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.shoroshi-product-tabs a.active {
+    border-color: var(--shoroshi-wine);
+    color: var(--shoroshi-brown);
+}
+
+.shoroshi-product-detail .product_tab_content {
+    color: #5d5148;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.shoroshi-product-detail .product_tab_content h3 {
+    color: var(--shoroshi-brown);
+    font-size: 22px;
+}
+
+.shoroshi-related-products {
+    padding-bottom: 24px;
+}
+
+.shoroshi-related-products .section-title h2 {
+    color: var(--shoroshi-brown);
+    font-size: 26px;
+}
+
+.shoroshi-related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.shoroshi-related-grid .products-images img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
 }
 
 .shoroshi-detail-price {
@@ -547,6 +696,24 @@ body.template-product {
     .shoroshi-product-detail-grid {
         grid-template-columns: 1fr;
         gap: 22px;
+    }
+
+    .shoroshi-product-detail-main {
+        padding: 38px 0 50px;
+    }
+
+    .shoroshi-product-details-content {
+        max-width: none;
+        margin: 28px 0 0;
+    }
+
+    .shoroshi-product-details-content h2 {
+        font-size: 30px;
+    }
+
+    .shoroshi-related-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px 12px;
     }
 
     .shoroshi-detail-info {

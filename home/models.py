@@ -179,6 +179,22 @@ class ProductPage(Page):
         ),
     ]
 
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        parent_page = self.get_parent()
+        if parent_page:
+            context["related_products"] = (
+                ProductPage.objects.live()
+                .public()
+                .child_of(parent_page)
+                .filter(category=self.category)
+                .exclude(pk=self.pk)
+                .order_by("-first_published_at")[:4]
+            )
+        else:
+            context["related_products"] = ProductPage.objects.none()
+        return context
+
 
 class JournalPage(Page):
     parent_page_types = ["home.HomePage"]

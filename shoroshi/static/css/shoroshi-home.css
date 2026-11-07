@@ -63,6 +63,7 @@ body.template-homepage {
 .shoroshi-header-icon {
 	padding: 0;
 	cursor: pointer;
+	text-decoration: none;
 }
 
 .shoroshi-search-control,
@@ -319,44 +320,6 @@ body.template-homepage {
 	text-align: center;
 }
 
-.shoroshi-home-banner {
-	background: var(--shoroshi-brown);
-}
-
-.shoroshi-home-banner .section-space--ptb_120 {
-	position: relative;
-	isolation: isolate;
-	background-position: center;
-	background-size: cover;
-}
-
-.shoroshi-home-banner .section-space--ptb_120::before {
-	position: absolute;
-	z-index: 0;
-	inset: 0;
-	background: linear-gradient(90deg, rgba(48, 37, 31, 0.76), rgba(48, 37, 31, 0.12));
-	content: "";
-}
-
-.shoroshi-home-banner .container {
-	position: relative;
-	z-index: 1;
-}
-
-.shoroshi-home-banner .section-title--one,
-.shoroshi-home-banner p {
-	color: var(--shoroshi-paper);
-}
-
-.shoroshi-home-banner .btn--black {
-	color: var(--shoroshi-paper);
-	background: var(--shoroshi-wine);
-}
-
-.shoroshi-home-banner .btn--black:hover {
-	background: var(--shoroshi-brown);
-}
-
 .shoroshi-journal-placeholder {
 	display: grid;
 	min-height: 238px;
@@ -561,8 +524,4 @@ body.template-homepage {
 		transform: none;
 	}
 
-	.shoroshi-home-banner .section-space--ptb_120 {
-		padding-top: 72px;
-		padding-bottom: 72px;
-	}
 }

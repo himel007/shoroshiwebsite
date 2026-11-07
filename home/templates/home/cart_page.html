@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load humanize static wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}template-cart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-cart.css' %}">
+{% endblock %}
+
+{% block title %}Shopping Bag | SHOROSHI{% endblock %}
+
+{% block content %}
+<header class="shoroshi-header shoroshi-cart-header">
+	<a class="shoroshi-brand" href="/" aria-label="SHOROSHI home">
+		<img src="{% static 'images/shoroshi-logo.png' %}" alt="SHOROSHI | ষোড়শী">
+		<span class="shoroshi-wordmark"><strong>SHOROSHI</strong><small lang="bn">ষোড়শী</small></span>
+	</a>
+	<nav class="shoroshi-nav" aria-label="Main navigation"><a href="/">Home</a><a href="{% url 'shop' %}">Continue shopping</a></nav>
+</header>
+
+<main class="shoroshi-cart-page">
+	<div class="breadcrumb-area shoroshi-cart-breadcrumb">
+		<div class="container"><div class="row breadcrumb_box align-items-center">
+			<div class="col-6"><h1 class="breadcrumb-title">Shopping Bag</h1></div>
+			<div class="col-6"><ul class="breadcrumb-list text-end"><li class="breadcrumb-item"><a href="/">Home</a></li><li class="breadcrumb-item active">Shopping Bag</li></ul></div>
+		</div></div>
+	</div>
+	<section class="cart-area section-space--pt_90 section-space--pb_120">
+		<div class="container">
+			{% if cart_items %}
+				<div class="table-content table-responsive cart-table-content header-color-gray shoroshi-cart-table">
+					<table>
+						<thead><tr class="bg-gray"><th>Product</th><th>Price</th><th>Quantity</th><th>Total</th><th><span class="visually-hidden">Remove</span></th></tr></thead>
+						<tbody>
+							{% for item in cart_items %}
+								<tr>
+									<td class="product-name shoroshi-cart-product">
+										<a class="product-img" href="{% pageurl item.product %}">{% image item.product.product_image fill-120x150 as cart_image %}<img src="{{ cart_image.url }}" alt="{{ item.product.product_image.title }}"></a>
+										<div><a href="{% pageurl item.product %}">{{ item.product.title }}</a><small>{{ item.product.get_category_display }} · {{ item.product.sku }}</small></div>
+									</td>
+									<td class="product-price">৳{{ item.product.price|floatformat:2|intcomma }}</td>
+									<td><form class="shoroshi-cart-quantity" action="{% url 'cart_update' item.product.pk %}" method="post">{% csrf_token %}<label class="visually-hidden" for="quantity-{{ item.product.pk }}">Quantity for {{ item.product.title }}</label><input id="quantity-{{ item.product.pk }}" type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99"><button type="submit">Update</button></form></td>
+									<td class="price-total">৳{{ item.line_total|floatformat:2|intcomma }}</td>
+									<td class="product-remove"><form action="{% url 'cart_remove' item.product.pk %}" method="post">{% csrf_token %}<button type="submit" aria-label="Remove {{ item.product.title }}"><i class="icon-cross2"></i></button></form></td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<div class="shoroshi-cart-summary"><p>{{ cart_count }} item{{ cart_count|pluralize }}</p><dl><dt>Subtotal</dt><dd>৳{{ subtotal|floatformat:2|intcomma }}</dd></dl><a class="btn btn--md btn--black" href="{% url 'shop' %}">Continue shopping</a></div>
+			{% else %}
+				<div class="shoroshi-cart-empty"><h2>Your bag is empty</h2><p>Explore the Shoroshi collections to find an item.</p><a class="btn btn--md btn--black" href="{% url 'shop' %}">Continue shopping <i class="icon-arrow-right"></i></a></div>
+			{% endif %}
+		</div>
+	</section>
+</main>
+
+<footer class="shoroshi-footer"><a class="shoroshi-brand" href="/" aria-label="SHOROSHI home"><img src="{% static 'images/shoroshi-logo.png' %}" alt=""><span class="shoroshi-wordmark"><strong>SHOROSHI</strong><small lang="bn">ষোড়শী</small></span></a><p>Where Tradition Meets Timeless Elegance.</p></footer>
+{% endblock %}

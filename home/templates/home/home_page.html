@@ -30,11 +30,10 @@
 					<nav class="header__navigation navigation-menu shoroshi-home-nav" aria-label="Main navigation">
 						<ul class="justify-content-center">
 							<li><a href="/"><span>Home</span></a></li>
-							<li><a href="#best-selling"><span>Shop</span></a></li>
-							<li class="has-children has-children--multilevel-submenu"><a href="#collections"><span>Pages</span></a>
+							<li><a href="{% url 'shop' %}"><span>Shop</span></a></li>
+							<li class="has-children has-children--multilevel-submenu"><a href="#collections"><span>Collections</span></a>
 								<ul class="submenu">{% for category in product_categories %}<li><a href="?category={{ category.value }}#best-selling"><span>{{ category.label }}</span></a></li>{% endfor %}</ul>
 								</li>
-								<li><a href="#journal"><span>Blog</span></a></li>
 							</ul>
 						</nav>
 				</div>
@@ -50,16 +49,15 @@
 						</details>
 						<button class="shoroshi-header-icon" type="button" aria-label="Account" title="Account"><i class="icon-user"></i></button>
 						<button class="shoroshi-header-icon" type="button" aria-label="Wishlist" title="Wishlist"><i class="icon-heart"></i></button>
-						<button class="shoroshi-header-icon" type="button" aria-label="Shopping bag" title="Shopping bag"><i class="icon-bag2"></i></button>
+						<a class="shoroshi-header-icon" href="{% url 'cart' %}" aria-label="Shopping bag" title="Shopping bag"><i class="icon-bag2"></i></a>
 						<details class="shoroshi-mobile-navigation">
 							<summary aria-label="Browse menu" title="Browse menu"><i class="icon-menu"></i></summary>
 							<nav id="shoroshi-mobile-menu" class="shoroshi-mobile-menu" aria-label="More navigation">
 								<ul>
 									<li><a href="/">Home</a></li>
-									<li><a href="#best-selling">Shop</a></li>
+									<li><a href="{% url 'shop' %}">Shop</a></li>
 									<li><a href="#collections">Collections</a></li>
 									{% for category in product_categories %}<li><a href="?category={{ category.value }}#best-selling">{{ category.label }}</a></li>{% endfor %}
-									<li><a href="#journal">Blog</a></li>
 								</ul>
 							</nav>
 						</details>
@@ -192,14 +190,6 @@
 				{% else %}
 					<p class="shoroshi-empty-state">No products have been added yet.</p>
 				{% endif %}
-			</div>
-		</section>
-
-		<section class="offer-colection-area container-fluid shoroshi-home-banner">
-			<div class="section-space--ptb_120 bg-img" data-bg="{% static 'images/featured/shoroshi-outfit-02.jpeg' %}">
-				<div class="container"><div class="row"><div class="col-lg-7 col-md-7">
-					<div class="colection-info-wrap"><div class="section-title mb-30"><h2 class="section-title--one">Where Tradition Meets Timeless Elegance</h2></div><p>{{ page.hero_description }}</p><div class="button-box section-space--mt_60"><a href="#collections" class="btn--md btn--black btn">Explore collections <i class="icon-arrow-right"></i></a></div></div>
-				</div></div></div>
 			</div>
 		</section>
 

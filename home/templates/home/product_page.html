@@ -23,36 +23,94 @@
         <span class="shoroshi-wordmark"><strong>SHOROSHI</strong><small lang="bn">ষোড়শী</small></span>
     </a>
     <nav class="shoroshi-nav" aria-label="Main navigation">
-        <a href="/#products">Shop</a>
-        <a href="/?category=muslin-silk#products">Muslin Silk</a>
-        <a href="/?category=balaka-silk#products">Balaka Silk</a>
-        <a href="/?category=endi-silk#products">Endi Silk</a>
-        <a href="/?category=joyosree-silk#products">Joyosree Silk</a>
+        <a href="{% url 'shop' %}">Shop</a>
+        <a href="{% url 'shop' %}?category=muslin-silk#shop-products">Muslin Silk</a>
+        <a href="{% url 'shop' %}?category=balaka-silk#shop-products">Balaka Silk</a>
+        <a href="{% url 'shop' %}?category=endi-silk#shop-products">Endi Silk</a>
+        <a href="{% url 'shop' %}?category=joyosree-silk#shop-products">Joyosree Silk</a>
     </nav>
 </header>
 
 <main class="shoroshi-product-detail">
-    <a class="shoroshi-back-link" href="/#products">← Back to shop</a>
-    <div class="shoroshi-product-detail-grid">
-        <div class="shoroshi-detail-image">
-            {% image page.product_image fill-900x1100 as detail_image %}
-            <img src="{{ detail_image.url }}" alt="{{ page.product_image.title }}">
-        </div>
-        <section class="shoroshi-detail-info" aria-labelledby="product-title">
-            <p class="shoroshi-product-category">{{ page.get_category_display }} · {{ page.sku }}</p>
-            <h1 id="product-title">{{ page.title }}</h1>
-            <p class="shoroshi-detail-price">৳{{ page.price|floatformat:2|intcomma }}</p>
-            <p class="shoroshi-detail-description">{{ page.description }}</p>
-            <p class="shoroshi-availability">{% if page.is_available %}Available{% else %}Currently unavailable{% endif %}</p>
-            <dl class="shoroshi-product-specs">
-                <dt>Fabric</dt><dd>{{ page.fabric_details }}</dd>
-                <dt>Colour</dt><dd>{{ page.colour }}</dd>
-                <dt>Work / design</dt><dd>{{ page.work_details }}</dd>
-                {% if page.measurements %}<dt>Measurements</dt><dd>{{ page.measurements }}</dd>{% endif %}
-                <dt>Care</dt><dd>{{ page.care_instructions }}</dd>
-            </dl>
-        </section>
+    <div class="breadcrumb-area shoroshi-product-breadcrumb">
+        <div class="container"><div class="row breadcrumb_box align-items-center">
+            <div class="col-6"><h1 class="breadcrumb-title">{{ page.title }}</h1></div>
+            <div class="col-6"><ul class="breadcrumb-list text-end"><li class="breadcrumb-item"><a href="/">Home</a></li><li class="breadcrumb-item"><a href="{% url 'shop' %}">Shop</a></li><li class="breadcrumb-item active">{{ page.get_category_display }}</li></ul></div>
+        </div></div>
     </div>
+
+    <section class="single-product-wrap section-space--pt_90 border-bottom shoroshi-product-detail-main">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7 col-md-6 col-sm-12">
+                    <div class="product-details-left">
+                        <div class="product-details-images-2 shoroshi-product-gallery">
+                            <div class="easyzoom-style"><div class="shoroshi-detail-image">
+                                {% image page.product_image fill-1000x1250 as detail_image %}
+                                <img src="{{ detail_image.url }}" class="img-fluid" alt="{{ page.product_image.title }}">
+                            </div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-6 col-sm-12">
+                    <section class="product-details-content shoroshi-product-details-content" aria-labelledby="product-title">
+                        <p class="shoroshi-product-category">{{ page.get_category_display }} · SKU: {{ page.sku }}</p>
+                        <h2 id="product-title" class="font-weight--reguler mb-10">{{ page.title }}</h2>
+                        <p class="price shoroshi-detail-price">৳{{ page.price|floatformat:2|intcomma }}</p>
+                        <div class="quickview-peragraph mt-10"><p>{{ page.description }}</p></div>
+                        <div class="stock {% if page.is_available %}in-stock{% else %}out-of-stock{% endif %}"><p>Availability: <span>{% if page.is_available %}Available{% else %}Currently unavailable{% endif %}</span></p></div>
+                        {% if page.is_available %}
+                            <form class="shoroshi-add-to-bag" action="{% url 'cart_add' page.pk %}" method="post">
+                                {% csrf_token %}
+                                <label for="product-quantity">Quantity</label>
+                                <input id="product-quantity" type="number" name="quantity" value="1" min="1" max="99">
+                                <button class="btn btn--md btn--black" type="submit">Add to bag</button>
+                            </form>
+                        {% endif %}
+                        <div class="product_meta mt-30">
+                            <div class="sku_wrapper item_meta"><span class="label">SKU: </span><span class="sku">{{ page.sku }}</span></div>
+                            <div class="posted_in item_meta"><span class="label">Collection: </span><a href="{% url 'shop' %}?category={{ page.category }}#shop-products">{{ page.get_category_display }}</a></div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div class="row"><div class="col-12">
+                <div class="product-details-tab section-space--pt_90">
+                    <ul role="tablist" class="nav shoroshi-product-tabs">
+                        <li role="presentation"><a data-bs-toggle="tab" role="tab" href="#product-description" class="active">Description</a></li>
+                        <li role="presentation"><a data-bs-toggle="tab" role="tab" href="#product-information">Additional information</a></li>
+                    </ul>
+                </div>
+                <div class="tab-content product_details_tab_content mt-30">
+                    <section class="product_tab_content tab-pane show active" id="product-description" role="tabpanel">
+                        <div class="product_description_wrap"><h3>Product description</h3><p>{{ page.description }}</p></div>
+                    </section>
+                    <section class="product_tab_content tab-pane" id="product-information" role="tabpanel">
+                        <dl class="shoroshi-product-specs">
+                            <dt>Fabric</dt><dd>{{ page.fabric_details }}</dd>
+                            <dt>Colour</dt><dd>{{ page.colour }}</dd>
+                            <dt>Work / design</dt><dd>{{ page.work_details }}</dd>
+                            {% if page.measurements %}<dt>Measurements</dt><dd>{{ page.measurements }}</dd>{% endif %}
+                            <dt>Care</dt><dd>{{ page.care_instructions }}</dd>
+                        </dl>
+                    </section>
+                </div>
+            </div></div>
+        </div>
+    </section>
+
+    {% if related_products %}
+        <section class="related-products section-space--ptb_90 shoroshi-related-products">
+            <div class="container"><div class="section-title text-center mb-30"><h2>More from {{ page.get_category_display }}</h2></div>
+                <div class="shoroshi-related-grid">
+                    {% for product in related_products %}
+                        <article class="single-product-item text-center"><div class="products-images"><a href="{% pageurl product %}" class="product-thumbnail">{% image product.product_image fill-520x620 as related_image %}<img src="{{ related_image.url }}" class="img-fluid" alt="{{ product.product_image.title }}" loading="lazy"></a></div><div class="product-content"><h3 class="prodect-title"><a href="{% pageurl product %}">{{ product.title }}</a></h3><div class="prodect-price"><span class="new-price">৳{{ product.price|floatformat:2|intcomma }}</span></div></div></article>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
 </main>
 
 <footer class="shoroshi-footer">
@@ -62,4 +120,9 @@
     </a>
     <p>Where Tradition Meets Timeless Elegance.</p>
 </footer>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'helendo/assets/js/vendor/jquery-3.5.1.min.js' %}"></script>
+<script src="{% static 'helendo/assets/js/vendor/bootstrap.min.js' %}"></script>
 {% endblock %}
