@@ -2,12 +2,69 @@
 <html lang="en" dir="ltr">
     <head>
         <meta charset="utf-8" />
-        <title>Internal server error</title>
+        <title>Something went wrong | SHOROSHI</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style>
+            :root {
+                --ivory: #f5efe5;
+                --brown: #30251f;
+                --gold: #b38a55;
+                --wine: #7b303b;
+            }
+            * { box-sizing: border-box; }
+            body {
+                margin: 0;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 24px;
+                font-family: "Segoe UI", system-ui, Arial, sans-serif;
+                color: var(--brown);
+                background: var(--ivory);
+                text-align: center;
+            }
+            .wrap { max-width: 520px; }
+            .wordmark {
+                display: inline-block;
+                margin-bottom: 28px;
+                letter-spacing: 0.18em;
+                font-size: 20px;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+            .wordmark small {
+                display: block;
+                margin-top: 4px;
+                letter-spacing: normal;
+                font-size: 14px;
+                font-weight: 400;
+                color: var(--gold);
+            }
+            .code { font-size: 48px; font-weight: 700; color: var(--gold); margin: 0; }
+            h1 { font-size: 24px; margin: 8px 0 12px; }
+            p { color: #5c5047; line-height: 1.7; }
+            a.button {
+                display: inline-block;
+                margin-top: 20px;
+                padding: 12px 26px;
+                color: var(--ivory);
+                background: var(--brown);
+                text-decoration: none;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                font-size: 13px;
+            }
+            a.button:hover { background: var(--wine); }
+        </style>
     </head>
     <body>
-        <h1>Internal server error</h1>
-
-        <h2>Sorry, there seems to be an error. Please try again soon.</h2>
+        <div class="wrap">
+            <span class="wordmark">SHOROSHI<small lang="bn">ষোড়শী</small></span>
+            <p class="code">500</p>
+            <h1>Something went wrong</h1>
+            <p>Sorry, an unexpected error occurred on our side. Please try again in a few moments. If you were placing an order, you can check its status from the homepage before trying again.</p>
+            <a class="button" href="/">Back to homepage</a>
+        </div>
     </body>
 </html>
