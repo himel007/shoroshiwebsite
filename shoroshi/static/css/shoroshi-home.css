@@ -314,6 +314,17 @@ body.template-homepage {
 	object-fit: cover;
 }
 
+.shoroshi-home-products .products-images .product-thumbnail {
+	display: block;
+	overflow: hidden;
+	border-radius: 18px;
+	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+}
+
+.shoroshi-home-products .products-images .product-thumbnail img {
+	border-radius: 18px;
+}
+
 .shoroshi-empty-state {
 	padding: 36px 0;
 	color: var(--shoroshi-brown);
@@ -424,6 +435,17 @@ body.template-homepage {
 
 .shoroshi-circle-category:hover {
 	color: var(--shoroshi-wine);
+}
+
+.shoroshi-featured-collections .product-thumbnail,
+.shoroshi-featured-collections .product-thumbnail a,
+.shoroshi-featured-collections .product-thumbnail img {
+	border-radius: 18px;
+}
+
+.shoroshi-featured-collections .product-thumbnail {
+	overflow: hidden;
+	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
 }
 
 @media (max-width: 767px) {
