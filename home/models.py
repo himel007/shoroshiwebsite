@@ -4,6 +4,7 @@ from django.core.validators import MinValueValidator
 
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
+from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 from wagtail.images import get_image_model_string
 from wagtail.search import index
@@ -43,7 +44,12 @@ class HomePage(Page):
         related_name="+",
     )
 
-    subpage_types = ["home.ProductPage", "home.JournalPage"]
+    subpage_types = [
+        "home.ProductPage",
+        "home.JournalPage",
+        "home.ContactPage",
+        "home.FAQPage",
+    ]
 
     content_panels = Page.content_panels + [
         InlinePanel("hero_items", label="Hero slide"),
@@ -385,3 +391,77 @@ class WishlistItem(models.Model):
 
     def __str__(self):
         return f"{self.user} ♥ {self.product}"
+
+
+class ContactPage(Page):
+    parent_page_types = ["home.HomePage"]
+    subpage_types = []
+    template = "home/contact_page.html"
+    max_count = 1
+
+    intro = models.TextField(
+        blank=True,
+        default="PLACEHOLDER — add a short introduction for the contact page in Wagtail admin.",
+    )
+    address = models.TextField(
+        blank=True,
+        default="PLACEHOLDER — add your shop or office address here.",
+    )
+    phone = models.CharField(max_length=40, blank=True)
+    email = models.EmailField(blank=True)
+    business_hours = models.TextField(
+        blank=True,
+        default="PLACEHOLDER — add your opening hours here, e.g. Sat–Thu, 10am–8pm.",
+    )
+    map_embed_url = models.URLField(
+        blank=True,
+        help_text="Optional Google Maps 'embed' URL (from Share → Embed a map → src).",
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel("intro"),
+        MultiFieldPanel(
+            [
+                FieldPanel("address"),
+                FieldPanel("phone"),
+                FieldPanel("email"),
+                FieldPanel("business_hours"),
+            ],
+            heading="Contact details",
+        ),
+        FieldPanel("map_embed_url"),
+    ]
+
+
+class FAQPage(Page):
+    parent_page_types = ["home.HomePage"]
+    subpage_types = []
+    template = "home/faq_page.html"
+    max_count = 1
+
+    intro = models.TextField(
+        blank=True,
+        default="PLACEHOLDER — add a short introduction for the FAQ page in Wagtail admin.",
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel("intro"),
+        InlinePanel("items", label="Question"),
+    ]
+
+
+class FAQItem(Orderable):
+    id = models.AutoField(primary_key=True)
+    page = ParentalKey(FAQPage, on_delete=models.CASCADE, related_name="items")
+    question = models.CharField(max_length=255)
+    answer = RichTextField()
+
+    panels = [
+        FieldPanel("question"),
+        FieldPanel("answer"),
+    ]
+
+    def __str__(self):
+        return self.question
+
+from .settings_models import SiteContactSettings  # noqa: E402,F401

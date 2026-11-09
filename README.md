@@ -48,6 +48,19 @@ Placed orders appear under **Shop -> Orders**. Use the inspect view to see the
 customer's address and items, and the edit view to change the order status or
 add an internal staff note.
 
+## Contact, FAQ, and footer links
+
+A **Contact** page (`/contact/`) and an **FAQ** page (`/faq/`) are created
+automatically and are editable in Wagtail admin (both start with PLACEHOLDER
+text). Edit the Contact page for your address, phone, email, hours, and an
+optional Google Maps embed. Edit the FAQ page to change the questions and
+answers.
+
+The footer shows **FAQ**, **Contact**, and **Track order** links, plus
+**WhatsApp, Facebook, Instagram, and Send us mail** icons. Set those in Wagtail
+admin under **Settings -> Contact & social links**; each icon only appears once
+its value is filled in, so no contact detail is invented.
+
 ## Template and brand assets
 
 The supplied Helendo ThemeForest archive is kept outside Git because it is a
