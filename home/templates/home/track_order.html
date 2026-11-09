@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load humanize static %}
+
+{% block body_class %}template-cart template-checkout template-track{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-cart.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-checkout.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-account.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-track.css' %}">
+{% endblock %}
+
+{% block title %}Track your order | SHOROSHI{% endblock %}
+
+{% block content %}
+{% include "home/includes/store_header.html" %}
+
+<main class="shoroshi-cart-page">
+	<div class="breadcrumb-area shoroshi-cart-breadcrumb">
+		<div class="container"><div class="row breadcrumb_box align-items-center">
+			<div class="col-6"><h1 class="breadcrumb-title">Track your order</h1></div>
+			<div class="col-6"><ul class="breadcrumb-list text-end"><li class="breadcrumb-item"><a href="/">Home</a></li><li class="breadcrumb-item active">Track order</li></ul></div>
+		</div></div>
+	</div>
+
+	<div class="section-space--ptb_90">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-7 col-md-9 m-auto">
+					<form class="order-tracking-form-box shoroshi-track-form" method="post" action="{% url 'track_order' %}" novalidate>
+						{% csrf_token %}
+						<p>Enter the order number from your confirmation page and the mobile number you used, then press Track.</p>
+						{% if not_found %}
+							<div class="shoroshi-notice shoroshi-notice--warning" role="alert">
+								<p>We couldn't find an order with that number and phone. Please check both and try again.</p>
+							</div>
+						{% endif %}
+						{% include "home/includes/form_field.html" with field=form.order_number %}
+						{% include "home/includes/form_field.html" with field=form.phone %}
+						<div class="button-box mt-10">
+							<button type="submit" class="btn btn--lg btn--black">Track</button>
+						</div>
+					</form>
+
+					{% if order %}
+						<section class="shoroshi-track-result" aria-labelledby="track-result-heading">
+							<div class="shoroshi-account-order-head">
+								<h2 id="track-result-heading">Order {{ order.number }}</h2>
+								<span class="shoroshi-status shoroshi-status--{{ order.status }}">{{ order.get_status_display }}</span>
+							</div>
+							<p>Placed on {{ order.created_at|date:"j F Y" }}.</p>
+
+							{% if progress_steps %}
+								<ol class="shoroshi-track-steps">
+									{% for step in progress_steps %}
+										<li class="{% if step.done %}is-done{% endif %}{% if step.current %} is-current{% endif %}">
+											<span class="shoroshi-track-dot" aria-hidden="true"></span>
+											<span class="shoroshi-track-label">{{ step.label }}</span>
+										</li>
+									{% endfor %}
+								</ol>
+							{% elif order.status == "cancelled" %}
+								<p class="shoroshi-track-cancelled">This order has been cancelled. If you have questions, please contact Shoroshi.</p>
+							{% endif %}
+
+							{% include "home/includes/order_summary.html" %}
+						</section>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+
+{% include "home/includes/store_footer.html" %}
+{% endblock %}

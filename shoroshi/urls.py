@@ -20,6 +20,7 @@ urlpatterns = [
     path("cart/add/<int:product_id>/", home_views.cart_add, name="cart_add"),
     path("cart/update/<int:product_id>/", home_views.cart_update, name="cart_update"),
     path("cart/remove/<int:product_id>/", home_views.cart_remove, name="cart_remove"),
+    path("track-order/", home_views.track_order, name="track_order"),
     path("wishlist/", home_views.wishlist, name="wishlist"),
     path("wishlist/toggle/<int:product_id>/", home_views.wishlist_toggle, name="wishlist_toggle"),
     path("checkout/", home_views.checkout, name="checkout"),

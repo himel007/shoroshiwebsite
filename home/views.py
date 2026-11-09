@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme, urlencode
 from django.views.decorators.http import require_POST
 
-from .forms import AccountDetailsForm, CheckoutForm, CustomerRegistrationForm
+from .forms import AccountDetailsForm, CheckoutForm, CustomerRegistrationForm, OrderTrackingForm
 from .models import DeliveryZone, HomePage, Order, OrderItem, PRODUCT_CATEGORIES, ProductPage, WishlistItem
 
 
@@ -225,6 +225,43 @@ def account_details(request):
             "account_section": "details",
             "details_form": details_form,
             "password_form": password_form,
+        },
+    )
+
+
+ORDER_PROGRESS = ["pending", "confirmed", "shipped", "delivered"]
+
+
+def track_order(request):
+    form = OrderTrackingForm(request.POST or None)
+    order = None
+    not_found = False
+    steps = None
+    if request.method == "POST" and form.is_valid():
+        order = form.find_order()
+        if order is None:
+            not_found = True
+        elif order.status in ORDER_PROGRESS:
+            current = ORDER_PROGRESS.index(order.status)
+            steps = [
+                {
+                    "label": label,
+                    "done": index <= current,
+                    "current": index == current,
+                }
+                for index, (value, label) in enumerate(
+                    [(s, dict(Order.STATUS_CHOICES)[s]) for s in ORDER_PROGRESS]
+                )
+            ]
+    return TemplateResponse(
+        request,
+        "home/track_order.html",
+        {
+            "form": form,
+            "order": order,
+            "order_items": order.items.all() if order else None,
+            "not_found": not_found,
+            "progress_steps": steps,
         },
     )
 

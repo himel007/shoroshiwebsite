@@ -91,3 +91,43 @@ class AccountDetailsForm(forms.ModelForm):
         if others.exists():
             raise forms.ValidationError("Another account already uses this email.")
         return email
+
+
+class OrderTrackingForm(forms.Form):
+    order_number = forms.CharField(
+        label="Order number",
+        max_length=20,
+        widget=forms.TextInput(attrs={"placeholder": "e.g. SH-000123"}),
+    )
+    phone = forms.CharField(
+        label="Phone number",
+        max_length=20,
+        widget=forms.TextInput(
+            attrs={"inputmode": "tel", "autocomplete": "tel", "placeholder": "01XXXXXXXXX"}
+        ),
+    )
+
+    def clean_order_number(self):
+        raw = self.cleaned_data["order_number"]
+        digits = re.sub(r"\D", "", raw)
+        if not digits:
+            raise forms.ValidationError("Enter your order number, for example SH-000123.")
+        return int(digits)
+
+    def clean_phone(self):
+        phone = re.sub(r"[\s-]", "", self.cleaned_data["phone"])
+        if not BD_PHONE_RE.match(phone):
+            raise forms.ValidationError("Enter the Bangladeshi mobile number used on the order.")
+        return phone[-11:]
+
+    def find_order(self):
+        """Return the matching order, or None. Call only on a valid form."""
+        from .models import Order
+
+        return (
+            Order.objects.filter(
+                pk=self.cleaned_data["order_number"],
+                phone=self.cleaned_data["phone"],
+            )
+            .first()
+        )

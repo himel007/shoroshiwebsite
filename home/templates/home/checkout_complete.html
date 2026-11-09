@@ -23,6 +23,7 @@
 			<p class="shoroshi-complete__eyebrow">Thank you, {{ order.full_name }}</p>
 			<h1>Your order has been received</h1>
 			<p>Order number <strong>{{ order.number }}</strong>. Shoroshi will contact you on <strong>{{ order.phone }}</strong> to confirm it before shipping.</p>
+			<p><a class="shoroshi-cart-continue" href="{% url 'track_order' %}">Track this order</a></p>
 
 			{% include "home/includes/order_summary.html" %}
 
