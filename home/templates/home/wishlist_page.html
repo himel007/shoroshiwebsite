@@ -1,46 +1,50 @@
-{% extends "base.html" %}
-{% load humanize static wagtailcore_tags wagtailimages_tags %}
-
-{% block body_class %}template-wishlist{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
-<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
-<link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
-<link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
-<link rel="stylesheet" href="{% static 'css/shoroshi-cart.css' %}">
-<link rel="stylesheet" href="{% static 'css/shoroshi-wishlist.css' %}">
-{% endblock %}
+{% extends "home/account_base.html" %}
+{% load humanize wagtailcore_tags wagtailimages_tags %}
 
 {% block title %}Wishlist | SHOROSHI{% endblock %}
 
-{% block content %}
-<header class="shoroshi-header shoroshi-cart-header">
-	<a class="shoroshi-brand" href="/" aria-label="SHOROSHI home"><img src="{% static 'images/shoroshi-logo.png' %}" alt="SHOROSHI | ষোড়শী"><span class="shoroshi-wordmark"><strong>SHOROSHI</strong><small lang="bn">ষোড়শী</small></span></a>
-	<nav class="shoroshi-nav" aria-label="Main navigation"><a href="/">Home</a><a href="{% url 'shop' %}">Shop</a><a href="{% url 'cart' %}">Shopping bag</a><a href="{% url 'wishlist' %}" aria-current="page">Wishlist</a></nav>
-</header>
-
-<main class="shoroshi-cart-page shoroshi-wishlist-page">
-	<div class="breadcrumb-area shoroshi-cart-breadcrumb"><div class="container"><div class="row breadcrumb_box align-items-center"><div class="col-6"><h1 class="breadcrumb-title">Wishlist</h1></div><div class="col-6"><ul class="breadcrumb-list text-end"><li class="breadcrumb-item"><a href="/">Home</a></li><li class="breadcrumb-item active">Wishlist</li></ul></div></div></div></div>
-	<section class="cart-area section-space--pt_90 section-space--pb_120">
-		<div class="container">
-			{% if wishlist_products %}
-				<div class="shoroshi-wishlist-grid">
-					{% for product in wishlist_products %}
-						<article class="shoroshi-wishlist-item">
-							<a class="shoroshi-wishlist-image" href="{% pageurl product %}">{% image product.product_image fill-520x650 as wishlist_image %}<img src="{{ wishlist_image.url }}" alt="{{ product.product_image.title }}"></a>
-							<div class="shoroshi-wishlist-info"><p class="shoroshi-product-category">{{ product.get_category_display }}</p><h2><a href="{% pageurl product %}">{{ product.title }}</a></h2><p class="shoroshi-wishlist-price">৳{{ product.price|floatformat:2|intcomma }}</p><p class="shoroshi-wishlist-availability">{% if product.is_available %}Available{% else %}Currently unavailable{% endif %}</p>
-								<div class="shoroshi-wishlist-actions"><a class="btn btn--md btn--black" href="{% pageurl product %}">View product</a><form action="{% url 'wishlist_remove' product.pk %}" method="post">{% csrf_token %}<button type="submit" aria-label="Remove {{ product.title }} from wishlist"><i class="icon-cross2"></i> Remove</button></form></div>
-							</div>
-						</article>
-					{% endfor %}
-				</div>
-			{% else %}
-				<div class="shoroshi-cart-empty"><h2>Your wishlist is empty</h2><p>Save products you would like to revisit.</p><a class="btn btn--md btn--black" href="{% url 'shop' %}">Shop collections <i class="icon-arrow-right"></i></a></div>
-			{% endif %}
-		</div>
-	</section>
-</main>
-
-<footer class="shoroshi-footer"><a class="shoroshi-brand" href="/" aria-label="SHOROSHI home"><img src="{% static 'images/shoroshi-logo.png' %}" alt=""><span class="shoroshi-wordmark"><strong>SHOROSHI</strong><small lang="bn">ষোড়শী</small></span></a><p>Where Tradition Meets Timeless Elegance.</p></footer>
+{% block account_content %}
+<h1 class="title">Wishlist</h1>
+{% if wishlist_items %}
+	<div class="table-content table-responsive cart-table-content shoroshi-cart-table shoroshi-wishlist-table">
+		<table>
+			<thead>
+				<tr>
+					<th scope="col">Product</th>
+					<th scope="col">Price</th>
+					<th scope="col">Availability</th>
+					<th scope="col"><span class="visually-hidden">Add to bag</span></th>
+					<th scope="col"><span class="visually-hidden">Remove</span></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in wishlist_items %}
+					{% with product=item.product %}
+					<tr>
+						<td class="product-name shoroshi-cart-product">
+							<a class="product-img" href="{% pageurl product %}">{% image product.product_image fill-120x150 as thumb %}<img src="{{ thumb.url }}" alt="{{ product.product_image.title }}"></a>
+							<div><a href="{% pageurl product %}">{{ product.title }}</a><small>{{ product.get_category_display }} · {{ product.sku }}</small></div>
+						</td>
+						<td class="product-price">৳{{ product.price|floatformat:2|intcomma }}</td>
+						<td class="product-stock-status">{% if product.is_available %}<span class="shoroshi-stock is-available">Available</span>{% else %}<span class="shoroshi-stock">Currently unavailable</span>{% endif %}</td>
+						<td class="product-wishlist-cart">
+							{% if product.is_available %}
+								<form action="{% url 'cart_add' product.pk %}" method="post">{% csrf_token %}<input type="hidden" name="quantity" value="1"><button type="submit" class="shoroshi-account-view">Add to bag</button></form>
+							{% endif %}
+						</td>
+						<td class="product-remove">
+							<form action="{% url 'wishlist_toggle' product.pk %}" method="post">{% csrf_token %}<input type="hidden" name="next" value="{% url 'wishlist' %}"><button type="submit" aria-label="Remove {{ product.title }} from wishlist"><i class="icon-cross2"></i></button></form>
+						</td>
+					</tr>
+					{% endwith %}
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% else %}
+	<div class="shoroshi-account-empty">
+		<p>Your wishlist is empty. Tap the heart on any piece to save it here.</p>
+		<a class="btn btn--md btn--black" href="{% url 'shop' %}">Explore the collections</a>
+	</div>
+{% endif %}
 {% endblock %}

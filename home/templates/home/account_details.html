@@ -1,0 +1,33 @@
+{% extends "home/account_base.html" %}
+
+{% block title %}Account details | SHOROSHI{% endblock %}
+
+{% block account_content %}
+<h1 class="title">Account details</h1>
+<p class="shoroshi-help">Username: <strong>{{ user.username }}</strong></p>
+
+<form class="account-details-form shoroshi-account-form" method="post" action="{% url 'account_details' %}" novalidate>
+	{% csrf_token %}
+	<input type="hidden" name="form" value="details">
+	<h2 class="shoroshi-checkout-heading">Your details</h2>
+	<div class="row">
+		<div class="col-lg-6">{% include "home/includes/form_field.html" with field=details_form.first_name %}</div>
+		<div class="col-lg-6">{% include "home/includes/form_field.html" with field=details_form.last_name %}</div>
+		<div class="col-12">{% include "home/includes/form_field.html" with field=details_form.email %}</div>
+	</div>
+	<button type="submit" class="btn btn--md btn--black">Save details</button>
+</form>
+
+<form class="account-details-form shoroshi-account-form" method="post" action="{% url 'account_details' %}" novalidate>
+	{% csrf_token %}
+	<input type="hidden" name="form" value="password">
+	<h2 class="shoroshi-checkout-heading">Change password</h2>
+	{% include "home/includes/form_field.html" with field=password_form.old_password %}
+	<div class="row">
+		<div class="col-lg-6">{% include "home/includes/form_field.html" with field=password_form.new_password1 %}</div>
+		<div class="col-lg-6">{% include "home/includes/form_field.html" with field=password_form.new_password2 %}</div>
+	</div>
+	{% if password_form.new_password1.help_text %}<div class="shoroshi-help mb-25">{{ password_form.new_password1.help_text|safe }}</div>{% endif %}
+	<button type="submit" class="btn btn--md btn--black">Change password</button>
+</form>
+{% endblock %}

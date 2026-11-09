@@ -1,0 +1,32 @@
+{% load humanize %}
+<div class="shoroshi-complete__grid">
+	<div class="your-order-wrap shoroshi-order-summary">
+		<h2 class="shoroshi-checkout-heading">Order summary</h2>
+		<ul class="shoroshi-complete__lines">
+			{% for item in order_items %}
+				<li>
+					<span>
+						{% if item.product and item.product.live %}<a href="{{ item.product.url }}">{{ item.product_title }}</a>{% else %}{{ item.product_title }}{% endif %}
+						<small>× {{ item.quantity }}</small>
+					</span>
+					<span>৳{{ item.line_total|floatformat:2|intcomma }}</span>
+				</li>
+			{% endfor %}
+			<li><span>Subtotal</span><span>৳{{ order.subtotal|floatformat:2|intcomma }}</span></li>
+			<li><span>Delivery ({{ order.delivery_zone_name }})</span><span>{% if order.delivery_charge %}৳{{ order.delivery_charge|floatformat:2|intcomma }}{% else %}Free{% endif %}</span></li>
+			<li class="shoroshi-complete__total"><strong>Total</strong><strong>৳{{ order.total|floatformat:2|intcomma }}</strong></li>
+		</ul>
+		<p>Payment: {{ order.get_payment_method_display }}</p>
+	</div>
+	<div class="shoroshi-order-summary">
+		<h2 class="shoroshi-checkout-heading">Delivering to</h2>
+		<address>
+			{{ order.full_name }}<br>
+			{{ order.address_line1 }}<br>
+			{% if order.address_line2 %}{{ order.address_line2 }}<br>{% endif %}
+			{{ order.city }}, {{ order.district }}{% if order.postcode %} {{ order.postcode }}{% endif %}<br>
+			{{ order.phone }}
+		</address>
+		{% if order.notes %}<p class="shoroshi-help"><strong>Your note:</strong> {{ order.notes }}</p>{% endif %}
+	</div>
+</div>

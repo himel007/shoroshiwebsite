@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/fontawesome-all.min.css' %}">
 <link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
 <link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-wishlist.css' %}">
 <link rel="stylesheet" href="{% static 'css/shoroshi-shop-page.css' %}">
 {% endblock %}
 
@@ -23,7 +24,6 @@
 	<nav class="shoroshi-nav" aria-label="Main navigation">
 		<a href="/">Home</a>
 		<a href="{% url 'shop' %}" aria-current="page">Shop</a>
-		<a href="{% url 'wishlist' %}">Wishlist</a>
 		{% for category in product_categories %}<a href="{% url 'shop' %}?category={{ category.value }}#shop-products">{{ category.label }}</a>{% endfor %}
 	</nav>
 </header>
@@ -94,7 +94,7 @@
 						<article class="single-product-item text-center">
 							<div class="products-images">
 								<a href="{% pageurl product %}" class="product-thumbnail">{% image product.product_image fill-520x620 as product_image %}<img src="{{ product_image.url }}" class="img-fluid" alt="{{ product.product_image.title }}" loading="lazy"></a>
-								<div class="product-actions"><a href="{% pageurl product %}" aria-label="View {{ product.title }}"><i class="p-icon icon-arrow-right"></i><span class="tool-tip">View details</span></a><form class="shoroshi-product-wishlist-form" action="{% url 'wishlist_add' product.pk %}" method="post">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button type="submit" aria-label="Save {{ product.title }} to wishlist"><i class="p-icon icon-heart"></i><span class="tool-tip">Save to wishlist</span></button></form></div>
+								<div class="product-actions"><a href="{% pageurl product %}" aria-label="View {{ product.title }}"><i class="p-icon icon-arrow-right"></i><span class="tool-tip">View details</span></a>{% include "home/includes/wishlist_button.html" with product=product variant="card" %}</div>
 							</div>
 							<div class="product-content"><p class="shoroshi-product-category">{{ product.get_category_display }}</p><h2 class="prodect-title"><a href="{% pageurl product %}">{{ product.title }}</a></h2><div class="prodect-price"><span class="new-price">৳{{ product.price|floatformat:2|intcomma }}</span></div></div>
 						</article>

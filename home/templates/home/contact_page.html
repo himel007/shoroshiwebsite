@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}template-cart template-checkout template-contact{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-cart.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-checkout.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-content.css' %}">
+{% endblock %}
+
+{% block title %}{{ page.title }} | SHOROSHI{% endblock %}
+
+{% block content %}
+{% include "home/includes/store_header.html" %}
+
+<main class="shoroshi-cart-page">
+	<div class="breadcrumb-area shoroshi-cart-breadcrumb">
+		<div class="container"><div class="row breadcrumb_box align-items-center">
+			<div class="col-6"><h1 class="breadcrumb-title">{{ page.title }}</h1></div>
+			<div class="col-6"><ul class="breadcrumb-list text-end"><li class="breadcrumb-item"><a href="/">Home</a></li><li class="breadcrumb-item active">{{ page.title }}</li></ul></div>
+		</div></div>
+	</div>
+
+	<section class="section-space--ptb_90">
+		<div class="container">
+			{% if page.intro %}<p class="shoroshi-content-intro">{{ page.intro }}</p>{% endif %}
+			<div class="shoroshi-contact-grid">
+				<div class="shoroshi-contact-details">
+					{% if page.address %}
+						<div class="shoroshi-contact-item">
+							<h2>Visit us</h2>
+							<p>{{ page.address|linebreaksbr }}</p>
+						</div>
+					{% endif %}
+					{% if page.phone %}
+						<div class="shoroshi-contact-item">
+							<h2>Call us</h2>
+							<p><a href="tel:{{ page.phone|cut:' ' }}">{{ page.phone }}</a></p>
+						</div>
+					{% endif %}
+					{% if page.email %}
+						<div class="shoroshi-contact-item">
+							<h2>Email us</h2>
+							<p><a href="mailto:{{ page.email }}">{{ page.email }}</a></p>
+						</div>
+					{% endif %}
+					{% if page.business_hours %}
+						<div class="shoroshi-contact-item">
+							<h2>Opening hours</h2>
+							<p>{{ page.business_hours|linebreaksbr }}</p>
+						</div>
+					{% endif %}
+				</div>
+				{% if page.map_embed_url %}
+					<div class="shoroshi-contact-map">
+						<iframe src="{{ page.map_embed_url }}" title="Map to SHOROSHI" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</section>
+</main>
+
+{% include "home/includes/store_footer.html" %}
+{% endblock %}

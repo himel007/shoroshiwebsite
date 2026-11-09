@@ -1,11 +1,47 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Page not found{% endblock %}
+{% block body_class %}template-cart template-checkout template-404{% endblock %}
 
-{% block body_class %}template-404{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-cart.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-checkout.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-error.css' %}">
+{% endblock %}
+
+{% block title %}Page not found | SHOROSHI{% endblock %}
 
 {% block content %}
-<h1>Page not found</h1>
+{% include "home/includes/store_header.html" %}
 
-<h2>Sorry, this page could not be found.</h2>
+<main class="shoroshi-cart-page">
+	<section class="section-space--ptb_90">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-8 m-auto">
+					<div class="shoroshi-error text-center">
+						<p class="shoroshi-error__code">404</p>
+						<h1>This page could not be found</h1>
+						<p class="shoroshi-error__text">The page you are looking for may have moved or no longer exists. Try searching the collections, or return to the homepage.</p>
+						<form class="shoroshi-error__search" action="{% url 'search' %}" method="get" role="search">
+							<label class="visually-hidden" for="error-search">Search the collections</label>
+							<input id="error-search" class="input-box" type="search" name="query" placeholder="Search the collections…">
+							<button type="submit" aria-label="Search"><i class="icon-magnifier"></i></button>
+						</form>
+						<div class="shoroshi-error__actions">
+							<a class="btn btn--md btn--black" href="/">Back to homepage</a>
+							<a class="shoroshi-cart-continue" href="{% url 'shop' %}">Browse the shop</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</main>
+
+{% include "home/includes/store_footer.html" %}
 {% endblock %}

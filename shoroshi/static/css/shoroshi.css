@@ -243,3 +243,64 @@ body.template-homepage {
 		text-align: center;
 	}
 }
+
+/* ---- Footer links & social (used site-wide) ---- */
+.shoroshi-footer-links {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px 24px;
+	margin-top: 18px;
+}
+
+.shoroshi-footer-links a {
+	color: var(--shoroshi-ivory);
+	font-size: 14px;
+	letter-spacing: 0.04em;
+	text-decoration: none;
+	opacity: 0.85;
+}
+
+.shoroshi-footer-links a:hover {
+	opacity: 1;
+	text-decoration: underline;
+}
+
+.shoroshi-footer-social {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 22px;
+	margin-top: 20px;
+}
+
+.shoroshi-footer-social a {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--shoroshi-ivory);
+	font-size: 13px;
+	text-decoration: none;
+	opacity: 0.85;
+}
+
+.shoroshi-footer-social a:hover {
+	opacity: 1;
+}
+
+.shoroshi-footer-social svg {
+	width: 20px;
+	height: 20px;
+	fill: currentColor;
+}
+
+@media (max-width: 767px) {
+	.shoroshi-footer-social span {
+		display: none;
+	}
+
+	.shoroshi-footer-social svg {
+		width: 24px;
+		height: 24px;
+	}
+}

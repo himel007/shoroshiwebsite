@@ -1,0 +1,293 @@
+/* Checkout, order confirmation, and customer account pages */
+
+.shoroshi-nav .shoroshi-logout {
+	display: inline;
+	margin: 0;
+}
+
+.shoroshi-nav .shoroshi-logout button {
+	padding: 0;
+	border: 0;
+	color: var(--shoroshi-brown);
+	background: transparent;
+	font: inherit;
+	cursor: pointer;
+}
+
+.shoroshi-nav .shoroshi-logout button:hover {
+	color: var(--shoroshi-wine);
+}
+
+.shoroshi-messages {
+	padding-top: 16px;
+}
+
+.shoroshi-message,
+.shoroshi-notice {
+	margin-bottom: 20px;
+	padding: 14px 18px;
+	border-left: 3px solid var(--shoroshi-gold);
+	color: var(--shoroshi-brown);
+	background: var(--shoroshi-ivory);
+}
+
+.shoroshi-notice--warning {
+	border-left-color: var(--shoroshi-wine);
+}
+
+.shoroshi-notice p:last-child,
+.shoroshi-notice ul:last-child {
+	margin-bottom: 0;
+}
+
+.shoroshi-notice a {
+	color: var(--shoroshi-wine);
+	text-decoration: underline;
+}
+
+.shoroshi-checkout-heading {
+	margin-bottom: 20px;
+	color: var(--shoroshi-brown);
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.template-checkout .billing-info label,
+.template-account .single-input label {
+	display: block;
+	margin-bottom: 6px;
+	color: var(--shoroshi-brown);
+	font-size: 14px;
+}
+
+.template-checkout .billing-info input,
+.template-checkout .billing-info textarea,
+.template-account .single-input input {
+	width: 100%;
+	padding: 10px 14px;
+	border: 1px solid var(--shoroshi-line);
+	color: var(--shoroshi-brown);
+	background: #fff;
+}
+
+.template-checkout .billing-info input + input {
+	margin-top: 12px;
+}
+
+.template-checkout .billing-info input:focus,
+.template-checkout .billing-info textarea:focus,
+.template-account .single-input input:focus {
+	border-color: var(--shoroshi-gold);
+	outline: 2px solid rgba(179, 138, 85, 0.25);
+}
+
+.template-checkout .required {
+	color: var(--shoroshi-wine);
+}
+
+.template-checkout .optional {
+	color: #695b50;
+	font-size: 12px;
+}
+
+.has-error input,
+.has-error textarea {
+	border-color: var(--shoroshi-wine) !important;
+}
+
+.shoroshi-field-error {
+	margin: 6px 0 0;
+	color: var(--shoroshi-wine);
+	font-size: 13px;
+}
+
+.shoroshi-zones {
+	margin-top: 10px;
+	padding: 0;
+	border: 0;
+}
+
+.shoroshi-zones legend {
+	float: none;
+	width: auto;
+}
+
+.shoroshi-zone {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 10px;
+	padding: 14px 16px;
+	border: 1px solid var(--shoroshi-line);
+	background: #fff;
+	cursor: pointer;
+}
+
+.shoroshi-zone:has(input:checked) {
+	border-color: var(--shoroshi-gold);
+	background: var(--shoroshi-ivory);
+}
+
+.shoroshi-zone input {
+	accent-color: var(--shoroshi-wine);
+}
+
+.shoroshi-zone__name {
+	flex: 1;
+}
+
+.shoroshi-zone__name small {
+	display: block;
+	color: #695b50;
+}
+
+.shoroshi-zone__charge {
+	color: var(--shoroshi-wine);
+	font-weight: 600;
+}
+
+.shoroshi-order-summary {
+	padding: 28px;
+	background: var(--shoroshi-ivory);
+}
+
+.shoroshi-order-summary .your-order-info ul,
+.shoroshi-order-summary .your-order-middle ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.shoroshi-order-summary .your-order-info li,
+.shoroshi-order-line {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 12px 0;
+	border-bottom: 1px solid var(--shoroshi-line);
+}
+
+.shoroshi-order-line {
+	align-items: center;
+}
+
+.shoroshi-order-line img {
+	width: 40px;
+	height: 50px;
+	object-fit: cover;
+}
+
+.shoroshi-order-line__name {
+	flex: 1;
+}
+
+.shoroshi-order-summary .order-total li {
+	border-bottom: 0;
+	color: var(--shoroshi-wine);
+	font-size: 18px;
+}
+
+.shoroshi-payment label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 4px;
+}
+
+.shoroshi-payment input {
+	accent-color: var(--shoroshi-wine);
+}
+
+.shoroshi-payment p {
+	margin: 0;
+	color: #695b50;
+	font-size: 13px;
+}
+
+.template-checkout .btn--full,
+.template-account .btn--full {
+	width: 100%;
+}
+
+.template-checkout button.btn:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+.shoroshi-checkout-note {
+	margin-top: 14px;
+	color: #695b50;
+	font-size: 13px;
+}
+
+.shoroshi-complete {
+	max-width: 900px;
+}
+
+.shoroshi-complete h1 {
+	margin-bottom: 12px;
+	color: var(--shoroshi-brown);
+	font-size: 32px;
+}
+
+.shoroshi-complete__eyebrow {
+	margin-bottom: 6px;
+	color: var(--shoroshi-gold);
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.shoroshi-complete__grid {
+	display: grid;
+	grid-template-columns: 3fr 2fr;
+	gap: 24px;
+	margin: 32px 0;
+}
+
+.shoroshi-complete__lines {
+	margin: 0 0 16px;
+	padding: 0;
+	list-style: none;
+}
+
+.shoroshi-complete__lines li {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 0;
+	border-bottom: 1px solid var(--shoroshi-line);
+}
+
+.shoroshi-complete__total {
+	color: var(--shoroshi-wine);
+}
+
+.shoroshi-complete address {
+	margin: 0;
+	line-height: 1.8;
+}
+
+.template-account .single-input {
+	margin-bottom: 18px;
+}
+
+.shoroshi-help {
+	margin-top: 6px;
+	color: #695b50;
+	font-size: 12px;
+}
+
+.shoroshi-help ul {
+	margin: 0;
+	padding-left: 18px;
+}
+
+@media (max-width: 767px) {
+	.shoroshi-complete__grid {
+		grid-template-columns: 1fr;
+	}
+
+	.shoroshi-order-summary {
+		padding: 20px;
+	}
+}

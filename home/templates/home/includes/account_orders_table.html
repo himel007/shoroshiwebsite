@@ -1,0 +1,19 @@
+{% load humanize %}
+<div class="myaccount-table table-responsive shoroshi-account-table">
+	<table class="table">
+		<thead>
+			<tr><th scope="col">Order</th><th scope="col">Date</th><th scope="col">Status</th><th scope="col">Total</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr>
+		</thead>
+		<tbody>
+			{% for order in orders %}
+				<tr>
+					<td>{{ order.number }}</td>
+					<td>{{ order.created_at|date:"j M Y" }}</td>
+					<td><span class="shoroshi-status shoroshi-status--{{ order.status }}">{{ order.get_status_display }}</span></td>
+					<td>৳{{ order.total|floatformat:2|intcomma }}</td>
+					<td><a class="shoroshi-account-view" href="{% url 'account_order_detail' order.pk %}" aria-label="View order {{ order.number }}">View</a></td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>

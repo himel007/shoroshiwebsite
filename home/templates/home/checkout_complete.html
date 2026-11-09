@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load humanize static %}
+
+{% block body_class %}template-cart template-checkout{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-cart.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-checkout.css' %}">
+{% endblock %}
+
+{% block title %}Order {{ order.number }} received | SHOROSHI{% endblock %}
+
+{% block content %}
+{% include "home/includes/store_header.html" %}
+
+<main class="shoroshi-cart-page">
+	<section class="section-space--ptb_90">
+		<div class="container shoroshi-complete">
+			<p class="shoroshi-complete__eyebrow">Thank you, {{ order.full_name }}</p>
+			<h1>Your order has been received</h1>
+			<p>Order number <strong>{{ order.number }}</strong>. Shoroshi will contact you on <strong>{{ order.phone }}</strong> to confirm it before shipping.</p>
+			<p><a class="shoroshi-cart-continue" href="{% url 'track_order' %}">Track this order</a></p>
+
+			{% include "home/includes/order_summary.html" %}
+
+			<a class="btn btn--md btn--black" href="{% url 'shop' %}">Continue shopping <i class="icon-arrow-right"></i></a>
+			<a class="shoroshi-cart-continue shoroshi-complete__account" href="{% url 'account_orders' %}">View your orders</a>
+		</div>
+	</section>
+</main>
+
+{% include "home/includes/store_footer.html" %}
+{% endblock %}

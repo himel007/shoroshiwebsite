@@ -314,6 +314,17 @@ body.template-homepage {
 	object-fit: cover;
 }
 
+.shoroshi-home-products .products-images .product-thumbnail {
+	display: block;
+	overflow: hidden;
+	border-radius: 18px;
+	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+}
+
+.shoroshi-home-products .products-images .product-thumbnail img {
+	border-radius: 18px;
+}
+
 .shoroshi-empty-state {
 	padding: 36px 0;
 	color: var(--shoroshi-brown);
@@ -395,6 +406,13 @@ body.template-homepage {
 	place-items: center;
 	border-radius: 50%;
 	background: #f2f1f3;
+	box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+	transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.shoroshi-circle-category:hover .shoroshi-circle-category-image {
+	box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+	transform: translateY(-4px);
 }
 
 .shoroshi-circle-category-image img {
@@ -417,6 +435,17 @@ body.template-homepage {
 
 .shoroshi-circle-category:hover {
 	color: var(--shoroshi-wine);
+}
+
+.shoroshi-featured-collections .product-thumbnail,
+.shoroshi-featured-collections .product-thumbnail a,
+.shoroshi-featured-collections .product-thumbnail img {
+	border-radius: 18px;
+}
+
+.shoroshi-featured-collections .product-thumbnail {
+	overflow: hidden;
+	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
 }
 
 @media (max-width: 767px) {
@@ -490,14 +519,18 @@ body.template-homepage {
 	}
 
 	.single-hero-slider-7.shoroshi-hero-slide {
-		height: 650px;
+		height: 720px;
 	}
 
 	.single-hero-slider-7.shoroshi-hero-slide .hero-content-wrap {
 		flex-direction: column;
 		align-items: flex-start;
-		justify-content: center;
+		justify-content: flex-start;
 		gap: 16px;
+		/* Clear the absolutely-positioned header so the logo and heading
+		   no longer overlap on mobile. */
+		padding-top: 100px;
+		padding-bottom: 30px;
 	}
 
 	.shoroshi-hero-slide .hero-text-7 {
@@ -522,6 +555,23 @@ body.template-homepage {
 		height: 310px;
 		align-self: center;
 		transform: none;
+		/* Pin the image to the bottom of the slide so its position is
+		   predictable regardless of how much hero text a slide has. */
+		margin-top: auto;
 	}
 
+	/* Centre the carousel arrows on the image (its centre sits ~185px above the
+	   slide's bottom: 30px padding + half of the 310px image). */
+	.hero-slider-7 .slick-arrow {
+		top: auto;
+		bottom: 185px;
+		transform: none;
+	}
+}
+/* On large screens the full nav (Home / Shop / Collections) is visible, so the
+   compact menu button is redundant there. Keep it only below the lg breakpoint. */
+@media (min-width: 992px) {
+	.shoroshi-mobile-navigation {
+		display: none;
+	}
 }

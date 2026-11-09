@@ -1,90 +1,130 @@
-body.template-wishlist {
-	color: var(--shoroshi-brown);
-	background: var(--shoroshi-paper);
-}
+/* Wishlist heart buttons (product cards and product page) */
 
-.shoroshi-wishlist-grid {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 28px;
-}
-
-.shoroshi-wishlist-item {
-	min-width: 0;
-	padding-bottom: 20px;
-	border-bottom: 1px solid var(--shoroshi-line);
-}
-
-.shoroshi-wishlist-image {
-	display: block;
-	margin-bottom: 16px;
-	background: var(--shoroshi-ivory);
-	aspect-ratio: 4 / 5;
-}
-
-.shoroshi-wishlist-image img {
-	display: block;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-}
-
-.shoroshi-wishlist-info h2 {
-	margin: 0 0 8px;
-	font-size: 17px;
-}
-
-.shoroshi-wishlist-info h2 a {
-	color: var(--shoroshi-brown);
-	text-decoration: none;
-}
-
-.shoroshi-wishlist-price {
-	margin: 0 0 6px;
-	color: var(--shoroshi-wine);
-	font-size: 15px;
-	font-weight: 600;
-}
-
-.shoroshi-wishlist-availability {
-	margin: 0 0 14px;
-	color: #695b50;
-	font-size: 12px;
-}
-
-.shoroshi-wishlist-actions {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 14px;
-}
-
-.shoroshi-wishlist-actions form {
+.shoroshi-wishlist-form {
+	display: inline-block;
 	margin: 0;
 }
 
-.shoroshi-wishlist-actions form button {
+/* Card variant: matches the template's round hover bubbles in .product-actions */
+.single-product-item .product-actions .shoroshi-wishlist-button {
+	position: relative;
+	width: 45px;
+	height: 45px;
+	margin: 0 7px;
+	padding: 0;
 	border: 0;
-	color: var(--shoroshi-wine);
-	background: transparent;
+	border-radius: 50%;
+	color: var(--shoroshi-brown, #30251f);
+	background: #fff;
+	font-size: 20px;
+	line-height: 48px;
+	text-align: center;
 	cursor: pointer;
-	font: inherit;
-	font-size: 12px;
+	opacity: 0;
+	transform: translateY(20px);
+	transition: 0.5s;
+	transition-delay: 0.15s;
 }
 
-.shoroshi-wishlist-actions form button:hover {
-	color: var(--shoroshi-brown);
+.single-product-item:hover .product-actions .shoroshi-wishlist-button,
+.single-product-item:focus-within .product-actions .shoroshi-wishlist-button,
+.single-product-item .product-actions .shoroshi-wishlist-button.is-saved {
+	opacity: 1;
+	transform: translateY(0);
 }
 
-@media (max-width: 900px) {
-	.shoroshi-wishlist-grid {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 24px;
+/* Keyboard users can reach the "View details" bubble too */
+.single-product-item:focus-within .product-actions a {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.single-product-item .product-actions .shoroshi-wishlist-button:hover,
+.single-product-item .product-actions .shoroshi-wishlist-button.is-saved {
+	color: var(--shoroshi-wine, #7b303b);
+}
+
+.single-product-item .product-actions .shoroshi-wishlist-button .tool-tip {
+	position: absolute;
+	top: -30px;
+	left: 50%;
+	z-index: 3;
+	padding: 8px 12px;
+	border-radius: 2px;
+	color: #fff;
+	background: #000;
+	font-size: 13px;
+	line-height: 14px;
+	white-space: pre;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateX(-50%);
+	transition: opacity 0.6s, top 0.3s;
+}
+
+.single-product-item .product-actions .shoroshi-wishlist-button:hover .tool-tip,
+.single-product-item .product-actions .shoroshi-wishlist-button:focus-visible .tool-tip {
+	top: -35px;
+	opacity: 1;
+	visibility: visible;
+}
+
+/* Touch screens have no hover: always show the heart */
+@media (hover: none) {
+	.single-product-item .product-actions .shoroshi-wishlist-button {
+		opacity: 1;
+		transform: none;
 	}
 }
 
-@media (max-width: 600px) {
-	.shoroshi-wishlist-grid {
-		grid-template-columns: 1fr;
-	}
+/* Detail variant: text button beside "Add to bag" */
+.shoroshi-wishlist-form--detail {
+	display: block;
+	margin-top: 16px;
+}
+
+.shoroshi-wishlist-form--detail .shoroshi-wishlist-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 18px;
+	border: 1px solid var(--shoroshi-line, rgba(48, 37, 31, 0.16));
+	color: var(--shoroshi-brown, #30251f);
+	background: #fff;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.shoroshi-wishlist-form--detail .shoroshi-wishlist-button:hover,
+.shoroshi-wishlist-form--detail .shoroshi-wishlist-button.is-saved {
+	border-color: var(--shoroshi-wine, #7b303b);
+	color: var(--shoroshi-wine, #7b303b);
+}
+
+.shoroshi-wishlist-form--detail .shoroshi-wishlist-button.is-saved {
+	background: var(--shoroshi-ivory, #f5efe5);
+}
+
+/* Wishlist page table */
+.shoroshi-wishlist-table td {
+	vertical-align: middle;
+}
+
+.shoroshi-wishlist-table form {
+	margin: 0;
+}
+
+.shoroshi-wishlist-table .shoroshi-account-view {
+	border: 0;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.shoroshi-stock {
+	color: #695b50;
+	font-size: 13px;
+}
+
+.shoroshi-stock.is-available {
+	color: #2f6b3a;
 }

@@ -1,0 +1,98 @@
+/* Order tracking page */
+
+.shoroshi-track-form {
+	padding: 28px;
+	background: var(--shoroshi-ivory);
+}
+
+.shoroshi-track-form > p {
+	margin-bottom: 20px;
+	color: #695b50;
+}
+
+.shoroshi-track-result {
+	margin-top: 40px;
+	padding-top: 32px;
+	border-top: 1px solid var(--shoroshi-line);
+}
+
+.shoroshi-track-result > p {
+	color: #695b50;
+}
+
+.shoroshi-track-steps {
+	display: flex;
+	margin: 28px 0 32px;
+	padding: 0;
+	list-style: none;
+	counter-reset: none;
+}
+
+.shoroshi-track-steps li {
+	position: relative;
+	flex: 1;
+	padding-top: 28px;
+	color: #9a8d82;
+	font-size: 13px;
+	text-align: center;
+}
+
+/* connecting line */
+.shoroshi-track-steps li::before {
+	content: "";
+	position: absolute;
+	top: 8px;
+	left: -50%;
+	width: 100%;
+	height: 2px;
+	background: var(--shoroshi-line);
+}
+
+.shoroshi-track-steps li:first-child::before {
+	display: none;
+}
+
+.shoroshi-track-steps li.is-done::before {
+	background: var(--shoroshi-gold);
+}
+
+.shoroshi-track-dot {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	width: 18px;
+	height: 18px;
+	border: 2px solid var(--shoroshi-line);
+	border-radius: 50%;
+	background: #fff;
+	transform: translateX(-50%);
+}
+
+.shoroshi-track-steps li.is-done .shoroshi-track-dot {
+	border-color: var(--shoroshi-gold);
+	background: var(--shoroshi-gold);
+}
+
+.shoroshi-track-steps li.is-current .shoroshi-track-dot {
+	box-shadow: 0 0 0 4px rgba(179, 138, 85, 0.25);
+}
+
+.shoroshi-track-steps li.is-done {
+	color: var(--shoroshi-brown);
+	font-weight: 500;
+}
+
+.shoroshi-track-cancelled {
+	margin: 24px 0;
+	padding: 14px 18px;
+	border-left: 3px solid var(--shoroshi-wine);
+	background: var(--shoroshi-ivory);
+	color: var(--shoroshi-brown);
+}
+
+.shoroshi-track-link {
+	display: inline-block;
+	margin-top: 10px;
+	color: var(--shoroshi-ivory);
+	text-decoration: underline;
+}

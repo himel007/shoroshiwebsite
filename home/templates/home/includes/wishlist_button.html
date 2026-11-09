@@ -1,0 +1,17 @@
+{% comment %}
+Heart toggle for a product. Pass product=..., and variant="card" (hover bubble on
+product cards) or variant="detail" (button beside "Add to bag").
+{% endcomment %}
+<form class="shoroshi-wishlist-form shoroshi-wishlist-form--{{ variant|default:'card' }}" action="{% url 'wishlist_toggle' product.pk %}" method="post">
+	{% csrf_token %}
+	<input type="hidden" name="next" value="{{ request.get_full_path }}">
+	{% if product.pk in wishlist_ids %}
+		<button type="submit" class="shoroshi-wishlist-button is-saved" aria-pressed="true" aria-label="Remove {{ product.title }} from wishlist">
+			<i class="p-icon icon-heart" aria-hidden="true"></i>{% if variant == "detail" %}<span>Saved to wishlist</span>{% else %}<span class="tool-tip">Saved</span>{% endif %}
+		</button>
+	{% else %}
+		<button type="submit" class="shoroshi-wishlist-button" aria-pressed="false" aria-label="Save {{ product.title }} to wishlist">
+			<i class="p-icon icon-heart" aria-hidden="true"></i>{% if variant == "detail" %}<span>Save to wishlist</span>{% else %}<span class="tool-tip">Save to wishlist</span>{% endif %}
+		</button>
+	{% endif %}
+</form>

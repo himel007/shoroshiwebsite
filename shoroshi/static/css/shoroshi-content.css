@@ -1,0 +1,122 @@
+/* Content pages (Contact, FAQ) and the shared footer links/social */
+
+.shoroshi-content-intro {
+	max-width: 760px;
+	margin: 0 auto 40px;
+	color: #5c5047;
+	font-size: 16px;
+	line-height: 1.8;
+}
+
+/* ---- Contact page ---- */
+.shoroshi-contact-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 40px;
+	align-items: start;
+}
+
+.shoroshi-contact-item {
+	margin-bottom: 28px;
+}
+
+.shoroshi-contact-item h2 {
+	margin-bottom: 8px;
+	color: var(--shoroshi-gold);
+	font-size: 14px;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.shoroshi-contact-item p {
+	margin: 0;
+	color: var(--shoroshi-brown);
+	font-size: 17px;
+	line-height: 1.7;
+}
+
+.shoroshi-contact-item a {
+	color: var(--shoroshi-brown);
+	text-decoration: none;
+}
+
+.shoroshi-contact-item a:hover {
+	color: var(--shoroshi-wine);
+}
+
+.shoroshi-contact-map iframe {
+	width: 100%;
+	min-height: 360px;
+	border: 1px solid var(--shoroshi-line);
+}
+
+/* ---- FAQ accordion (native <details>) ---- */
+.shoroshi-faq {
+	border-top: 1px solid var(--shoroshi-line);
+}
+
+.shoroshi-faq-item {
+	border-bottom: 1px solid var(--shoroshi-line);
+}
+
+.shoroshi-faq-item summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 20px 4px;
+	color: var(--shoroshi-brown);
+	font-size: 17px;
+	font-weight: 500;
+	list-style: none;
+	cursor: pointer;
+}
+
+.shoroshi-faq-item summary::-webkit-details-marker {
+	display: none;
+}
+
+.shoroshi-faq-sign {
+	position: relative;
+	flex-shrink: 0;
+	width: 16px;
+	height: 16px;
+}
+
+.shoroshi-faq-sign::before,
+.shoroshi-faq-sign::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 14px;
+	height: 2px;
+	background: var(--shoroshi-gold);
+	transform: translate(-50%, -50%);
+	transition: transform 0.2s;
+}
+
+.shoroshi-faq-sign::after {
+	transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.shoroshi-faq-item[open] .shoroshi-faq-sign::after {
+	transform: translate(-50%, -50%) rotate(0);
+}
+
+.shoroshi-faq-answer {
+	padding: 0 4px 22px;
+	color: #5c5047;
+	line-height: 1.8;
+}
+
+.shoroshi-faq-answer p:last-child {
+	margin-bottom: 0;
+}
+
+@media (max-width: 767px) {
+	.shoroshi-contact-grid {
+		grid-template-columns: 1fr;
+		gap: 28px;
+	}
+}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}template-cart template-account{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-cart.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-checkout.css' %}">
+{% endblock %}
+
+{% block title %}{% if active_tab == "register" %}Create an account{% else %}Log in{% endif %} | SHOROSHI{% endblock %}
+
+{% block content %}
+{% include "home/includes/store_header.html" %}
+
+<main class="shoroshi-cart-page">
+	<div class="my-account-page-warpper section-space--ptb_90">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6 col-md-8 m-auto">
+					{% if next and "/checkout/" in next %}
+						<p class="shoroshi-notice">Please log in or create an account to place your order. Your bag will be kept.</p>
+					{% endif %}
+					<div class="myaccount-box-wrapper">
+						<div class="helendo-tabs">
+							<ul class="nav">
+								<li class="tab__item nav-item{% if active_tab == 'login' %} active{% endif %}">
+									<a class="nav-link{% if active_tab == 'login' %} active{% endif %}" href="{% url 'account_login' %}{% if next %}?next={{ next|urlencode }}{% endif %}"{% if active_tab == 'login' %} aria-current="page"{% endif %}>Log in</a>
+								</li>
+								<li class="tab__item nav-item{% if active_tab == 'register' %} active{% endif %}">
+									<a class="nav-link{% if active_tab == 'register' %} active{% endif %}" href="{% url 'account_register' %}{% if next %}?next={{ next|urlencode }}{% endif %}"{% if active_tab == 'register' %} aria-current="page"{% endif %}>Register</a>
+								</li>
+							</ul>
+						</div>
+						<div class="content-modal-box">
+							<form method="post" class="account-form-box" novalidate>
+								{% csrf_token %}
+								<input type="hidden" name="next" value="{{ next }}">
+								<h1 class="shoroshi-checkout-heading">{% if active_tab == "register" %}Create your account{% else %}Log in to your account{% endif %}</h1>
+								{% if form.non_field_errors %}
+									<div class="shoroshi-field-error" role="alert">{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+								{% endif %}
+								{% for field in form %}
+									<div class="single-input{% if field.errors %} has-error{% endif %}">
+										<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+										{{ field }}
+										{% for error in field.errors %}<p class="shoroshi-field-error">{{ error }}</p>{% endfor %}
+										{% if active_tab == "register" and field.help_text %}<div class="shoroshi-help">{{ field.help_text|safe }}</div>{% endif %}
+									</div>
+								{% endfor %}
+								<div class="button-box mt-25">
+									<button type="submit" class="btn btn--full btn--black">{% if active_tab == "register" %}Register{% else %}Log in{% endif %}</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+
+{% include "home/includes/store_footer.html" %}
+{% endblock %}

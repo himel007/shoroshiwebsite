@@ -467,6 +467,8 @@ body.template-product {
 
 .shoroshi-detail-image {
     aspect-ratio: 4 / 5;
+    border-radius: 18px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
 }
 
 .shoroshi-detail-info {
