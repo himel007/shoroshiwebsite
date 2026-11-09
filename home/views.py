@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from .models import HomePage, PRODUCT_CATEGORIES, ProductPage
@@ -113,6 +114,65 @@ def cart_remove(request, product_id):
         session_cart.pop(str(product_id), None)
         request.session["shoroshi_cart"] = session_cart
     return redirect("cart")
+
+
+def _wishlist_product_ids(request):
+    raw_ids = request.session.get("shoroshi_wishlist", [])
+    if not isinstance(raw_ids, list):
+        return []
+    product_ids = []
+    for raw_id in raw_ids:
+        try:
+            product_id = int(raw_id)
+        except (TypeError, ValueError):
+            continue
+        if product_id > 0 and product_id not in product_ids:
+            product_ids.append(product_id)
+    return product_ids
+
+
+def wishlist(request):
+    product_ids = _wishlist_product_ids(request)
+    products_by_id = {
+        product.pk: product
+        for product in ProductPage.objects.live().public().filter(pk__in=product_ids)
+    }
+    wishlist_products = [
+        products_by_id[product_id]
+        for product_id in product_ids
+        if product_id in products_by_id
+    ]
+    return TemplateResponse(
+        request,
+        "home/wishlist_page.html",
+        {"wishlist_products": wishlist_products},
+    )
+
+
+@require_POST
+def wishlist_add(request, product_id):
+    product = get_object_or_404(ProductPage.objects.live().public(), pk=product_id)
+    product_ids = _wishlist_product_ids(request)
+    if product.pk not in product_ids:
+        product_ids.append(product.pk)
+        request.session["shoroshi_wishlist"] = product_ids
+    next_url = request.POST.get("next", "")
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return redirect(next_url)
+    return redirect("wishlist")
+
+
+@require_POST
+def wishlist_remove(request, product_id):
+    product_ids = _wishlist_product_ids(request)
+    if product_id in product_ids:
+        product_ids.remove(product_id)
+        request.session["shoroshi_wishlist"] = product_ids
+    return redirect("wishlist")
 
 
 def shop(request):

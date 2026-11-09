@@ -1,0 +1,90 @@
+body.template-wishlist {
+	color: var(--shoroshi-brown);
+	background: var(--shoroshi-paper);
+}
+
+.shoroshi-wishlist-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 28px;
+}
+
+.shoroshi-wishlist-item {
+	min-width: 0;
+	padding-bottom: 20px;
+	border-bottom: 1px solid var(--shoroshi-line);
+}
+
+.shoroshi-wishlist-image {
+	display: block;
+	margin-bottom: 16px;
+	background: var(--shoroshi-ivory);
+	aspect-ratio: 4 / 5;
+}
+
+.shoroshi-wishlist-image img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.shoroshi-wishlist-info h2 {
+	margin: 0 0 8px;
+	font-size: 17px;
+}
+
+.shoroshi-wishlist-info h2 a {
+	color: var(--shoroshi-brown);
+	text-decoration: none;
+}
+
+.shoroshi-wishlist-price {
+	margin: 0 0 6px;
+	color: var(--shoroshi-wine);
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.shoroshi-wishlist-availability {
+	margin: 0 0 14px;
+	color: #695b50;
+	font-size: 12px;
+}
+
+.shoroshi-wishlist-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 14px;
+}
+
+.shoroshi-wishlist-actions form {
+	margin: 0;
+}
+
+.shoroshi-wishlist-actions form button {
+	border: 0;
+	color: var(--shoroshi-wine);
+	background: transparent;
+	cursor: pointer;
+	font: inherit;
+	font-size: 12px;
+}
+
+.shoroshi-wishlist-actions form button:hover {
+	color: var(--shoroshi-brown);
+}
+
+@media (max-width: 900px) {
+	.shoroshi-wishlist-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 24px;
+	}
+}
+
+@media (max-width: 600px) {
+	.shoroshi-wishlist-grid {
+		grid-template-columns: 1fr;
+	}
+}

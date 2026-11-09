@@ -48,7 +48,7 @@
 							</form>
 						</details>
 						<button class="shoroshi-header-icon" type="button" aria-label="Account" title="Account"><i class="icon-user"></i></button>
-						<button class="shoroshi-header-icon" type="button" aria-label="Wishlist" title="Wishlist"><i class="icon-heart"></i></button>
+						<a class="shoroshi-header-icon" href="{% url 'wishlist' %}" aria-label="Wishlist" title="Wishlist"><i class="icon-heart"></i></a>
 						<a class="shoroshi-header-icon" href="{% url 'cart' %}" aria-label="Shopping bag" title="Shopping bag"><i class="icon-bag2"></i></a>
 						<details class="shoroshi-mobile-navigation">
 							<summary aria-label="Browse menu" title="Browse menu"><i class="icon-menu"></i></summary>
@@ -56,6 +56,7 @@
 								<ul>
 									<li><a href="/">Home</a></li>
 									<li><a href="{% url 'shop' %}">Shop</a></li>
+									<li><a href="{% url 'wishlist' %}">Wishlist</a></li>
 									<li><a href="#collections">Collections</a></li>
 									{% for category in product_categories %}<li><a href="?category={{ category.value }}#best-selling">{{ category.label }}</a></li>{% endfor %}
 								</ul>
@@ -181,7 +182,7 @@
 							<article class="single-product-item text-center">
 								<div class="products-images">
 									<a href="{% pageurl product %}" class="product-thumbnail">{% image product.product_image fill-520x620 as product_image %}<img src="{{ product_image.url }}" class="img-fluid" alt="{{ product.product_image.title }}" loading="lazy"></a>
-									<div class="product-actions"><a href="{% pageurl product %}" aria-label="View {{ product.title }}"><i class="p-icon icon-arrow-right"></i><span class="tool-tip">View details</span></a></div>
+									<div class="product-actions"><a href="{% pageurl product %}" aria-label="View {{ product.title }}"><i class="p-icon icon-arrow-right"></i><span class="tool-tip">View details</span></a><form class="shoroshi-product-wishlist-form" action="{% url 'wishlist_add' product.pk %}" method="post">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button type="submit" aria-label="Save {{ product.title }} to wishlist"><i class="p-icon icon-heart"></i><span class="tool-tip">Save to wishlist</span></button></form></div>
 								</div>
 								<div class="product-content"><p class="shoroshi-product-category">{{ product.get_category_display }}</p><h6 class="prodect-title"><a href="{% pageurl product %}">{{ product.title }}</a></h6><div class="prodect-price"><span class="new-price">৳{{ product.price|floatformat:2|intcomma }}</span></div></div>
 							</article>

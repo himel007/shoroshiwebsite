@@ -547,6 +547,59 @@ body.template-product {
     color: var(--shoroshi-wine);
 }
 
+.shoroshi-detail-wishlist {
+    margin: 16px 0 0;
+}
+
+.shoroshi-detail-wishlist button {
+    padding: 8px 0;
+    border: 0;
+    color: var(--shoroshi-wine);
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+}
+
+.shoroshi-detail-wishlist button:hover {
+    color: var(--shoroshi-brown);
+}
+
+.shoroshi-product-wishlist-form {
+    margin: 0;
+}
+
+.single-product-item .product-actions .shoroshi-product-wishlist-form {
+    width: 45px;
+    height: 45px;
+    margin: 0 7px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: 0.5s;
+}
+
+.single-product-item .product-actions .shoroshi-product-wishlist-form button {
+    display: grid;
+    width: 45px;
+    height: 45px;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    color: var(--shoroshi-brown);
+    background: #fff;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.single-product-item .product-actions .shoroshi-product-wishlist-form button:hover {
+    color: var(--shoroshi-wine);
+}
+
+.single-product-item:hover .product-actions .shoroshi-product-wishlist-form {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .shoroshi-product-tabs {
     gap: 28px;
     border-bottom: 1px solid var(--shoroshi-line);

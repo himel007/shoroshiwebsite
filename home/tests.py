@@ -1,8 +1,11 @@
 from decimal import Decimal
 from io import BytesIO
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.management import call_command
 from django.test import TestCase
 from PIL import Image as PillowImage
 from wagtail.images import get_image_model
@@ -56,6 +59,7 @@ class WagtailSetupSmokeTests(TestCase):
         self.assertContains(response, 'aria-label="Wishlist"')
         self.assertContains(response, 'aria-label="Shopping bag"')
         self.assertContains(response, 'href="/cart/"')
+        self.assertContains(response, 'href="/wishlist/"')
         self.assertContains(response, '<span>Collections</span>')
         self.assertContains(response, 'href="/shop/"')
         self.assertNotContains(response, '<span>Pages</span>')
@@ -99,6 +103,7 @@ class WagtailSetupSmokeTests(TestCase):
         self.assertContains(response, 'aria-label="Show 3 columns"')
         self.assertContains(response, 'aria-label="Show 5 columns"')
         self.assertContains(response, "All Collections")
+        self.assertContains(response, "Wishlist")
         self.assertContains(response, "Filter by collection")
         self.assertContains(response, "Explore Shoroshi Collections")
         self.assertContains(response, "Muslin Silk")
@@ -108,6 +113,7 @@ class WagtailSetupSmokeTests(TestCase):
         self.assertContains(response, "Browse our collections")
         self.assertNotContains(response, "No products yet")
         self.assertContains(response, "No products found in this collection yet.")
+        self.assertContains(response, "Wishlist")
 
     def test_cart_page_renders_empty_state(self):
         response = self.client.get("/cart/")
@@ -169,6 +175,67 @@ class WagtailSetupSmokeTests(TestCase):
         self.assertRedirects(unavailable_add, product.url)
         self.assertNotContains(self.client.get(product.url), "Add to bag")
         self.assertContains(self.client.get("/cart/"), "Your bag is empty")
+
+    def test_wishlist_page_renders_empty_state(self):
+        response = self.client.get("/wishlist/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Your wishlist is empty")
+        self.assertContains(response, "Shop collections")
+
+    def test_wishlist_adds_and_removes_published_product(self):
+        homepage = HomePage.objects.get(depth=2)
+        image_buffer = BytesIO()
+        PillowImage.new("RGB", (8, 8), color="red").save(image_buffer, format="PNG")
+        image = get_image_model().objects.create(
+            title="Wishlist test product",
+            file=SimpleUploadedFile("wishlist-test.png", image_buffer.getvalue(), content_type="image/png"),
+        )
+        product = ProductPage(
+            title="Wishlist Test Saree",
+            slug="wishlist-test-saree",
+            category="muslin-silk",
+            sku="WISH-001",
+            price=Decimal("12500.00"),
+            product_image=image,
+            description="Verified wishlist test description.",
+            fabric_details="Test fabric",
+            colour="Wine",
+            work_details="Test detailing",
+            care_instructions="Test care instructions",
+            is_available=True,
+        )
+        homepage.add_child(instance=product)
+        product.save_revision().publish()
+
+        add_response = self.client.post(f"/wishlist/add/{product.pk}/")
+        self.assertEqual(add_response.status_code, 302)
+        self.client.post(f"/wishlist/add/{product.pk}/")
+        self.assertEqual(self.client.session["shoroshi_wishlist"], [product.pk])
+        wishlist_response = self.client.get("/wishlist/")
+        self.assertContains(wishlist_response, "Wishlist Test Saree")
+        self.assertContains(wishlist_response, "৳12,500.00")
+
+        remove_response = self.client.post(f"/wishlist/remove/{product.pk}/")
+        self.assertEqual(remove_response.status_code, 302)
+        self.assertContains(self.client.get("/wishlist/"), "Your wishlist is empty")
+
+    def test_import_shoroshi_jpgs_into_wagtail_collection_idempotently(self):
+        with TemporaryDirectory() as source_directory:
+            source_image = Path(source_directory) / "IMG_0001.JPG"
+            PillowImage.new("RGB", (8, 8), color="red").save(source_image, format="JPEG")
+
+            call_command("import_shoroshi_images", source_directory, verbosity=0)
+            call_command("import_shoroshi_images", source_directory, verbosity=0)
+
+        image_model = get_image_model()
+        self.assertEqual(
+            image_model.objects.filter(
+                title="IMG_0001",
+                collection__name="JPG Shoroshi",
+            ).count(),
+            1,
+        )
 
     def test_published_product_appears_with_cms_price(self):
         homepage = HomePage.objects.get(depth=2)
@@ -234,6 +301,8 @@ class WagtailSetupSmokeTests(TestCase):
         self.assertNotContains(detail_response, 'href="/#products"')
         self.assertContains(detail_response, "Additional information")
         self.assertContains(detail_response, "Add to bag")
+        self.assertContains(detail_response, "Save to wishlist")
+        self.assertContains(detail_response, "Save to wishlist")
         self.assertContains(detail_response, "Fabric")
         self.assertContains(detail_response, "Care")
         self.assertNotContains(detail_response, "Add to cart")
@@ -243,6 +312,8 @@ class WagtailSetupSmokeTests(TestCase):
         self.assertEqual(shop_response.status_code, 200)
         self.assertContains(shop_response, "Test Muslin Saree")
         self.assertNotContains(shop_response, "Test Balaka Saree")
+        self.assertContains(shop_response, "Save Test Muslin Saree to wishlist")
+        self.assertContains(shop_response, "Save to wishlist")
 
         sorted_shop_response = self.client.get("/shop/", {"sort": "price_low"})
         sorted_titles = list(
