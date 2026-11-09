@@ -395,6 +395,13 @@ body.template-homepage {
 	place-items: center;
 	border-radius: 50%;
 	background: #f2f1f3;
+	box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+	transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.shoroshi-circle-category:hover .shoroshi-circle-category-image {
+	box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+	transform: translateY(-4px);
 }
 
 .shoroshi-circle-category-image img {
