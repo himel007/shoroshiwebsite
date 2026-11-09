@@ -1,0 +1,37 @@
+{% extends "home/account_base.html" %}
+{% load humanize %}
+
+{% block account_content %}
+<h1 class="title">Dashboard</h1>
+<p class="shoroshi-account-welcome">Hello, <strong>{{ user.get_full_name|default:user.username }}</strong>.</p>
+<p>From your account you can view your orders and update your name, email and password.</p>
+
+<section class="shoroshi-account-section" aria-labelledby="recent-orders-heading">
+	<div class="shoroshi-account-section__head">
+		<h2 id="recent-orders-heading" class="shoroshi-checkout-heading">Recent orders</h2>
+		{% if order_count > recent_orders|length %}<a href="{% url 'account_orders' %}">View all {{ order_count }} orders</a>{% endif %}
+	</div>
+	{% if recent_orders %}
+		{% include "home/includes/account_orders_table.html" with orders=recent_orders %}
+	{% else %}
+		<div class="shoroshi-account-empty">
+			<p>You haven't placed any orders yet.</p>
+			<a class="btn btn--md btn--black" href="{% url 'shop' %}">Start shopping</a>
+		</div>
+	{% endif %}
+</section>
+
+{% if last_order %}
+	<section class="shoroshi-account-section" aria-labelledby="address-heading">
+		<h2 id="address-heading" class="shoroshi-checkout-heading">Delivery address</h2>
+		<address class="shoroshi-account-address">
+			<strong>{{ last_order.full_name }}</strong><br>
+			{{ last_order.address_line1 }}<br>
+			{% if last_order.address_line2 %}{{ last_order.address_line2 }}<br>{% endif %}
+			{{ last_order.city }}, {{ last_order.district }}{% if last_order.postcode %} {{ last_order.postcode }}{% endif %}<br>
+			Mobile: {{ last_order.phone }}
+		</address>
+		<p class="shoroshi-help">This address from your latest order is filled in for you at checkout. You can change it there.</p>
+	</section>
+{% endif %}
+{% endblock %}

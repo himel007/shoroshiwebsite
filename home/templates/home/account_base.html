@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}template-cart template-checkout template-account{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-cart.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-checkout.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-account.css' %}">
+{% endblock %}
+
+{% block title %}My account | SHOROSHI{% endblock %}
+
+{% block content %}
+{% include "home/includes/store_header.html" %}
+
+<main class="shoroshi-cart-page">
+	<div class="breadcrumb-area shoroshi-cart-breadcrumb">
+		<div class="container"><div class="row breadcrumb_box align-items-center">
+			<div class="col-6"><p class="breadcrumb-title">My account</p></div>
+			<div class="col-6"><ul class="breadcrumb-list text-end"><li class="breadcrumb-item"><a href="/">Home</a></li><li class="breadcrumb-item active">My account</li></ul></div>
+		</div></div>
+	</div>
+
+	<div class="my-account-page-warpper section-space--ptb_90">
+		<div class="container">
+			<div class="myaccount-page-wrapper">
+				<div class="row">
+					<div class="col-lg-3 col-md-4">
+						<nav class="myaccount-tab-menu shoroshi-account-menu" aria-label="My account">
+							<a href="{% url 'account_dashboard' %}"{% if account_section == "dashboard" %} class="active" aria-current="page"{% endif %}><i class="icon-home"></i> Dashboard</a>
+							<a href="{% url 'account_orders' %}"{% if account_section == "orders" %} class="active" aria-current="page"{% endif %}><i class="icon-bag2"></i> Orders</a>
+							<a href="{% url 'account_details' %}"{% if account_section == "details" %} class="active" aria-current="page"{% endif %}><i class="icon-user"></i> Account details</a>
+							<form action="{% url 'account_logout' %}" method="post">{% csrf_token %}<button type="submit"><i class="icon-exit"></i> Log out</button></form>
+						</nav>
+					</div>
+					<div class="col-lg-9 col-md-8">
+						<div class="myaccount-content shoroshi-account-content">
+							{% block account_content %}{% endblock %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+
+{% include "home/includes/store_footer.html" %}
+{% endblock %}

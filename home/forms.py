@@ -76,3 +76,18 @@ class CustomerRegistrationForm(UserCreationForm):
         if get_user_model().objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("An account with this email already exists.")
         return email
+
+
+class AccountDetailsForm(forms.ModelForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ("first_name", "last_name", "email")
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].strip()
+        others = get_user_model().objects.filter(email__iexact=email).exclude(pk=self.instance.pk)
+        if others.exists():
+            raise forms.ValidationError("Another account already uses this email.")
+        return email

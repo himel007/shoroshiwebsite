@@ -1,0 +1,209 @@
+/* My Account pages: dashboard, orders, order detail, account details */
+
+.shoroshi-account-menu {
+	display: flex;
+	flex-direction: column;
+}
+
+.shoroshi-account-menu a,
+.shoroshi-account-menu button {
+	display: block;
+	width: 100%;
+	padding: 12px 16px;
+	border: 1px solid var(--shoroshi-line);
+	border-bottom: 0;
+	color: var(--shoroshi-brown);
+	background: #fff;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 500;
+	letter-spacing: 0.06em;
+	text-align: left;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.shoroshi-account-menu form {
+	margin: 0;
+}
+
+.shoroshi-account-menu button {
+	border-bottom: 1px solid var(--shoroshi-line);
+}
+
+.shoroshi-account-menu a:hover,
+.shoroshi-account-menu button:hover,
+.shoroshi-account-menu a.active {
+	border-color: var(--shoroshi-brown);
+	color: var(--shoroshi-ivory);
+	background: var(--shoroshi-brown);
+}
+
+.shoroshi-account-menu i {
+	display: inline-block;
+	width: 25px;
+}
+
+.shoroshi-account-content {
+	border-color: var(--shoroshi-line);
+	background: #fff;
+}
+
+.shoroshi-account-content .title {
+	margin-bottom: 16px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--shoroshi-line);
+	color: var(--shoroshi-brown);
+	font-size: 24px;
+}
+
+.shoroshi-account-content form {
+	margin-top: 0;
+}
+
+.shoroshi-account-welcome {
+	font-size: 16px;
+}
+
+.shoroshi-account-section {
+	margin-top: 36px;
+}
+
+.shoroshi-account-section__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.shoroshi-account-section__head a,
+.shoroshi-account-back a,
+.shoroshi-account-pagination a {
+	color: var(--shoroshi-wine);
+	text-decoration: underline;
+}
+
+.shoroshi-account-table table {
+	width: 100%;
+	margin: 0;
+}
+
+.shoroshi-account-table th {
+	color: var(--shoroshi-brown);
+	background: var(--shoroshi-ivory);
+	font-size: 13px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.shoroshi-account-table th,
+.shoroshi-account-table td {
+	padding: 12px 14px;
+	border-color: var(--shoroshi-line);
+	vertical-align: middle;
+}
+
+.shoroshi-account-view {
+	display: inline-block;
+	padding: 6px 14px;
+	color: var(--shoroshi-ivory);
+	background: var(--shoroshi-brown);
+	font-size: 12px;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.shoroshi-account-view:hover {
+	color: var(--shoroshi-ivory);
+	background: var(--shoroshi-wine);
+}
+
+.shoroshi-status {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 999px;
+	color: var(--shoroshi-brown);
+	background: var(--shoroshi-ivory);
+	font-size: 12px;
+	white-space: nowrap;
+}
+
+.shoroshi-status--confirmed,
+.shoroshi-status--shipped {
+	color: #fff;
+	background: var(--shoroshi-gold);
+}
+
+.shoroshi-status--delivered {
+	color: var(--shoroshi-ivory);
+	background: var(--shoroshi-brown);
+}
+
+.shoroshi-status--cancelled {
+	color: #fff;
+	background: var(--shoroshi-wine);
+}
+
+.shoroshi-account-empty {
+	padding: 28px;
+	text-align: center;
+	background: var(--shoroshi-ivory);
+}
+
+.shoroshi-account-address {
+	margin-bottom: 8px;
+	padding: 18px 20px;
+	line-height: 1.8;
+	background: var(--shoroshi-ivory);
+}
+
+.shoroshi-account-order-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 4px;
+}
+
+.shoroshi-account-order-head .title {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.shoroshi-account-content .shoroshi-complete__grid {
+	grid-template-columns: 1fr;
+	margin: 24px 0 0;
+}
+
+.shoroshi-account-form + .shoroshi-account-form {
+	margin-top: 40px;
+	padding-top: 32px;
+	border-top: 1px solid var(--shoroshi-line);
+}
+
+.shoroshi-account-pagination {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 20px;
+	margin-top: 20px;
+}
+
+.shoroshi-complete__account {
+	display: inline-block;
+	margin: 0 0 0 16px;
+}
+
+@media (min-width: 992px) {
+	.shoroshi-account-content .shoroshi-complete__grid {
+		grid-template-columns: 3fr 2fr;
+	}
+}
+
+@media (max-width: 767px) {
+	.shoroshi-account-menu {
+		margin-bottom: 24px;
+	}
+}

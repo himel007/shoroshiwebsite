@@ -1,7 +1,8 @@
 from decimal import Decimal
 
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator
@@ -11,7 +12,7 @@ from django.template.response import TemplateResponse
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
-from .forms import CheckoutForm, CustomerRegistrationForm
+from .forms import AccountDetailsForm, CheckoutForm, CustomerRegistrationForm
 from .models import DeliveryZone, HomePage, Order, OrderItem, PRODUCT_CATEGORIES, ProductPage
 
 
@@ -159,6 +160,71 @@ def checkout_complete(request, order_id):
         request,
         "home/checkout_complete.html",
         {"order": order, "order_items": order.items.all()},
+    )
+
+
+@login_required
+def account_dashboard(request):
+    orders = Order.objects.filter(user=request.user)
+    return TemplateResponse(
+        request,
+        "home/account_dashboard.html",
+        {
+            "account_section": "dashboard",
+            "recent_orders": orders[:5],
+            "order_count": orders.count(),
+            "last_order": orders.first(),
+        },
+    )
+
+
+@login_required
+def account_orders(request):
+    orders = Order.objects.filter(user=request.user)
+    page_obj = Paginator(orders, 10).get_page(request.GET.get("page"))
+    return TemplateResponse(
+        request,
+        "home/account_orders.html",
+        {"account_section": "orders", "orders": page_obj.object_list, "page_obj": page_obj},
+    )
+
+
+@login_required
+def account_order_detail(request, order_id):
+    order = get_object_or_404(Order, pk=order_id, user=request.user)
+    return TemplateResponse(
+        request,
+        "home/account_order_detail.html",
+        {"account_section": "orders", "order": order, "order_items": order.items.all()},
+    )
+
+
+@login_required
+def account_details(request):
+    details_form = AccountDetailsForm(instance=request.user, prefix="details")
+    password_form = PasswordChangeForm(request.user, prefix="password")
+    if request.method == "POST":
+        if request.POST.get("form") == "password":
+            password_form = PasswordChangeForm(request.user, request.POST, prefix="password")
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Your password has been changed.")
+                return redirect("account_details")
+        else:
+            details_form = AccountDetailsForm(request.POST, instance=request.user, prefix="details")
+            if details_form.is_valid():
+                details_form.save()
+                messages.success(request, "Your account details have been saved.")
+                return redirect("account_details")
+    return TemplateResponse(
+        request,
+        "home/account_details.html",
+        {
+            "account_section": "details",
+            "details_form": details_form,
+            "password_form": password_form,
+        },
     )
 
 

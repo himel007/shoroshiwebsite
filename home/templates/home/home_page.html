@@ -47,7 +47,7 @@
 								<button type="submit" aria-label="Search"><i class="icon-arrow-right"></i></button>
 							</form>
 						</details>
-						<button class="shoroshi-header-icon" type="button" aria-label="Account" title="Account"><i class="icon-user"></i></button>
+						<a class="shoroshi-header-icon" href="{% url 'account_dashboard' %}" aria-label="Account" title="{% if user.is_authenticated %}My account{% else %}Log in{% endif %}"><i class="icon-user"></i></a>
 						<button class="shoroshi-header-icon" type="button" aria-label="Wishlist" title="Wishlist"><i class="icon-heart"></i></button>
 						<a class="shoroshi-header-icon" href="{% url 'cart' %}" aria-label="Shopping bag" title="Shopping bag"><i class="icon-bag2"></i></a>
 						<details class="shoroshi-mobile-navigation">

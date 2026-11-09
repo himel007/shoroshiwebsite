@@ -9,18 +9,13 @@
 <link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
 <link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
 <link rel="stylesheet" href="{% static 'css/shoroshi-cart.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-checkout.css' %}">
 {% endblock %}
 
 {% block title %}Shopping Bag | SHOROSHI{% endblock %}
 
 {% block content %}
-<header class="shoroshi-header shoroshi-cart-header">
-	<a class="shoroshi-brand" href="/" aria-label="SHOROSHI home">
-		<img src="{% static 'images/shoroshi-logo.png' %}" alt="SHOROSHI | ষোড়শী">
-		<span class="shoroshi-wordmark"><strong>SHOROSHI</strong><small lang="bn">ষোড়শী</small></span>
-	</a>
-	<nav class="shoroshi-nav" aria-label="Main navigation"><a href="/">Home</a><a href="{% url 'shop' %}">Continue shopping</a></nav>
-</header>
+{% include "home/includes/store_header.html" %}
 
 <main class="shoroshi-cart-page">
 	<div class="breadcrumb-area shoroshi-cart-breadcrumb">
