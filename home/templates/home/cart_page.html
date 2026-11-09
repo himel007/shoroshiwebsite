@@ -38,7 +38,7 @@
 										<div><a href="{% pageurl item.product %}">{{ item.product.title }}</a><small>{{ item.product.get_category_display }} · {{ item.product.sku }}</small></div>
 									</td>
 									<td class="product-price">৳{{ item.product.price|floatformat:2|intcomma }}</td>
-									<td><form class="shoroshi-cart-quantity" action="{% url 'cart_update' item.product.pk %}" method="post">{% csrf_token %}<label class="visually-hidden" for="quantity-{{ item.product.pk }}">Quantity for {{ item.product.title }}</label><input id="quantity-{{ item.product.pk }}" type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99"><button type="submit">Update</button></form></td>
+									<td><form class="shoroshi-cart-quantity" action="{% url 'cart_update' item.product.pk %}" method="post">{% csrf_token %}<label class="visually-hidden" for="quantity-{{ item.product.pk }}">Quantity for {{ item.product.title }}</label><input id="quantity-{{ item.product.pk }}" type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99"><button type="submit" class="shoroshi-cart-update-btn">Update</button></form></td>
 									<td class="price-total">৳{{ item.line_total|floatformat:2|intcomma }}</td>
 									<td class="product-remove"><form action="{% url 'cart_remove' item.product.pk %}" method="post">{% csrf_token %}<button type="submit" aria-label="Remove {{ item.product.title }}"><i class="icon-cross2"></i></button></form></td>
 								</tr>
@@ -55,4 +55,26 @@
 </main>
 
 {% include "home/includes/store_footer.html" %}
+
+<script>
+	(function () {
+		document.querySelectorAll('.shoroshi-cart-quantity').forEach(function (form) {
+			var input = form.querySelector('input[name="quantity"]');
+			var button = form.querySelector('.shoroshi-cart-update-btn');
+			if (!input) {
+				return;
+			}
+			if (button) {
+				button.hidden = true;
+			}
+			input.addEventListener('change', function () {
+				var value = parseInt(input.value, 10);
+				if (isNaN(value) || value < 1) {
+					input.value = 1;
+				}
+				form.submit();
+			});
+		});
+	})();
+</script>
 {% endblock %}
