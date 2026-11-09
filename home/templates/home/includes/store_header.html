@@ -1,0 +1,22 @@
+{% load static %}
+<header class="shoroshi-header shoroshi-cart-header">
+	<a class="shoroshi-brand" href="/" aria-label="SHOROSHI home">
+		<img src="{% static 'images/shoroshi-logo.png' %}" alt="SHOROSHI | ষোড়শী">
+		<span class="shoroshi-wordmark"><strong>SHOROSHI</strong><small lang="bn">ষোড়শী</small></span>
+	</a>
+	<nav class="shoroshi-nav" aria-label="Main navigation">
+		<a href="/">Home</a>
+		<a href="{% url 'shop' %}">Shop</a>
+		<a href="{% url 'cart' %}">Bag</a>
+		{% if user.is_authenticated %}
+			<form class="shoroshi-logout" action="{% url 'account_logout' %}" method="post">{% csrf_token %}<button type="submit">Log out</button></form>
+		{% else %}
+			<a href="{% url 'account_login' %}">Log in</a>
+		{% endif %}
+	</nav>
+</header>
+{% if messages %}
+	<div class="shoroshi-messages container" role="status">
+		{% for message in messages %}<p class="shoroshi-message shoroshi-message--{{ message.tags }}">{{ message }}</p>{% endfor %}
+	</div>
+{% endif %}

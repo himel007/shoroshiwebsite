@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
@@ -19,6 +20,11 @@ urlpatterns = [
     path("cart/add/<int:product_id>/", home_views.cart_add, name="cart_add"),
     path("cart/update/<int:product_id>/", home_views.cart_update, name="cart_update"),
     path("cart/remove/<int:product_id>/", home_views.cart_remove, name="cart_remove"),
+    path("checkout/", home_views.checkout, name="checkout"),
+    path("checkout/complete/<int:order_id>/", home_views.checkout_complete, name="checkout_complete"),
+    path("account/login/", home_views.CustomerLoginView.as_view(), name="account_login"),
+    path("account/register/", home_views.register, name="account_register"),
+    path("account/logout/", LogoutView.as_view(next_page="/"), name="account_logout"),
 ]
 
 

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.core.validators import MinValueValidator
 
@@ -218,3 +219,147 @@ class JournalPage(Page):
         FieldPanel("cover_image"),
         FieldPanel("body"),
     ]
+
+
+class DeliveryZone(models.Model):
+    """A delivery area with a charge set by Shoroshi staff in Wagtail admin."""
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=80, unique=True)
+    charge = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        help_text="Delivery charge in BDT for orders shipped to this zone.",
+    )
+    description = models.CharField(
+        max_length=160,
+        blank=True,
+        help_text="Optional note shown to customers, e.g. estimated delivery time.",
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Only active zones are offered at checkout.",
+    )
+    sort_order = models.PositiveIntegerField(default=0)
+
+    panels = [
+        FieldPanel("name"),
+        FieldPanel("charge"),
+        FieldPanel("description"),
+        FieldPanel("is_active"),
+        FieldPanel("sort_order"),
+    ]
+
+    class Meta:
+        ordering = ["sort_order", "name"]
+
+    def __str__(self):
+        return self.name
+
+
+class Order(models.Model):
+    id = models.AutoField(primary_key=True)
+    PAYMENT_COD = "cod"
+    PAYMENT_METHODS = [(PAYMENT_COD, "Cash on Delivery")]
+
+    STATUS_PENDING = "pending"
+    STATUS_CHOICES = [
+        (STATUS_PENDING, "Pending confirmation"),
+        ("confirmed", "Confirmed"),
+        ("shipped", "Shipped"),
+        ("delivered", "Delivered"),
+        ("cancelled", "Cancelled"),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="shoroshi_orders",
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    full_name = models.CharField(max_length=120)
+    phone = models.CharField(max_length=20)
+    email = models.EmailField(blank=True)
+    address_line1 = models.CharField("Street address", max_length=200)
+    address_line2 = models.CharField("Apartment, floor, etc.", max_length=200, blank=True)
+    city = models.CharField("Area / City", max_length=100)
+    district = models.CharField(max_length=100)
+    postcode = models.CharField(max_length=12, blank=True)
+    notes = models.TextField("Order notes", max_length=500, blank=True)
+    delivery_zone = models.ForeignKey(
+        DeliveryZone,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    delivery_zone_name = models.CharField(max_length=80)
+    delivery_charge = models.DecimalField(max_digits=10, decimal_places=2)
+    subtotal = models.DecimalField(max_digits=12, decimal_places=2)
+    total = models.DecimalField(max_digits=12, decimal_places=2)
+    payment_method = models.CharField(
+        max_length=20,
+        choices=PAYMENT_METHODS,
+        default=PAYMENT_COD,
+    )
+    staff_note = models.TextField(blank=True, help_text="Internal note, not shown to the customer.")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    panels = [
+        FieldPanel("status"),
+        FieldPanel("staff_note"),
+        MultiFieldPanel(
+            [
+                FieldPanel("full_name", read_only=True),
+                FieldPanel("phone", read_only=True),
+                FieldPanel("email", read_only=True),
+                FieldPanel("address_line1", read_only=True),
+                FieldPanel("address_line2", read_only=True),
+                FieldPanel("city", read_only=True),
+                FieldPanel("district", read_only=True),
+                FieldPanel("postcode", read_only=True),
+                FieldPanel("notes", read_only=True),
+            ],
+            heading="Customer and delivery address",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("delivery_zone_name", read_only=True),
+                FieldPanel("delivery_charge", read_only=True),
+                FieldPanel("subtotal", read_only=True),
+                FieldPanel("total", read_only=True),
+                FieldPanel("payment_method", read_only=True),
+            ],
+            heading="Totals",
+        ),
+    ]
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Order {self.number}"
+
+    @property
+    def number(self):
+        return f"SH-{self.pk:06d}" if self.pk else "SH-new"
+
+
+class OrderItem(models.Model):
+    id = models.AutoField(primary_key=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
+    product = models.ForeignKey(
+        ProductPage,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    product_title = models.CharField(max_length=255)
+    sku = models.CharField(max_length=40)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.PositiveIntegerField()
+    line_total = models.DecimalField(max_digits=12, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.product_title} ({self.sku}) × {self.quantity} = ৳{self.line_total}"

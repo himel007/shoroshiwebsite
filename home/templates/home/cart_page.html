@@ -51,7 +51,7 @@
 						</tbody>
 					</table>
 				</div>
-				<div class="shoroshi-cart-summary"><p>{{ cart_count }} item{{ cart_count|pluralize }}</p><dl><dt>Subtotal</dt><dd>৳{{ subtotal|floatformat:2|intcomma }}</dd></dl><a class="btn btn--md btn--black" href="{% url 'shop' %}">Continue shopping</a></div>
+				<div class="shoroshi-cart-summary"><p>{{ cart_count }} item{{ cart_count|pluralize }}</p><dl><dt>Subtotal</dt><dd>৳{{ subtotal|floatformat:2|intcomma }}</dd></dl><p class="shoroshi-cart-delivery-note">Delivery charge is added at checkout.</p><a class="btn btn--md btn--black btn--full" href="{% url 'checkout' %}">Proceed to checkout</a><a class="shoroshi-cart-continue" href="{% url 'shop' %}">Continue shopping</a></div>
 			{% else %}
 				<div class="shoroshi-cart-empty"><h2>Your bag is empty</h2><p>Explore the Shoroshi collections to find an item.</p><a class="btn btn--md btn--black" href="{% url 'shop' %}">Continue shopping <i class="icon-arrow-right"></i></a></div>
 			{% endif %}

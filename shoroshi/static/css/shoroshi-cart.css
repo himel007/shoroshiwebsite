@@ -134,3 +134,21 @@ body.template-cart {
 		margin-right: auto;
 	}
 }
+.shoroshi-cart-summary .shoroshi-cart-delivery-note {
+	margin: -8px 0 16px;
+	font-size: 12px;
+}
+
+.shoroshi-cart-summary .btn--full {
+	width: 100%;
+	text-align: center;
+}
+
+.shoroshi-cart-continue {
+	display: block;
+	margin-top: 12px;
+	color: var(--shoroshi-brown);
+	font-size: 13px;
+	text-align: center;
+	text-decoration: underline;
+}

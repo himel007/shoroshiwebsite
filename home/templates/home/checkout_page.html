@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load humanize static wagtailimages_tags %}
+
+{% block body_class %}template-cart template-checkout{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-cart.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-checkout.css' %}">
+{% endblock %}
+
+{% block title %}Checkout | SHOROSHI{% endblock %}
+
+{% block content %}
+{% include "home/includes/store_header.html" %}
+
+<main class="shoroshi-cart-page">
+	<div class="breadcrumb-area shoroshi-cart-breadcrumb">
+		<div class="container"><div class="row breadcrumb_box align-items-center">
+			<div class="col-6"><h1 class="breadcrumb-title">Checkout</h1></div>
+			<div class="col-6"><ul class="breadcrumb-list text-end"><li class="breadcrumb-item"><a href="/">Home</a></li><li class="breadcrumb-item"><a href="{% url 'cart' %}">Shopping Bag</a></li><li class="breadcrumb-item active">Checkout</li></ul></div>
+		</div></div>
+	</div>
+
+	<div class="checkout-main-area section-space--ptb_90">
+		<div class="container">
+			{% if unavailable_products %}
+				<div class="shoroshi-notice shoroshi-notice--warning" role="alert">
+					<p><strong>Some items in your bag are currently unavailable:</strong></p>
+					<ul>{% for product in unavailable_products %}<li>{{ product.title }}</li>{% endfor %}</ul>
+					<p>Please <a href="{% url 'cart' %}">remove them from your bag</a> to continue.</p>
+				</div>
+			{% endif %}
+			{% if not delivery_zones %}
+				<div class="shoroshi-notice shoroshi-notice--warning" role="alert">
+					<p>Online ordering is not open yet because delivery areas have not been set up. Please check back soon.</p>
+				</div>
+			{% endif %}
+
+			<form class="checkout-wrap" method="post" action="{% url 'checkout' %}" novalidate>
+				{% csrf_token %}
+				{% if form.non_field_errors %}<div class="shoroshi-notice shoroshi-notice--warning" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+				<div class="row">
+					<div class="col-lg-7">
+						<div class="billing-info-wrap shoroshi-billing">
+							<h2 class="shoroshi-checkout-heading">Delivery details</h2>
+							<div class="row">
+								<div class="col-md-6">{% include "home/includes/form_field.html" with field=form.full_name %}</div>
+								<div class="col-md-6">{% include "home/includes/form_field.html" with field=form.phone %}</div>
+								<div class="col-12">{% include "home/includes/form_field.html" with field=form.email %}</div>
+								<div class="col-12">
+									<div class="billing-info mb-25{% if form.address_line1.errors %} has-error{% endif %}">
+										<label for="{{ form.address_line1.id_for_label }}">Street address <span class="required" aria-hidden="true">*</span></label>
+										{{ form.address_line1 }}
+										{% for error in form.address_line1.errors %}<p class="shoroshi-field-error">{{ error }}</p>{% endfor %}
+										<label class="visually-hidden" for="{{ form.address_line2.id_for_label }}">{{ form.address_line2.label }}</label>
+										{{ form.address_line2 }}
+									</div>
+								</div>
+								<div class="col-md-6">{% include "home/includes/form_field.html" with field=form.city %}</div>
+								<div class="col-md-6">{% include "home/includes/form_field.html" with field=form.district %}</div>
+								<div class="col-md-6">{% include "home/includes/form_field.html" with field=form.postcode %}</div>
+							</div>
+
+							<fieldset class="shoroshi-zones mb-25{% if form.delivery_zone.errors %} has-error{% endif %}">
+								<legend class="shoroshi-checkout-heading">Delivery area <span class="required" aria-hidden="true">*</span></legend>
+								{% for zone in delivery_zones %}
+									<label class="shoroshi-zone">
+										<input type="radio" name="{{ form.delivery_zone.html_name }}" value="{{ zone.pk }}" data-charge="{{ zone.charge }}"{% if form.delivery_zone.value|stringformat:"s" == zone.pk|stringformat:"s" %} checked{% endif %} required>
+										<span class="shoroshi-zone__name">{{ zone.name }}{% if zone.description %}<small>{{ zone.description }}</small>{% endif %}</span>
+										<span class="shoroshi-zone__charge">{% if zone.charge %}৳{{ zone.charge|floatformat:2|intcomma }}{% else %}Free{% endif %}</span>
+									</label>
+								{% empty %}
+									<p>No delivery areas are available yet.</p>
+								{% endfor %}
+								{% for error in form.delivery_zone.errors %}<p class="shoroshi-field-error">{{ error }}</p>{% endfor %}
+							</fieldset>
+
+							<div class="additional-info-wrap">
+								{% include "home/includes/form_field.html" with field=form.notes %}
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-5">
+						<div class="your-order-wrappwer tablet-mt__60 small-mt__60">
+							<h2 class="shoroshi-checkout-heading">Your order</h2>
+							<div class="your-order-area">
+								<div class="your-order-wrap shoroshi-order-summary">
+									<div class="your-order-info-wrap">
+										<div class="your-order-info"><ul><li>Product <span>Total</span></li></ul></div>
+										<div class="your-order-middle">
+											<ul>
+												{% for item in cart_items %}
+													<li class="shoroshi-order-line">
+														{% image item.product.product_image fill-60x75 as thumb %}
+														<img src="{{ thumb.url }}" alt="" width="40" height="50">
+														<span class="shoroshi-order-line__name">{{ item.product.title }} <small>× {{ item.quantity }}</small></span>
+														<span>৳{{ item.line_total|floatformat:2|intcomma }}</span>
+													</li>
+												{% endfor %}
+											</ul>
+										</div>
+										<div class="your-order-info order-subtotal"><ul><li><strong>Subtotal</strong> <span id="checkout-subtotal" data-amount="{{ subtotal }}">৳{{ subtotal|floatformat:2|intcomma }}</span></li></ul></div>
+										<div class="your-order-info order-subtotal"><ul><li><strong>Delivery</strong> <span id="checkout-delivery">Select an area</span></li></ul></div>
+										<div class="your-order-info order-total"><ul><li><strong>Total</strong> <span id="checkout-total">৳{{ subtotal|floatformat:2|intcomma }}</span></li></ul></div>
+
+										<div class="payment-area mt-30">
+											<div class="single-payment shoroshi-payment">
+												<label><input type="radio" name="payment_method" value="cod" checked> <strong>Cash on Delivery</strong></label>
+												<p>Pay in cash when your order is delivered.</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="place-order mt-30">
+								<button type="submit" class="btn btn--full btn--black btn--lg"{% if unavailable_products or not delivery_zones %} disabled{% endif %}>Place order</button>
+							</div>
+							<p class="shoroshi-checkout-note">Your order will be confirmed by Shoroshi before it is shipped.</p>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</main>
+
+{% include "home/includes/store_footer.html" %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+	var subtotalEl = document.getElementById("checkout-subtotal");
+	var deliveryEl = document.getElementById("checkout-delivery");
+	var totalEl = document.getElementById("checkout-total");
+	if (!subtotalEl) { return; }
+	var subtotal = parseFloat(subtotalEl.dataset.amount) || 0;
+	var fmt = function (n) {
+		return "৳" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+	};
+	var update = function () {
+		var selected = document.querySelector('input[name="delivery_zone"]:checked');
+		if (!selected) { return; }
+		var charge = parseFloat(selected.dataset.charge) || 0;
+		deliveryEl.textContent = charge ? fmt(charge) : "Free";
+		totalEl.textContent = fmt(subtotal + charge);
+	};
+	document.querySelectorAll('input[name="delivery_zone"]').forEach(function (input) {
+		input.addEventListener("change", update);
+	});
+	update();
+})();
+</script>
+{% endblock %}

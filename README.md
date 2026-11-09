@@ -3,8 +3,9 @@
 A Django and Wagtail foundation for SHOROSHI (ষোড়শী), a premium Bangladeshi
 traditional fashion brand. The homepage is being adapted from the supplied
 Helendo template and now includes a Wagtail-managed product catalog, category
-filters, and product detail pages. Cart, checkout, customer accounts, and
-payments are not implemented yet.
+filters, product detail pages, a session shopping bag, customer login and
+registration, and a Cash on Delivery checkout. Online payment gateways are not
+implemented yet.
 
 ## Requirements
 
@@ -33,10 +34,25 @@ name, category, SKU, price in BDT, product image, fabric and design details,
 care instructions, and availability, then publish it. Published products appear
 in the homepage grid and category filters. No sample products are preloaded.
 
+## Checkout and orders
+
+Customers must log in or register (`/account/login/`, `/account/register/`)
+before checking out. Checkout offers Cash on Delivery only.
+
+Before taking orders, open Wagtail admin -> **Shop -> Delivery zones** and add
+your delivery areas with their charges (for example, Inside Dhaka and Outside
+Dhaka). No delivery charges are preloaded; checkout stays closed until at least
+one active zone exists.
+
+Placed orders appear under **Shop -> Orders**. Use the inspect view to see the
+customer's address and items, and the edit view to change the order status or
+add an internal staff note.
+
 ## Template and brand assets
 
 The supplied Helendo ThemeForest archive is kept outside Git because it is a
-commercial template. Adapt only assets permitted by its license. The Shoroshi
+commercial template. Place the zip in `theme-source/` (ignored by Git) and
+extract it there for reference. Adapt only assets permitted by its license. The Shoroshi
 logo is in `home/static/images/shoroshi-logo.png`. Brand copy and colors follow
 the supplied Shoroshi website brief; unconfirmed business details and products
 must not be invented.
