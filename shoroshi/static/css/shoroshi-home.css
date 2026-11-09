@@ -490,14 +490,18 @@ body.template-homepage {
 	}
 
 	.single-hero-slider-7.shoroshi-hero-slide {
-		height: 650px;
+		height: 720px;
 	}
 
 	.single-hero-slider-7.shoroshi-hero-slide .hero-content-wrap {
 		flex-direction: column;
 		align-items: flex-start;
-		justify-content: center;
+		justify-content: flex-start;
 		gap: 16px;
+		/* Clear the absolutely-positioned header so the logo and heading
+		   no longer overlap on mobile. */
+		padding-top: 100px;
+		padding-bottom: 30px;
 	}
 
 	.shoroshi-hero-slide .hero-text-7 {
@@ -522,8 +526,18 @@ body.template-homepage {
 		height: 310px;
 		align-self: center;
 		transform: none;
+		/* Pin the image to the bottom of the slide so its position is
+		   predictable regardless of how much hero text a slide has. */
+		margin-top: auto;
 	}
 
+	/* Centre the carousel arrows on the image (its centre sits ~185px above the
+	   slide's bottom: 30px padding + half of the 310px image). */
+	.hero-slider-7 .slick-arrow {
+		top: auto;
+		bottom: 185px;
+		transform: none;
+	}
 }
 /* On large screens the full nav (Home / Shop / Collections) is visible, so the
    compact menu button is redundant there. Keep it only below the lg breakpoint. */
