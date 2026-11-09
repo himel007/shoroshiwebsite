@@ -525,3 +525,10 @@ body.template-homepage {
 	}
 
 }
+/* On large screens the full nav (Home / Shop / Collections) is visible, so the
+   compact menu button is redundant there. Keep it only below the lg breakpoint. */
+@media (min-width: 992px) {
+	.shoroshi-mobile-navigation {
+		display: none;
+	}
+}
