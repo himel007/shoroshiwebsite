@@ -69,6 +69,28 @@ The footer shows **FAQ**, **Contact**, and **Track order** links, plus
 admin under **Settings -> Contact & social links**; each icon only appears once
 its value is filled in, so no contact detail is invented.
 
+## Bulk-import products from a spreadsheet
+
+For adding many products at once, use the importer instead of the admin form:
+
+1. Copy `product_import_template.csv` and fill one row per product. Columns:
+   `title, category, sku, price, image, description, fabric_details, colour,
+   work_details, measurements, care_instructions, is_available, is_featured`.
+   `category` may be a name or slug (created automatically if new); `image` is a
+   file name; `is_available`/`is_featured` accept yes/no.
+2. Put all the product images in one folder, named exactly as in the `image`
+   column.
+3. Check everything first (saves nothing):
+
+   ```bash
+   python manage.py import_products products.csv --images-dir path/to/images --dry-run
+   ```
+
+4. Run it for real (drop `--dry-run`). Products are created under the Home page
+   and published. Re-running skips rows whose SKU already exists; add `--update`
+   to overwrite those instead. Bad rows are reported and skipped; good rows still
+   import.
+
 ## Template and brand assets
 
 The supplied Helendo ThemeForest archive is kept outside Git because it is a
