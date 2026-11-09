@@ -14,7 +14,15 @@ from django.utils.http import url_has_allowed_host_and_scheme, urlencode
 from django.views.decorators.http import require_POST
 
 from .forms import AccountDetailsForm, CheckoutForm, CustomerRegistrationForm, OrderTrackingForm
-from .models import DeliveryZone, HomePage, Order, OrderItem, PRODUCT_CATEGORIES, ProductPage, WishlistItem
+from .models import (
+    build_category_context,
+    DeliveryZone,
+    HomePage,
+    Order,
+    OrderItem,
+    ProductPage,
+    WishlistItem,
+)
 
 
 SORT_OPTIONS = [
@@ -378,14 +386,13 @@ def shop(request):
     else:
         all_products = all_products.none()
 
-    valid_categories = {value for value, _ in PRODUCT_CATEGORIES}
-    selected_category = request.GET.get("category", "")
-    if selected_category not in valid_categories:
-        selected_category = ""
+    categories, selected_category, _ = build_category_context(
+        all_products, request.GET.get("category", "")
+    )
 
     products = all_products
     if selected_category:
-        products = products.filter(category=selected_category)
+        products = products.filter(category__slug=selected_category)
 
     sort = request.GET.get("sort", "newest")
     if sort not in dict(SORT_OPTIONS):
@@ -401,16 +408,6 @@ def shop(request):
         products = products.order_by("-first_published_at", "title")
 
     page_obj = Paginator(products, 12).get_page(request.GET.get("page"))
-    categories = [
-        {
-            "value": value,
-            "label": label,
-            "number": "{:02d}".format(index),
-            "count": all_products.filter(category=value).count(),
-            "product": all_products.filter(category=value).first(),
-        }
-        for index, (value, label) in enumerate(PRODUCT_CATEGORIES, start=1)
-    ]
 
     return TemplateResponse(
         request,

@@ -7,7 +7,7 @@ from django.test import TestCase
 from PIL import Image as PillowImage
 from wagtail.images import get_image_model
 
-from home.models import DeliveryZone, HomePage, Order, ProductPage
+from home.models import ProductCategory, DeliveryZone, HomePage, Order, ProductPage
 
 
 PASSWORD = "safe-test-pass-91"
@@ -25,7 +25,7 @@ class CheckoutTests(TestCase):
         self.product = ProductPage(
             title="Checkout Test Saree",
             slug="checkout-test-saree",
-            category="endi-silk",
+            category=ProductCategory.objects.get(slug="endi-silk"),
             sku="CHK-001",
             price=Decimal("10000.00"),
             product_image=image,

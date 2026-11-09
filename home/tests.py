@@ -6,7 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from PIL import Image as PillowImage
 from wagtail.images import get_image_model
-from home.models import HomePage, JournalPage, ProductPage
+from home.models import ProductCategory, HomePage, JournalPage, ProductPage
 
 
 class WagtailSetupSmokeTests(TestCase):
@@ -128,7 +128,7 @@ class WagtailSetupSmokeTests(TestCase):
         product = ProductPage(
             title="Cart Test Saree",
             slug="cart-test-saree",
-            category="muslin-silk",
+            category=ProductCategory.objects.get(slug="muslin-silk"),
             sku="CART-001",
             price=Decimal("12500.00"),
             product_image=image,
@@ -181,7 +181,7 @@ class WagtailSetupSmokeTests(TestCase):
         product = ProductPage(
             title="Test Muslin Saree",
             slug="test-muslin-saree",
-            category="muslin-silk",
+            category=ProductCategory.objects.get(slug="muslin-silk"),
             sku="TEST-001",
             price=Decimal("12500.00"),
             product_image=image,
@@ -198,7 +198,7 @@ class WagtailSetupSmokeTests(TestCase):
         second_product = ProductPage(
             title="Test Balaka Saree",
             slug="test-balaka-saree",
-            category="balaka-silk",
+            category=ProductCategory.objects.get(slug="balaka-silk"),
             sku="TEST-002",
             price=Decimal("15000.00"),
             product_image=image,

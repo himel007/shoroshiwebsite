@@ -71,7 +71,7 @@
                         {% include "home/includes/wishlist_button.html" with product=page variant="detail" %}
                         <div class="product_meta mt-30">
                             <div class="sku_wrapper item_meta"><span class="label">SKU: </span><span class="sku">{{ page.sku }}</span></div>
-                            <div class="posted_in item_meta"><span class="label">Collection: </span><a href="{% url 'shop' %}?category={{ page.category }}#shop-products">{{ page.get_category_display }}</a></div>
+                            <div class="posted_in item_meta"><span class="label">Collection: </span><a href="{% url 'shop' %}?category={{ page.category.slug }}#shop-products">{{ page.get_category_display }}</a></div>
                         </div>
                     </section>
                 </div>

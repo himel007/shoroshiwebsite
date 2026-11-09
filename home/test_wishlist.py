@@ -9,7 +9,7 @@ from django.test.utils import CaptureQueriesContext
 from PIL import Image as PillowImage
 from wagtail.images import get_image_model
 
-from home.models import HomePage, ProductPage, WishlistItem
+from home.models import ProductCategory, HomePage, ProductPage, WishlistItem
 
 
 PASSWORD = "safe-test-pass-91"
@@ -33,7 +33,7 @@ class WishlistTests(TestCase):
         product = ProductPage(
             title=title,
             slug=sku.lower(),
-            category="balaka-silk",
+            category=ProductCategory.objects.get(slug="balaka-silk"),
             sku=sku,
             price=Decimal("8000.00"),
             product_image=self.image,

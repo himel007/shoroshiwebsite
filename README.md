@@ -27,6 +27,14 @@ python manage.py runserver
 Open `http://127.0.0.1:8000/` for the site and `http://127.0.0.1:8000/admin/`
 for Wagtail CMS.
 
+## Manage categories
+
+Product categories are managed in Wagtail admin under **Snippets -> Shop ->
+Product categories** (four defaults are provided: Muslin, Balaka, Endi, and
+Joyosree Silk). Add, rename, reorder, or delete categories there; the slug is
+filled in from the name automatically. A category that still has products
+cannot be deleted. When adding a product, pick its category from the dropdown.
+
 ## Add products
 
 In Wagtail, create a Product page under the homepage. Add a verified product

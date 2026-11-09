@@ -10,12 +10,98 @@ from wagtail.images import get_image_model_string
 from wagtail.search import index
 
 
+# Default categories seeded for a new site. After launch, categories are fully
+# managed by staff in Wagtail admin (Snippets -> Product categories).
 PRODUCT_CATEGORIES = [
     ("muslin-silk", "Muslin Silk"),
     ("balaka-silk", "Balaka Silk"),
     ("endi-silk", "Endi Silk"),
     ("joyosree-silk", "Joyosree Silk"),
 ]
+
+
+class ProductCategory(models.Model):
+    """A product collection/category, created and edited by staff in admin."""
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=80, unique=True)
+    slug = models.SlugField(
+        max_length=90,
+        unique=True,
+        blank=True,
+        help_text="Used in shop links, e.g. ?category=muslin-silk. Leave blank to fill it from the name automatically.",
+    )
+    description = models.CharField(max_length=200, blank=True)
+    image = models.ForeignKey(
+        get_image_model_string(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        help_text="Optional image for category tiles. If empty, a product image is used.",
+    )
+    sort_order = models.PositiveIntegerField(default=0)
+
+    panels = [
+        FieldPanel("name"),
+        FieldPanel("slug"),
+        FieldPanel("description"),
+        FieldPanel("image"),
+        FieldPanel("sort_order"),
+    ]
+
+    class Meta:
+        ordering = ["sort_order", "name"]
+        verbose_name = "Product category"
+        verbose_name_plural = "Product categories"
+
+    def save(self, *args, **kwargs):
+        if not self.slug and self.name:
+            from django.utils.text import slugify
+
+            base = slugify(self.name) or "category"
+            slug = base
+            counter = 2
+            while ProductCategory.objects.exclude(pk=self.pk).filter(slug=slug).exists():
+                slug = f"{base}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+def build_category_context(all_products, selected_slug):
+    """Return (categories list, selected_slug, selected_label) for templates.
+
+    Keeps the same dict keys (value/label/number/count/product) the templates
+    already use, so category markup did not need to change.
+    """
+    categories = list(ProductCategory.objects.all())
+    valid_slugs = {c.slug for c in categories}
+    if selected_slug not in valid_slugs:
+        selected_slug = ""
+
+    category_dicts = []
+    for index, category in enumerate(categories, start=1):
+        in_category = all_products.filter(category=category)
+        category_dicts.append(
+            {
+                "value": category.slug,
+                "label": category.name,
+                "number": "{:02d}".format(index),
+                "count": in_category.count(),
+                "product": in_category.first(),
+                "image": category.image,
+            }
+        )
+
+    selected_label = next(
+        (c.name for c in categories if c.slug == selected_slug),
+        "Shop the collection",
+    )
+    return category_dicts, selected_slug, selected_label
 
 
 class HomePage(Page):
@@ -61,34 +147,21 @@ class HomePage(Page):
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        selected_category = request.GET.get("category", "")
-        valid_categories = {value for value, _ in PRODUCT_CATEGORIES}
         all_products = ProductPage.objects.live().public().child_of(self)
         hero_products = all_products.order_by("-first_published_at")[:2]
+
+        category_dicts, selected_category, selected_label = build_category_context(
+            all_products, request.GET.get("category", "")
+        )
         products = all_products
+        if selected_category:
+            products = products.filter(category__slug=selected_category)
 
-        if selected_category in valid_categories:
-            products = products.filter(category=selected_category)
-        else:
-            selected_category = ""
-
-        context["product_categories"] = [
-            {
-                "value": value,
-                "label": label,
-                "number": "{:02d}".format(index),
-                "count": all_products.filter(category=value).count(),
-                "product": all_products.filter(category=value).first(),
-            }
-            for index, (value, label) in enumerate(PRODUCT_CATEGORIES, start=1)
-        ]
+        context["product_categories"] = category_dicts
         context["hero_products"] = hero_products
         context["hero_slides"] = self.hero_items.all()
         context["selected_category"] = selected_category
-        context["selected_category_label"] = dict(PRODUCT_CATEGORIES).get(
-            selected_category,
-            "Shop the collection",
-        )
+        context["selected_category_label"] = selected_label
         context["products"] = products.order_by("-first_published_at")[:8]
         context["featured_products"] = (
             all_products.filter(is_featured=True)
@@ -138,7 +211,13 @@ class ProductPage(Page):
     subpage_types = []
     template = "home/product_page.html"
 
-    category = models.CharField(max_length=32, choices=PRODUCT_CATEGORIES)
+    category = models.ForeignKey(
+        "home.ProductCategory",
+        null=True,
+        blank=False,
+        on_delete=models.PROTECT,
+        related_name="products",
+    )
     sku = models.CharField(max_length=40, unique=True)
     price = models.DecimalField(
         max_digits=10,
@@ -186,10 +265,14 @@ class ProductPage(Page):
         ),
     ]
 
+    def get_category_display(self):
+        """Backwards-compatible label used by the storefront templates."""
+        return self.category.name if self.category_id else ""
+
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         parent_page = self.get_parent()
-        if parent_page:
+        if parent_page and self.category_id:
             context["related_products"] = (
                 ProductPage.objects.live()
                 .public()

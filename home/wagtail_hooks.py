@@ -1,7 +1,7 @@
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
-from .models import DeliveryZone, Order
+from .models import DeliveryZone, Order, ProductCategory
 
 
 class OrderViewSet(SnippetViewSet):
@@ -42,8 +42,16 @@ class DeliveryZoneViewSet(SnippetViewSet):
     list_display = ["name", "charge", "is_active", "sort_order"]
 
 
+class ProductCategoryViewSet(SnippetViewSet):
+    model = ProductCategory
+    icon = "tag"
+    menu_label = "Product categories"
+    list_display = ["name", "slug", "sort_order"]
+    search_fields = ["name"]
+
+
 class ShopViewSetGroup(SnippetViewSetGroup):
-    items = (OrderViewSet, DeliveryZoneViewSet)
+    items = (OrderViewSet, ProductCategoryViewSet, DeliveryZoneViewSet)
     menu_icon = "tag"
     menu_label = "Shop"
     menu_name = "shop"
