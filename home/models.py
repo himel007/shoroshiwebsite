@@ -363,3 +363,25 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product_title} ({self.sku}) × {self.quantity} = ৳{self.line_total}"
+
+
+class WishlistItem(models.Model):
+    """A product a logged-in customer has saved to their wishlist."""
+
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="shoroshi_wishlist",
+    )
+    product = models.ForeignKey(ProductPage, on_delete=models.CASCADE, related_name="+")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(fields=["user", "product"], name="unique_wishlist_product"),
+        ]
+
+    def __str__(self):
+        return f"{self.user} ♥ {self.product}"

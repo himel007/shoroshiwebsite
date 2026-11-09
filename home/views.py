@@ -9,11 +9,12 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
-from django.utils.http import url_has_allowed_host_and_scheme
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme, urlencode
 from django.views.decorators.http import require_POST
 
 from .forms import AccountDetailsForm, CheckoutForm, CustomerRegistrationForm
-from .models import DeliveryZone, HomePage, Order, OrderItem, PRODUCT_CATEGORIES, ProductPage
+from .models import DeliveryZone, HomePage, Order, OrderItem, PRODUCT_CATEGORIES, ProductPage, WishlistItem
 
 
 SORT_OPTIONS = [
@@ -228,6 +229,45 @@ def account_details(request):
     )
 
 
+def _safe_next(request, url):
+    """Return url if it points at this site, otherwise an empty string."""
+    if url and url_has_allowed_host_and_scheme(
+        url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+    ):
+        return url
+    return ""
+
+
+@login_required
+def wishlist(request):
+    items = (
+        WishlistItem.objects.filter(user=request.user, product__live=True)
+        .select_related("product", "product__product_image")
+    )
+    return TemplateResponse(
+        request,
+        "home/wishlist_page.html",
+        {"account_section": "wishlist", "wishlist_items": items},
+    )
+
+
+@require_POST
+def wishlist_toggle(request, product_id):
+    next_url = _safe_next(request, request.POST.get("next"))
+    if not request.user.is_authenticated:
+        product = ProductPage.objects.live().public().filter(pk=product_id).first()
+        return_to = next_url or (product.url if product else reverse("shop"))
+        return redirect(f"{reverse('account_login')}?{urlencode({'next': return_to})}")
+
+    product = get_object_or_404(ProductPage.objects.live().public(), pk=product_id)
+    # The filled/empty heart is the feedback; no flash message, because the
+    # product, shop and home pages do not display messages.
+    deleted, _ = WishlistItem.objects.filter(user=request.user, product=product).delete()
+    if not deleted:
+        WishlistItem.objects.get_or_create(user=request.user, product=product)
+    return redirect(next_url or "wishlist")
+
+
 class CustomerLoginView(LoginView):
     template_name = "home/account_login.html"
     redirect_authenticated_user = True
@@ -237,11 +277,7 @@ class CustomerLoginView(LoginView):
 def register(request):
     if request.user.is_authenticated:
         return redirect(request.GET.get("next") or "shop")
-    next_url = request.POST.get("next") or request.GET.get("next") or ""
-    if not url_has_allowed_host_and_scheme(
-        next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
-    ):
-        next_url = ""
+    next_url = _safe_next(request, request.POST.get("next") or request.GET.get("next"))
     if request.method == "POST":
         form = CustomerRegistrationForm(request.POST)
         if form.is_valid():

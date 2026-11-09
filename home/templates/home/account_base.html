@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
 <link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
 <link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-wishlist.css' %}">
 <link rel="stylesheet" href="{% static 'css/shoroshi-cart.css' %}">
 <link rel="stylesheet" href="{% static 'css/shoroshi-checkout.css' %}">
 <link rel="stylesheet" href="{% static 'css/shoroshi-account.css' %}">
@@ -34,6 +35,7 @@
 						<nav class="myaccount-tab-menu shoroshi-account-menu" aria-label="My account">
 							<a href="{% url 'account_dashboard' %}"{% if account_section == "dashboard" %} class="active" aria-current="page"{% endif %}><i class="icon-home"></i> Dashboard</a>
 							<a href="{% url 'account_orders' %}"{% if account_section == "orders" %} class="active" aria-current="page"{% endif %}><i class="icon-bag2"></i> Orders</a>
+							<a href="{% url 'wishlist' %}"{% if account_section == "wishlist" %} class="active" aria-current="page"{% endif %}><i class="icon-heart"></i> Wishlist</a>
 							<a href="{% url 'account_details' %}"{% if account_section == "details" %} class="active" aria-current="page"{% endif %}><i class="icon-user"></i> Account details</a>
 							<form action="{% url 'account_logout' %}" method="post">{% csrf_token %}<button type="submit"><i class="icon-exit"></i> Log out</button></form>
 						</nav>
