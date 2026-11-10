@@ -51,19 +51,35 @@ body.template-shop {
 	margin-top: 20px;
 }
 
+/* Keep the mosaic layout. Proportional aspect ratios make a narrow card and a
+   wide card (twice the width) come out the SAME height, so rows line up while
+   each card keeps a natural shape. Rounded corners + drop shadow on top. */
 .shoroshi-shop-category {
 	position: relative;
 	display: block;
 	min-width: 0;
-	min-height: 260px;
+	width: 100%;
+	aspect-ratio: 3 / 4;
 	overflow: hidden;
 	color: var(--shoroshi-paper);
 	background: var(--shoroshi-ivory);
-	aspect-ratio: 0.9;
+	border-radius: 16px;
+	box-shadow: 0 10px 28px rgba(32, 24, 20, 0.18);
+	transition: transform 300ms ease, box-shadow 300ms ease;
 }
 
+/* A wide (double-width) card at 3:2 is the same height as a 3:4 narrow one. */
 .shoroshi-shop-category--wide {
-	aspect-ratio: 1.75;
+	aspect-ratio: 3 / 2;
+}
+
+.shoroshi-shop-category:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 18px 40px rgba(32, 24, 20, 0.26);
+}
+
+.shoroshi-shop-category-grid > [class*="col-"] {
+	margin-bottom: 24px;
 }
 
 .shoroshi-shop-category::after {
@@ -144,19 +160,24 @@ body.template-shop {
 	margin: 0;
 	color: #695b50;
 	font-size: 12px;
+	white-space: nowrap;
 }
 
 .shoroshi-shop-sort select {
+	height: 36px;
 	max-width: 220px;
-	padding: 8px 26px 8px 10px;
+	padding: 0 26px 0 12px;
 	border: 1px solid var(--shoroshi-line);
 	color: var(--shoroshi-brown);
 	background: #fff;
 	font: inherit;
-	font-size: 12px;
+	font-size: 13px;
 }
 
 .shoroshi-shop-sort button {
+	display: grid;
+	place-items: center;
+	flex: 0 0 auto;
 	width: 36px;
 	height: 36px;
 	border: 0;
@@ -172,8 +193,8 @@ body.template-shop {
 
 .shoroshi-shop-view-menu a {
 	display: grid;
-	width: 32px;
-	height: 32px;
+	width: 36px;
+	height: 36px;
 	place-items: center;
 	border: 1px solid transparent;
 	color: var(--shoroshi-brown);
@@ -196,11 +217,13 @@ body.template-shop {
 .shoroshi-shop-filter summary {
 	display: flex;
 	align-items: center;
+	height: 36px;
 	gap: 8px;
 	color: var(--shoroshi-brown);
 	cursor: pointer;
-	font-size: 12px;
+	font-size: 13px;
 	list-style: none;
+	white-space: nowrap;
 }
 
 .shoroshi-shop-filter summary::-webkit-details-marker {

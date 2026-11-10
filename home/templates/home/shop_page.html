@@ -63,7 +63,7 @@
 
 	<section class="product-wrapper section-space--ptb_120 shoroshi-shop-products" id="shop-products">
 		<div class="container">
-			<div class="row align-items-end shoroshi-shop-toolbar">
+			<div class="row align-items-center shoroshi-shop-toolbar">
 				<div class="col-lg-6 col-md-6"><p class="shoroshi-shop-result-count">{% if page_obj.paginator.count %}Showing {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ page_obj.paginator.count }} products{% else %}Browse our collections{% endif %}</p></div>
 				<div class="col-lg-6 col-md-6 shoroshi-shop-toolbar-tools">
 					<form class="shoroshi-shop-sort" action="{% url 'shop' %}" method="get">
