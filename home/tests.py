@@ -103,7 +103,6 @@ class WagtailSetupSmokeTests(TestCase):
         self.assertContains(response, 'aria-label="Show 3 columns"')
         self.assertContains(response, 'aria-label="Show 5 columns"')
         self.assertContains(response, "All Collections")
-        self.assertContains(response, "Wishlist")
         self.assertContains(response, "Filter by collection")
         self.assertContains(response, "Explore Shoroshi Collections")
         self.assertContains(response, "Muslin Silk")
@@ -113,7 +112,6 @@ class WagtailSetupSmokeTests(TestCase):
         self.assertContains(response, "Browse our collections")
         self.assertNotContains(response, "No products yet")
         self.assertContains(response, "No products found in this collection yet.")
-        self.assertContains(response, "Wishlist")
 
     def test_cart_page_renders_empty_state(self):
         response = self.client.get("/cart/")
@@ -176,49 +174,10 @@ class WagtailSetupSmokeTests(TestCase):
         self.assertNotContains(self.client.get(product.url), "Add to bag")
         self.assertContains(self.client.get("/cart/"), "Your bag is empty")
 
-    def test_wishlist_page_renders_empty_state(self):
-        response = self.client.get("/wishlist/")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Your wishlist is empty")
-        self.assertContains(response, "Shop collections")
-
-    def test_wishlist_adds_and_removes_published_product(self):
-        homepage = HomePage.objects.get(depth=2)
-        image_buffer = BytesIO()
-        PillowImage.new("RGB", (8, 8), color="red").save(image_buffer, format="PNG")
-        image = get_image_model().objects.create(
-            title="Wishlist test product",
-            file=SimpleUploadedFile("wishlist-test.png", image_buffer.getvalue(), content_type="image/png"),
-        )
-        product = ProductPage(
-            title="Wishlist Test Saree",
-            slug="wishlist-test-saree",
-            category="muslin-silk",
-            sku="WISH-001",
-            price=Decimal("12500.00"),
-            product_image=image,
-            description="Verified wishlist test description.",
-            fabric_details="Test fabric",
-            colour="Wine",
-            work_details="Test detailing",
-            care_instructions="Test care instructions",
-            is_available=True,
-        )
-        homepage.add_child(instance=product)
-        product.save_revision().publish()
-
-        add_response = self.client.post(f"/wishlist/add/{product.pk}/")
-        self.assertEqual(add_response.status_code, 302)
-        self.client.post(f"/wishlist/add/{product.pk}/")
-        self.assertEqual(self.client.session["shoroshi_wishlist"], [product.pk])
-        wishlist_response = self.client.get("/wishlist/")
-        self.assertContains(wishlist_response, "Wishlist Test Saree")
-        self.assertContains(wishlist_response, "৳12,500.00")
-
-        remove_response = self.client.post(f"/wishlist/remove/{product.pk}/")
-        self.assertEqual(remove_response.status_code, 302)
-        self.assertContains(self.client.get("/wishlist/"), "Your wishlist is empty")
+    # The wishlist is now login-gated and database-backed; its behaviour is
+    # covered comprehensively in home/test_wishlist.py (empty state, toggle
+    # add/remove, availability, login redirect, etc.). The old session-based
+    # smoke tests that lived here were removed to avoid duplication.
 
     def test_import_shoroshi_jpgs_into_wagtail_collection_idempotently(self):
         with TemporaryDirectory() as source_directory:

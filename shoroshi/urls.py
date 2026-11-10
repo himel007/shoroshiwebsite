@@ -25,6 +25,10 @@ urlpatterns = [
     path("wishlist/toggle/<int:product_id>/", home_views.wishlist_toggle, name="wishlist_toggle"),
     path("checkout/", home_views.checkout, name="checkout"),
     path("checkout/complete/<int:order_id>/", home_views.checkout_complete, name="checkout_complete"),
+    # Social login (Google) by django-allauth. Included BEFORE the custom
+    # account/* routes so the storefront's own account_login / account_logout
+    # names keep priority in reverse().
+    path("accounts/", include("allauth.urls")),
     path("account/", home_views.account_dashboard, name="account_dashboard"),
     path("account/orders/", home_views.account_orders, name="account_orders"),
     path("account/orders/<int:order_id>/", home_views.account_order_detail, name="account_order_detail"),

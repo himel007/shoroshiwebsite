@@ -68,6 +68,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
 ]
 
 MIDDLEWARE = [
@@ -78,6 +83,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
@@ -209,8 +215,40 @@ WAGTAILADMIN_BASE_URL = "http://example.com"
 WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'txt', 'xlsx', 'zip']
 
 # Storefront customer accounts (Wagtail admin keeps its own login at /admin/login/).
-LOGIN_URL = "account_login"
+# Explicit path (not the name) so it is unambiguous despite allauth's same-named route.
+LOGIN_URL = "/account/login/"
 LOGIN_REDIRECT_URL = "shop"
+
+# --- Social login (Google) via django-allauth ---
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+# Where allauth sends users after social login / logout.
+LOGIN_REDIRECT_URL = "shop"
+ACCOUNT_LOGOUT_REDIRECT_URL = "shop"
+
+# No transactional email backend is configured, so don't gate accounts on it.
+ACCOUNT_EMAIL_VERIFICATION = "none"
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
+# If a Google email matches an existing account, link them automatically.
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_LOGIN_ON_GET = True  # go straight to Google without an interstitial page
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": os.environ.get("GOOGLE_OAUTH_CLIENT_ID", ""),
+            "secret": os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET", ""),
+            "key": "",
+        },
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {"access_type": "online"},
+    }
+}
 
 # Steadfast Courier API (https://portal.packzy.com/api/v1)
 # Set these in the environment; never commit real keys.
@@ -219,3 +257,7 @@ STEADFAST_SECRET_KEY = os.environ.get("STEADFAST_SECRET_KEY", "")
 STEADFAST_BASE_URL = os.environ.get(
     "STEADFAST_BASE_URL", "https://portal.packzy.com/api/v1"
 )
+
+# Google OAuth credentials (from Google Cloud Console). Set in .env, never commit.
+GOOGLE_OAUTH_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID", "")
+GOOGLE_OAUTH_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET", "")

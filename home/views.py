@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -348,10 +349,19 @@ def wishlist_toggle(request, product_id):
     return redirect(next_url or "wishlist")
 
 
+def _google_enabled():
+    return bool(settings.GOOGLE_OAUTH_CLIENT_ID and settings.GOOGLE_OAUTH_CLIENT_SECRET)
+
+
 class CustomerLoginView(LoginView):
     template_name = "home/account_login.html"
     redirect_authenticated_user = True
     extra_context = {"active_tab": "login"}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["google_enabled"] = _google_enabled()
+        return context
 
 
 def register(request):
@@ -362,14 +372,15 @@ def register(request):
         form = CustomerRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
             return redirect(next_url or "shop")
     else:
         form = CustomerRegistrationForm()
     return TemplateResponse(
         request,
         "home/account_login.html",
-        {"form": form, "next": next_url, "active_tab": "register"},
+        {"form": form, "next": next_url, "active_tab": "register",
+         "google_enabled": _google_enabled()},
     )
 
 
