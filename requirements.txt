@@ -1,3 +1,4 @@
 Django>=4.2,<5.0
 wagtail>=6.4,<6.5
 django-allauth==65.21.1
+PyJWT[crypto]==2.15.1
