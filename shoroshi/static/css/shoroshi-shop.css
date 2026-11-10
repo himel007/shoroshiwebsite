@@ -775,3 +775,28 @@ body.template-product {
         padding-top: 0;
     }
 }
+/* --- Product photo gallery (cover + thumbnails) --- */
+.shoroshi-product-gallery .shoroshi-detail-image { position: relative; }
+.shoroshi-product-gallery .shoroshi-gallery-main { display: none; width: 100%; }
+.shoroshi-product-gallery .shoroshi-gallery-main.is-active { display: block; }
+.shoroshi-gallery-thumbs {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 0;
+    margin: 16px 0 0;
+}
+.shoroshi-gallery-thumb {
+    padding: 0;
+    border: 2px solid transparent;
+    background: none;
+    cursor: pointer;
+    border-radius: 6px;
+    overflow: hidden;
+    line-height: 0;
+    transition: border-color 0.15s ease;
+}
+.shoroshi-gallery-thumb img { width: 72px; height: 90px; object-fit: cover; display: block; }
+.shoroshi-gallery-thumb:hover { border-color: #c9a24b; }
+.shoroshi-gallery-thumb.is-active { border-color: #1a1a1a; }

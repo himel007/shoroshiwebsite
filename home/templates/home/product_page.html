@@ -47,9 +47,23 @@
                     <div class="product-details-left">
                         <div class="product-details-images-2 shoroshi-product-gallery">
                             <div class="easyzoom-style"><div class="shoroshi-detail-image">
-                                {% image page.product_image fill-1000x1250 as detail_image %}
-                                <img src="{{ detail_image.url }}" class="img-fluid" alt="{{ page.product_image.title }}">
+                                {% for shot in page.gallery %}
+                                    {% image shot.image fill-1000x1250 as detail_image %}
+                                    <img src="{{ detail_image.url }}" class="img-fluid shoroshi-gallery-main{% if forloop.first %} is-active{% endif %}" data-gallery-index="{{ forloop.counter0 }}" alt="{{ shot.caption }}">
+                                {% endfor %}
                             </div></div>
+                            {% if page.gallery|length > 1 %}
+                            <ul class="shoroshi-gallery-thumbs" role="tablist" aria-label="Product photos">
+                                {% for shot in page.gallery %}
+                                    {% image shot.image fill-150x188 as thumb_image %}
+                                    <li>
+                                        <button type="button" class="shoroshi-gallery-thumb{% if forloop.first %} is-active{% endif %}" data-gallery-target="{{ forloop.counter0 }}" aria-label="Show photo {{ forloop.counter }}">
+                                            <img src="{{ thumb_image.url }}" alt="{{ shot.caption }}">
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -129,4 +143,24 @@
 {% block extra_js %}
 <script src="{% static 'helendo/assets/js/vendor/jquery-3.5.1.min.js' %}"></script>
 <script src="{% static 'helendo/assets/js/vendor/bootstrap.min.js' %}"></script>
+<script>
+(function () {
+    var gallery = document.querySelector(".shoroshi-product-gallery");
+    if (!gallery) return;
+    var mains = gallery.querySelectorAll(".shoroshi-gallery-main");
+    var thumbs = gallery.querySelectorAll(".shoroshi-gallery-thumb");
+    if (mains.length < 2) return;
+    function show(index) {
+        mains.forEach(function (img) {
+            img.classList.toggle("is-active", img.dataset.galleryIndex === String(index));
+        });
+        thumbs.forEach(function (btn) {
+            btn.classList.toggle("is-active", btn.dataset.galleryTarget === String(index));
+        });
+    }
+    thumbs.forEach(function (btn) {
+        btn.addEventListener("click", function () { show(btn.dataset.galleryTarget); });
+    });
+})();
+</script>
 {% endblock %}

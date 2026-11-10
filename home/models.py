@@ -273,7 +273,22 @@ class ProductPage(Page):
             ],
             heading="Product information",
         ),
+        InlinePanel(
+            "gallery_images",
+            label="Additional photo",
+            help_text="Extra photos shown on the product page, in addition to the cover image above.",
+        ),
     ]
+
+    @property
+    def gallery(self):
+        """The cover image followed by every published gallery photo, as a list
+        of {'image', 'caption'} dicts for the product-page carousel."""
+        items = [{"image": self.product_image, "caption": self.title}]
+        for extra in self.gallery_images.all():
+            if extra.image_id:
+                items.append({"image": extra.image, "caption": extra.caption or self.title})
+        return items
 
     @property
     def in_stock(self):
@@ -304,6 +319,29 @@ class ProductPage(Page):
         else:
             context["related_products"] = ProductPage.objects.none()
         return context
+
+
+class ProductGalleryImage(Orderable):
+    """An additional photo for a ProductPage, beyond its cover image."""
+
+    id = models.AutoField(primary_key=True)
+    page = ParentalKey(
+        ProductPage, on_delete=models.CASCADE, related_name="gallery_images"
+    )
+    image = models.ForeignKey(
+        get_image_model_string(),
+        on_delete=models.CASCADE,
+        related_name="+",
+    )
+    caption = models.CharField(max_length=120, blank=True)
+
+    panels = [
+        FieldPanel("image"),
+        FieldPanel("caption"),
+    ]
+
+    def __str__(self):
+        return f"{self.page.title} photo {self.sort_order or ''}".strip()
 
 
 class JournalPage(Page):
