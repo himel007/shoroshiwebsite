@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags %}
+
+{% block body_class %}template-cart template-checkout template-privacy{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/vendor/linearicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'helendo/assets/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-shop.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-cart.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-checkout.css' %}">
+<link rel="stylesheet" href="{% static 'css/shoroshi-content.css' %}">
+{% endblock %}
+
+{% block title %}{{ page.title }} | SHOROSHI{% endblock %}
+
+{% block content %}
+{% include "home/includes/store_header.html" %}
+
+<main class="shoroshi-cart-page">
+	<div class="breadcrumb-area shoroshi-cart-breadcrumb">
+		<div class="container"><div class="row breadcrumb_box align-items-center">
+			<div class="col-6"><h1 class="breadcrumb-title">{{ page.title }}</h1></div>
+			<div class="col-6"><ul class="breadcrumb-list text-end"><li class="breadcrumb-item"><a href="/">Home</a></li><li class="breadcrumb-item active">{{ page.title }}</li></ul></div>
+		</div></div>
+	</div>
+
+	<section class="section-space--ptb_90">
+		<div class="container">
+			<div class="row"><div class="col-lg-9 m-auto">
+				{% if page.intro %}<p class="shoroshi-content-intro text-center">{{ page.intro }}</p>{% endif %}
+				<div class="shoroshi-content-body">{{ page.body|richtext }}</div>
+			</div></div>
+		</div>
+	</section>
+</main>
+
+{% include "home/includes/store_footer.html" %}
+{% endblock %}

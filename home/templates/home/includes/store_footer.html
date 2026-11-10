@@ -6,6 +6,7 @@
 	<nav class="shoroshi-footer-links" aria-label="Footer">
 		{% slugurl 'faq' as faq_url %}{% if faq_url %}<a href="{{ faq_url }}">FAQ</a>{% endif %}
 		{% slugurl 'contact' as contact_url %}{% if contact_url %}<a href="{{ contact_url }}">Contact</a>{% endif %}
+		{% slugurl 'privacy' as privacy_url %}{% if privacy_url %}<a href="{{ privacy_url }}">Privacy Policy</a>{% endif %}
 		<a href="{% url 'track_order' %}">Track order</a>
 	</nav>
 

@@ -659,4 +659,30 @@ class FAQItem(Orderable):
     def __str__(self):
         return self.question
 
+
+class PrivacyPolicyPage(Page):
+    parent_page_types = ["home.HomePage"]
+    subpage_types = []
+    template = "home/privacy_page.html"
+    max_count = 1
+
+    intro = models.TextField(
+        blank=True,
+        default="PLACEHOLDER — add a short introduction for the privacy policy in Wagtail admin.",
+    )
+    body = RichTextField(
+        blank=True,
+        default=(
+            "<p>PLACEHOLDER — replace this with your real privacy policy in Wagtail admin. "
+            "Describe what personal data you collect, how you use it, how you store it, "
+            "and how customers can contact you about their data.</p>"
+        ),
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel("intro"),
+        FieldPanel("body"),
+    ]
+
+
 from .settings_models import SiteContactSettings  # noqa: E402,F401
