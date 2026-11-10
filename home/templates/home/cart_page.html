@@ -29,7 +29,7 @@
 			{% if cart_items %}
 				<div class="table-content table-responsive cart-table-content header-color-gray shoroshi-cart-table">
 					<table>
-						<thead><tr class="bg-gray"><th>Product</th><th>Price</th><th>Quantity</th><th>Total</th><th><span class="visually-hidden">Remove</span></th></tr></thead>
+						<thead><tr class="bg-gray"><th>Product</th><th>Price</th><th>Quantity</th><th>Total</th></tr></thead>
 						<tbody>
 							{% for item in cart_items %}
 								<tr>
@@ -37,16 +37,15 @@
 										<a class="product-img" href="{% pageurl item.product %}">{% image item.product.product_image fill-120x150 as cart_image %}<img src="{{ cart_image.url }}" alt="{{ item.product.product_image.title }}"></a>
 										<div><a href="{% pageurl item.product %}">{{ item.product.title }}</a><small>{{ item.product.get_category_display }} · {{ item.product.sku }}</small></div>
 									</td>
-									<td class="product-price">৳{{ item.product.price|floatformat:2|intcomma }}</td>
-									<td><form class="shoroshi-cart-quantity" action="{% url 'cart_update' item.product.pk %}" method="post">{% csrf_token %}<label class="visually-hidden" for="quantity-{{ item.product.pk }}">Quantity for {{ item.product.title }}</label><input id="quantity-{{ item.product.pk }}" type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99"><button type="submit" class="shoroshi-cart-update-btn">Update</button></form></td>
-									<td class="price-total">৳{{ item.line_total|floatformat:2|intcomma }}</td>
-									<td class="product-remove"><form action="{% url 'cart_remove' item.product.pk %}" method="post">{% csrf_token %}<button type="submit" aria-label="Remove {{ item.product.title }}"><i class="icon-cross2"></i></button></form></td>
-								</tr>
+									<td class="product-price" data-label="Price">৳{{ item.product.price|floatformat:2|intcomma }}</td>
+									<td data-label="Quantity"><form class="shoroshi-cart-quantity" action="{% url 'cart_update' item.product.pk %}" method="post">{% csrf_token %}<label class="visually-hidden" for="quantity-{{ item.product.pk }}">Quantity for {{ item.product.title }}</label><div class="shoroshi-qty-control"><button type="button" class="shoroshi-qty-btn" data-step="-1" aria-label="Decrease quantity for {{ item.product.title }}">&minus;</button><input id="quantity-{{ item.product.pk }}" type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99"><button type="button" class="shoroshi-qty-btn" data-step="1" aria-label="Increase quantity for {{ item.product.title }}">+</button></div><button type="submit" class="shoroshi-cart-update-btn">Update</button></form></td>
+									<td class="price-total" data-label="Total">৳{{ item.line_total|floatformat:2|intcomma }}</td>
+																	</tr>
 							{% endfor %}
 						</tbody>
 					</table>
 				</div>
-				<div class="shoroshi-cart-summary"><p>{{ cart_count }} item{{ cart_count|pluralize }}</p><dl><dt>Subtotal</dt><dd>৳{{ subtotal|floatformat:2|intcomma }}</dd></dl><p class="shoroshi-cart-delivery-note">Delivery charge is added at checkout.</p><a class="btn btn--md btn--black btn--full" href="{% url 'checkout' %}">Proceed to checkout</a><a class="shoroshi-cart-continue" href="{% url 'shop' %}">Continue shopping</a></div>
+				<div class="shoroshi-cart-summary"><p>{{ cart_count }} item{{ cart_count|pluralize }}</p><dl><dt>Subtotal</dt><dd>৳{{ subtotal|floatformat:2|intcomma }}</dd></dl><p class="shoroshi-cart-delivery-note">Delivery charge is added at checkout.</p>{% if emi_from_monthly %}<p class="shoroshi-cart-emi-note"><strong>EMI available</strong> — from ৳{{ emi_from_monthly|floatformat:2|intcomma }}/month. 30% advance, rest over 3–4 months. Choose at checkout.</p>{% endif %}<a class="btn btn--md btn--black btn--full" href="{% url 'checkout' %}">Proceed to checkout</a><a class="shoroshi-cart-continue" href="{% url 'shop' %}">Continue shopping</a></div>
 			{% else %}
 				<div class="shoroshi-cart-empty"><h2>Your bag is empty</h2><p>Explore the Shoroshi collections to find an item.</p><a class="btn btn--md btn--black" href="{% url 'shop' %}">Continue shopping <i class="icon-arrow-right"></i></a></div>
 			{% endif %}
@@ -67,12 +66,29 @@
 			if (button) {
 				button.hidden = true;
 			}
-			input.addEventListener('change', function () {
-				var value = parseInt(input.value, 10);
+			function clamp(value) {
 				if (isNaN(value) || value < 1) {
-					input.value = 1;
+					return 1;
 				}
+				if (value > 99) {
+					return 99;
+				}
+				return value;
+			}
+			input.addEventListener('change', function () {
+				input.value = clamp(parseInt(input.value, 10));
 				form.submit();
+			});
+			form.querySelectorAll('.shoroshi-qty-btn').forEach(function (btn) {
+				btn.addEventListener('click', function () {
+					var step = parseInt(btn.getAttribute('data-step'), 10) || 0;
+					var next = clamp(parseInt(input.value, 10) + step);
+					if (next === parseInt(input.value, 10)) {
+						return;
+					}
+					input.value = next;
+					form.submit();
+				});
 			});
 		});
 	})();

@@ -16,7 +16,14 @@
 			<li><span>Delivery ({{ order.delivery_zone_name }})</span><span>{% if order.delivery_charge %}৳{{ order.delivery_charge|floatformat:2|intcomma }}{% else %}Free{% endif %}</span></li>
 			<li class="shoroshi-complete__total"><strong>Total</strong><strong>৳{{ order.total|floatformat:2|intcomma }}</strong></li>
 		</ul>
-		<p>Payment: {{ order.get_payment_method_display }}</p>
+		<p>Payment: {% if order.is_emi %}EMI (installments){% else %}{{ order.get_payment_method_display }}{% endif %}</p>
+		{% if order.is_emi %}
+			<dl class="shoroshi-emi__breakdown shoroshi-emi__breakdown--summary">
+				<div><dt>Advance (30%) — paid at order</dt><dd>৳{{ order.emi_advance|floatformat:2|intcomma }}</dd></div>
+				<div><dt>{{ order.emi_months }} monthly payments of</dt><dd>৳{{ order.emi_monthly|floatformat:2|intcomma }}</dd></div>
+			</dl>
+			<p class="shoroshi-help">Your order ships once 90% of the product value (৳{{ order.emi_delivery_amount|floatformat:2|intcomma }}) has been paid. Delivery charge is collected on delivery.</p>
+		{% endif %}
 	</div>
 	<div class="shoroshi-order-summary">
 		<h2 class="shoroshi-checkout-heading">Delivering to</h2>
@@ -28,5 +35,9 @@
 			{{ order.phone }}
 		</address>
 		{% if order.notes %}<p class="shoroshi-help"><strong>Your note:</strong> {{ order.notes }}</p>{% endif %}
+		{% if order.is_dispatched %}
+			<p class="shoroshi-courier"><strong>Courier:</strong> Steadfast{% if order.courier_tracking_code %} · Tracking {{ order.courier_tracking_code }}{% endif %}<br>
+			<strong>Delivery status:</strong> <span class="shoroshi-courier__status">{{ order.courier_status_label }}</span></p>
+		{% endif %}
 	</div>
 </div>

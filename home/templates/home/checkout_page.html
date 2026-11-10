@@ -40,6 +40,8 @@
 				</div>
 			{% endif %}
 
+			{{ bd_districts|json_script:"bd-districts-data" }}
+		{{ delivery_rules|json_script:"delivery-rules-data" }}
 			<form class="checkout-wrap" method="post" action="{% url 'checkout' %}" novalidate>
 				{% csrf_token %}
 				{% if form.non_field_errors %}<div class="shoroshi-notice shoroshi-notice--warning" role="alert">{{ form.non_field_errors }}</div>{% endif %}
@@ -60,16 +62,17 @@
 										{{ form.address_line2 }}
 									</div>
 								</div>
-								<div class="col-md-6">{% include "home/includes/form_field.html" with field=form.city %}</div>
 								<div class="col-md-6">{% include "home/includes/form_field.html" with field=form.district %}</div>
+								<div class="col-md-6">{% include "home/includes/form_field.html" with field=form.city %}</div>
 								<div class="col-md-6">{% include "home/includes/form_field.html" with field=form.postcode %}</div>
 							</div>
 
-							<fieldset class="shoroshi-zones mb-25{% if form.delivery_zone.errors %} has-error{% endif %}">
+							<fieldset class="shoroshi-zones shoroshi-zones--auto mb-25{% if form.delivery_zone.errors %} has-error{% endif %}">
 								<legend class="shoroshi-checkout-heading">Delivery area <span class="required" aria-hidden="true">*</span></legend>
+								<p class="shoroshi-zones__hint">Set automatically from your district and area above.</p>
 								{% for zone in delivery_zones %}
 									<label class="shoroshi-zone">
-										<input type="radio" name="{{ form.delivery_zone.html_name }}" value="{{ zone.pk }}" data-charge="{{ zone.charge }}"{% if form.delivery_zone.value|stringformat:"s" == zone.pk|stringformat:"s" %} checked{% endif %} required>
+										<input type="radio" tabindex="-1" aria-readonly="true" name="{{ form.delivery_zone.html_name }}" value="{{ zone.pk }}" data-charge="{{ zone.charge }}" data-zone-name="{{ zone.name }}"{% if form.delivery_zone.value|stringformat:"s" == zone.pk|stringformat:"s" %} checked{% endif %} required>
 										<span class="shoroshi-zone__name">{{ zone.name }}{% if zone.description %}<small>{{ zone.description }}</small>{% endif %}</span>
 										<span class="shoroshi-zone__charge">{% if zone.charge %}৳{{ zone.charge|floatformat:2|intcomma }}{% else %}Free{% endif %}</span>
 									</label>
@@ -108,10 +111,34 @@
 										<div class="your-order-info order-subtotal"><ul><li><strong>Delivery</strong> <span id="checkout-delivery">Select an area</span></li></ul></div>
 										<div class="your-order-info order-total"><ul><li><strong>Total</strong> <span id="checkout-total">৳{{ subtotal|floatformat:2|intcomma }}</span></li></ul></div>
 
-										<div class="payment-area mt-30">
-											<div class="single-payment shoroshi-payment">
-												<label><input type="radio" name="payment_method" value="cod" checked> <strong>Cash on Delivery</strong></label>
-												<p>Pay in cash when your order is delivered.</p>
+										<div class="payment-area mt-30 shoroshi-plan" data-subtotal="{{ subtotal }}">
+											<h3 class="shoroshi-checkout-heading">Payment plan</h3>
+											{% for value, label in form.payment_plan.field.choices %}
+												<label class="shoroshi-plan__option">
+													<input type="radio" name="{{ form.payment_plan.html_name }}" value="{{ value }}"{% if form.payment_plan.value|default:'full'|stringformat:'s' == value|stringformat:'s' %} checked{% endif %}>
+													<span class="shoroshi-plan__body">
+														<strong>{% if value == 'full' %}Pay in full (Cash on Delivery){% else %}EMI — pay in installments{% endif %}</strong>
+														<small>{% if value == 'full' %}Pay in cash when your order is delivered.{% else %}30% advance now, the rest over 3 or 4 months. No interest.{% endif %}</small>
+													</span>
+												</label>
+											{% endfor %}
+
+											<div class="shoroshi-emi" data-emi-panel hidden>
+												<p class="shoroshi-emi__label">Choose your installment period:</p>
+												<div class="shoroshi-emi__months">
+													{% for value, label in form.emi_months.field.choices %}
+														<label class="shoroshi-emi__month">
+															<input type="radio" name="{{ form.emi_months.html_name }}" value="{{ value }}"{% if form.emi_months.value|stringformat:'s' == value|stringformat:'s' %} checked{% endif %}>
+															<span>{{ label }}</span>
+														</label>
+													{% endfor %}
+												</div>
+												{% for error in form.emi_months.errors %}<p class="shoroshi-field-error">{{ error }}</p>{% endfor %}
+												<dl class="shoroshi-emi__breakdown" data-emi-breakdown>
+													<div><dt>Advance (30%) — due now</dt><dd data-emi-advance>—</dd></div>
+													<div><dt data-emi-monthly-label>Monthly installment</dt><dd data-emi-monthly>—</dd></div>
+												</dl>
+												<p class="shoroshi-emi__hint">We ship your order once 90% of the product value (৳<span data-emi-threshold>—</span>) has been paid. Delivery charge is collected on delivery.</p>
 											</div>
 										</div>
 									</div>
@@ -145,7 +172,11 @@
 	};
 	var update = function () {
 		var selected = document.querySelector('input[name="delivery_zone"]:checked');
-		if (!selected) { return; }
+		if (!selected) {
+			deliveryEl.textContent = "Select district & area";
+			totalEl.textContent = fmt(subtotal);
+			return;
+		}
 		var charge = parseFloat(selected.dataset.charge) || 0;
 		deliveryEl.textContent = charge ? fmt(charge) : "Free";
 		totalEl.textContent = fmt(subtotal + charge);
@@ -154,6 +185,135 @@
 		input.addEventListener("change", update);
 	});
 	update();
+
+	// EMI plan: toggle panel + live breakdown
+	var planWrap = document.querySelector(".shoroshi-plan");
+	if (!planWrap) { return; }
+	var emiBase = parseFloat(planWrap.dataset.subtotal) || 0;
+	var emiPanel = planWrap.querySelector("[data-emi-panel]");
+	var advanceEl = planWrap.querySelector("[data-emi-advance]");
+	var monthlyEl = planWrap.querySelector("[data-emi-monthly]");
+	var monthlyLabelEl = planWrap.querySelector("[data-emi-monthly-label]");
+	var thresholdEl = planWrap.querySelector("[data-emi-threshold]");
+	var round2 = function (n) { return Math.round(n * 100) / 100; };
+
+	var renderEmi = function () {
+		var monthsInput = planWrap.querySelector('input[name="emi_months"]:checked');
+		if (thresholdEl) { thresholdEl.textContent = fmt(round2(emiBase * 0.9)).slice(1); }
+		if (!monthsInput) {
+			if (advanceEl) { advanceEl.textContent = "—"; }
+			if (monthlyEl) { monthlyEl.textContent = "—"; }
+			return;
+		}
+		var months = parseInt(monthsInput.value, 10);
+		var monthly = round2(emiBase * 0.7 / months);
+		var advance = round2(emiBase - monthly * months);
+		if (advanceEl) { advanceEl.textContent = fmt(advance); }
+		if (monthlyEl) { monthlyEl.textContent = fmt(monthly); }
+		if (monthlyLabelEl) { monthlyLabelEl.textContent = months + " monthly payments of"; }
+	};
+
+	var togglePlan = function () {
+		var plan = planWrap.querySelector('input[name="payment_plan"]:checked');
+		var isEmi = plan && plan.value === "emi";
+		if (emiPanel) { emiPanel.hidden = !isEmi; }
+		if (isEmi) { renderEmi(); }
+	};
+
+	planWrap.querySelectorAll('input[name="payment_plan"]').forEach(function (input) {
+		input.addEventListener("change", togglePlan);
+	});
+	planWrap.querySelectorAll('input[name="emi_months"]').forEach(function (input) {
+		input.addEventListener("change", renderEmi);
+	});
+	togglePlan();
+})();
+
+// Dependent District -> Area/Upazila dropdowns
+(function () {
+	var dataEl = document.getElementById("bd-districts-data");
+	var districtSel = document.querySelector("[data-district-select]");
+	var areaSel = document.querySelector("[data-area-select]");
+	if (!dataEl || !districtSel || !areaSel) { return; }
+
+	var areasByDistrict;
+	try { areasByDistrict = JSON.parse(dataEl.textContent); } catch (e) { return; }
+
+	// Delivery-zone auto-selection rules (district/area -> zone).
+	var rules = null;
+	var rulesEl = document.getElementById("delivery-rules-data");
+	if (rulesEl) { try { rules = JSON.parse(rulesEl.textContent); } catch (e) { rules = null; } }
+	var cityAreas = rules ? new Set(rules.dhaka_city_areas) : new Set();
+	var subareaDistricts = rules ? new Set(rules.subarea_districts) : new Set();
+
+	function zoneNameFor(district, area) {
+		if (!rules) { return null; }
+		if (district === "Dhaka") {
+			return cityAreas.has(area) ? rules.zones.inside : rules.zones.subarea;
+		}
+		if (subareaDistricts.has(district)) { return rules.zones.subarea; }
+		return rules.zones.outside;
+	}
+
+	function clearZone() {
+		var radios = document.querySelectorAll('input[name="delivery_zone"]');
+		radios.forEach(function (r) { r.checked = false; });
+		if (radios[0]) { radios[0].dispatchEvent(new Event("change", { bubbles: true })); }
+	}
+
+	function autoSelectZone() {
+		var district = districtSel.value;
+		var area = areaSel.value;
+		if (!district || !area) { clearZone(); return; }
+		var name = zoneNameFor(district, area);
+		if (!name) { return; }
+		var matched = false;
+		document.querySelectorAll('input[name="delivery_zone"]').forEach(function (radio) {
+			if (radio.getAttribute("data-zone-name") === name && !radio.disabled) {
+				if (!radio.checked) {
+					radio.checked = true;
+					radio.dispatchEvent(new Event("change", { bubbles: true }));
+				}
+				matched = true;
+			}
+		});
+		return matched;
+	}
+
+	// Remember the currently-selected area so we can restore it after an error reload.
+	var selectedArea = areaSel.value;
+
+	function fillAreas(keepValue) {
+		var district = districtSel.value;
+		var areas = areasByDistrict[district] || [];
+		areaSel.innerHTML = "";
+		var placeholder = document.createElement("option");
+		placeholder.value = "";
+		placeholder.textContent = district ? "Select area" : "Select district first";
+		areaSel.appendChild(placeholder);
+		areas.forEach(function (name) {
+			var opt = document.createElement("option");
+			opt.value = name;
+			opt.textContent = name;
+			if (keepValue && name === selectedArea) { opt.selected = true; }
+			areaSel.appendChild(opt);
+		});
+		areaSel.disabled = !district;
+	}
+
+	districtSel.addEventListener("change", function () {
+		selectedArea = "";
+		fillAreas(false);
+		autoSelectZone(); // area is now empty -> clears the zone until an area is picked
+	});
+
+	areaSel.addEventListener("change", function () {
+		selectedArea = areaSel.value;
+		autoSelectZone();
+	});
+
+	fillAreas(true); // initial load (restores value on validation error)
+	autoSelectZone(); // auto-pick the delivery zone if district+area are already set
 })();
 </script>
 {% endblock %}

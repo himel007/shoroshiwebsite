@@ -51,8 +51,8 @@ class CheckoutTests(TestCase):
             "email": "customer@example.com",
             "address_line1": "House 1, Road 2",
             "address_line2": "",
-            "city": "Test Area",
-            "district": "Test District",
+            "city": "Dhanmondi",
+            "district": "Dhaka",
             "postcode": "",
             "delivery_zone": str(self.zone.pk),
             "notes": "",
@@ -168,6 +168,78 @@ class CheckoutTests(TestCase):
         # The previous address is prefilled on the next checkout.
         self._add_to_bag()
         self.assertContains(self.client.get("/checkout/"), 'value="House 1, Road 2"')
+
+    def test_checkout_has_district_area_dropdowns(self):
+        self.client.force_login(self.user)
+        self._add_to_bag()
+        page = self.client.get("/checkout/")
+        self.assertContains(page, "data-district-select")
+        self.assertContains(page, "data-area-select")
+        self.assertContains(page, "bd-districts-data")
+        self.assertContains(page, "Dhanmondi")  # a seeded Dhaka area
+        self.assertContains(page, "fillAreas")  # dependent-dropdown JS
+
+    def test_checkout_embeds_delivery_rules(self):
+        self.client.force_login(self.user)
+        self._add_to_bag()
+        page = self.client.get("/checkout/")
+        self.assertContains(page, "delivery-rules-data")
+        self.assertContains(page, "autoSelectZone")
+        self.assertContains(page, 'data-zone-name="Test Zone A"')
+
+    def test_delivery_zone_classification(self):
+        from home.delivery_rules import classify
+        self.assertEqual(classify("Dhaka", "Dhanmondi"), "Inside Dhaka")
+        self.assertEqual(classify("Dhaka", "Savar"), "Dhaka Sub-area")
+        self.assertEqual(classify("Narayanganj", "Fatullah"), "Dhaka Sub-area")
+        self.assertEqual(classify("Gazipur", "Tongi"), "Dhaka Sub-area")
+        self.assertEqual(classify("Cox's Bazar", "Teknaf"), "Outside Dhaka")
+        self.assertEqual(classify("Rajshahi", "Paba"), "Outside Dhaka")
+
+    def test_area_must_match_district(self):
+        self.client.force_login(self.user)
+        self._add_to_bag()
+        # Cox's Bazar area with Dhaka district should be rejected.
+        response = self.client.post(
+            "/checkout/", self._address(district="Dhaka", city="Teknaf")
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Order.objects.count(), 0)
+        self.assertContains(response, "belongs to the selected district")
+
+    def test_place_emi_order(self):
+        self.client.force_login(self.user)
+        self._add_to_bag(2)  # subtotal 20000
+
+        page = self.client.get("/checkout/")
+        self.assertContains(page, "EMI")
+
+        response = self.client.post(
+            "/checkout/", self._address(payment_plan="emi", emi_months="4")
+        )
+        order = Order.objects.get()
+        self.assertRedirects(response, f"/checkout/complete/{order.pk}/")
+        self.assertEqual(order.payment_plan, "emi")
+        self.assertTrue(order.is_emi)
+        self.assertEqual(order.emi_months, 4)
+        # 30% advance, remaining 70% over 4 months.
+        self.assertEqual(order.emi_advance, Decimal("6000.00"))
+        self.assertEqual(order.emi_monthly, Decimal("3500.00"))
+        self.assertEqual(order.emi_advance + order.emi_monthly * 4, order.subtotal)
+        self.assertEqual(order.emi_delivery_amount, Decimal("18000.00"))
+
+        complete = self.client.get(f"/checkout/complete/{order.pk}/")
+        self.assertContains(complete, "৳6,000.00")
+        self.assertContains(complete, "৳3,500.00")
+
+    def test_emi_without_months_is_rejected(self):
+        self.client.force_login(self.user)
+        self._add_to_bag()
+        response = self.client.post(
+            "/checkout/", self._address(payment_plan="emi", emi_months="")
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Order.objects.count(), 0)
 
     def test_invalid_phone_and_missing_zone_are_rejected(self):
         self.client.force_login(self.user)

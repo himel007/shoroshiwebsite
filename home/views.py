@@ -13,6 +13,8 @@ from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme, urlencode
 from django.views.decorators.http import require_POST
 
+from .bd_geo import DISTRICTS
+from .delivery_rules import js_config as delivery_js_config
 from .forms import AccountDetailsForm, CheckoutForm, CustomerRegistrationForm, OrderTrackingForm
 from .models import (
     build_category_context,
@@ -83,6 +85,10 @@ def _cart_contents(request):
 
 def cart(request):
     cart_items, subtotal = _cart_contents(request)
+    emi_from_monthly = None
+    if cart_items:
+        # Lowest monthly installment is the 4-month plan.
+        _, emi_from_monthly = Order.calculate_emi(subtotal, 4)
     return TemplateResponse(
         request,
         "home/cart_page.html",
@@ -90,6 +96,7 @@ def cart(request):
             "cart_items": cart_items,
             "cart_count": sum(item["quantity"] for item in cart_items),
             "subtotal": subtotal,
+            "emi_from_monthly": emi_from_monthly,
         },
     )
 
@@ -116,6 +123,15 @@ def checkout(request):
                 order.subtotal = subtotal
                 order.total = subtotal + zone.charge
                 order.payment_method = Order.PAYMENT_COD
+                if order.payment_plan == Order.PLAN_EMI and order.emi_months:
+                    order.emi_advance, order.emi_monthly = Order.calculate_emi(
+                        subtotal, order.emi_months
+                    )
+                else:
+                    order.payment_plan = Order.PLAN_FULL
+                    order.emi_months = None
+                    order.emi_advance = None
+                    order.emi_monthly = None
                 order.save()
                 OrderItem.objects.bulk_create(
                     [
@@ -146,6 +162,8 @@ def checkout(request):
             "subtotal": subtotal,
             "unavailable_products": unavailable,
             "delivery_zones": zones,
+            "bd_districts": DISTRICTS,
+            "delivery_rules": delivery_js_config(),
         },
     )
 
@@ -240,6 +258,21 @@ def account_details(request):
 ORDER_PROGRESS = ["pending", "confirmed", "shipped", "delivered"]
 
 
+def _refresh_courier_status(order):
+    """Best-effort live refresh of the Steadfast delivery status."""
+    from . import steadfast
+
+    if not order.is_dispatched or not steadfast.is_configured():
+        return
+    try:
+        status = steadfast.get_status_by_consignment(order.courier_consignment_id)
+    except steadfast.SteadfastError:
+        return
+    if status and status != order.courier_status:
+        order.courier_status = status
+        order.save(update_fields=["courier_status"])
+
+
 def track_order(request):
     form = OrderTrackingForm(request.POST or None)
     order = None
@@ -249,7 +282,9 @@ def track_order(request):
         order = form.find_order()
         if order is None:
             not_found = True
-        elif order.status in ORDER_PROGRESS:
+        else:
+            _refresh_courier_status(order)
+        if order is not None and order.status in ORDER_PROGRESS:
             current = ORDER_PROGRESS.index(order.status)
             steps = [
                 {

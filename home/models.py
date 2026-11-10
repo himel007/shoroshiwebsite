@@ -1,3 +1,5 @@
+from decimal import Decimal, ROUND_HALF_UP
+
 from django.conf import settings
 from django.db import models
 from django.core.validators import MinValueValidator
@@ -361,6 +363,15 @@ class Order(models.Model):
         ("cancelled", "Cancelled"),
     ]
 
+    PLAN_FULL = "full"
+    PLAN_EMI = "emi"
+    PAYMENT_PLANS = [
+        (PLAN_FULL, "Pay in full"),
+        (PLAN_EMI, "EMI (installments)"),
+    ]
+    EMI_ADVANCE_RATE = Decimal("0.30")
+    EMI_MONTHS_CHOICES = [(3, "3 months"), (4, "4 months")]
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
@@ -391,6 +402,45 @@ class Order(models.Model):
         choices=PAYMENT_METHODS,
         default=PAYMENT_COD,
     )
+    payment_plan = models.CharField(
+        max_length=10,
+        choices=PAYMENT_PLANS,
+        default=PLAN_FULL,
+    )
+    emi_months = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        help_text="Number of monthly installments (EMI orders only).",
+    )
+    emi_advance = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Advance paid at order time (EMI orders only).",
+    )
+    emi_monthly = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Amount of each monthly installment (EMI orders only).",
+    )
+    amount_paid = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00"),
+        help_text="Total already collected from the customer (advance, installments, etc.). "
+        "The courier COD amount is the order total minus this.",
+    )
+    courier_consignment_id = models.CharField(max_length=40, blank=True)
+    courier_tracking_code = models.CharField(max_length=40, blank=True)
+    courier_status = models.CharField(max_length=50, blank=True)
+    courier_cod_amount = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True,
+        help_text="COD amount sent to Steadfast at dispatch.",
+    )
+    dispatched_at = models.DateTimeField(null=True, blank=True)
     staff_note = models.TextField(blank=True, help_text="Internal note, not shown to the customer.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -422,6 +472,26 @@ class Order(models.Model):
             ],
             heading="Totals",
         ),
+        MultiFieldPanel(
+            [
+                FieldPanel("payment_plan", read_only=True),
+                FieldPanel("emi_months", read_only=True),
+                FieldPanel("emi_advance", read_only=True),
+                FieldPanel("emi_monthly", read_only=True),
+                FieldPanel("amount_paid"),
+            ],
+            heading="EMI plan & payments",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("courier_consignment_id", read_only=True),
+                FieldPanel("courier_tracking_code", read_only=True),
+                FieldPanel("courier_cod_amount", read_only=True),
+                FieldPanel("courier_status", read_only=True),
+                FieldPanel("dispatched_at", read_only=True),
+            ],
+            heading="Steadfast delivery",
+        ),
     ]
 
     class Meta:
@@ -433,6 +503,48 @@ class Order(models.Model):
     @property
     def number(self):
         return f"SH-{self.pk:06d}" if self.pk else "SH-new"
+
+    @property
+    def is_emi(self):
+        return self.payment_plan == self.PLAN_EMI
+
+    @classmethod
+    def calculate_emi(cls, amount, months):
+        """Return (advance, monthly) for an EMI on `amount` over `months`.
+
+        30% advance, the remaining 70% split into equal monthly installments.
+        No interest. The advance absorbs any rounding remainder.
+        """
+        amount = Decimal(amount)
+        cents = Decimal("0.01")
+        monthly = (amount * (Decimal("1") - cls.EMI_ADVANCE_RATE) / Decimal(months)).quantize(
+            cents, rounding=ROUND_HALF_UP
+        )
+        advance = (amount - monthly * Decimal(months)).quantize(cents, rounding=ROUND_HALF_UP)
+        return advance, monthly
+
+    @property
+    def emi_delivery_amount(self):
+        """Amount that must be paid (90% of product subtotal) before we ship."""
+        if not self.is_emi:
+            return None
+        return (self.subtotal * Decimal("0.90")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+    @property
+    def cod_amount_due(self):
+        """What the courier should collect on delivery: total minus amount already paid."""
+        due = (self.total or Decimal("0.00")) - (self.amount_paid or Decimal("0.00"))
+        return due if due > 0 else Decimal("0.00")
+
+    @property
+    def is_dispatched(self):
+        return bool(self.courier_consignment_id)
+
+    @property
+    def courier_status_label(self):
+        from .steadfast import status_label
+
+        return status_label(self.courier_status)
 
 
 class OrderItem(models.Model):

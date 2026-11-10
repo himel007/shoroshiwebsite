@@ -218,6 +218,7 @@
 	margin-top: 14px;
 	color: #695b50;
 	font-size: 13px;
+	text-align: center;
 }
 
 .shoroshi-complete {
@@ -290,4 +291,160 @@
 	.shoroshi-order-summary {
 		padding: 20px;
 	}
+}
+
+/* Payment plan + EMI */
+.shoroshi-plan {
+	border-top: 1px solid var(--shoroshi-line);
+	padding-top: 20px;
+}
+
+.shoroshi-plan__option {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin-bottom: 10px;
+	padding: 12px 14px;
+	border: 1px solid var(--shoroshi-line);
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.shoroshi-plan__option input {
+	margin-top: 3px;
+}
+
+.shoroshi-plan__body {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.shoroshi-plan__body strong {
+	color: var(--shoroshi-brown);
+}
+
+.shoroshi-plan__body small {
+	color: #695b50;
+	font-size: 12px;
+}
+
+.shoroshi-emi {
+	margin: 4px 0 0;
+	padding: 16px 14px;
+	border: 1px solid var(--shoroshi-line);
+	border-radius: 4px;
+	background: var(--shoroshi-ivory);
+}
+
+.shoroshi-emi__label {
+	margin: 0 0 10px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--shoroshi-brown);
+}
+
+.shoroshi-emi__months {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 14px;
+}
+
+.shoroshi-emi__month {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex: 1;
+	padding: 10px 12px;
+	border: 1px solid var(--shoroshi-line);
+	border-radius: 4px;
+	background: #fff;
+	cursor: pointer;
+}
+
+.shoroshi-emi__month input:checked + span {
+	font-weight: 600;
+	color: var(--shoroshi-wine);
+}
+
+.shoroshi-emi__breakdown {
+	margin: 0 0 10px;
+	padding-top: 12px;
+	border-top: 1px solid var(--shoroshi-line);
+}
+
+.shoroshi-emi__breakdown div {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 8px;
+}
+
+.shoroshi-emi__breakdown dt {
+	color: var(--shoroshi-brown);
+	font-size: 13px;
+}
+
+.shoroshi-emi__breakdown dd {
+	margin: 0;
+	font-weight: 600;
+	color: var(--shoroshi-wine);
+	white-space: nowrap;
+}
+
+.shoroshi-emi__hint {
+	margin: 0;
+	color: #695b50;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.shoroshi-emi__breakdown--summary {
+	border-top: 0;
+	padding-top: 0;
+	margin-top: 8px;
+}
+
+/* District / Area dropdowns */
+.billing-info select.shoroshi-select {
+	width: 100%;
+	min-height: 48px;
+	padding: 10px 36px 10px 14px;
+	border: 1px solid var(--shoroshi-line);
+	border-radius: 0;
+	color: var(--shoroshi-brown);
+	background-color: #fff;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2330251f' d='M6 8 0 2l1.4-1.4L6 5.2 10.6.6 12 2z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 14px center;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+
+.billing-info select.shoroshi-select:disabled {
+	color: #9a8f86;
+	background-color: #f3efe9;
+	cursor: not-allowed;
+}
+
+/* Auto-selected delivery area: visible but not user-selectable */
+.shoroshi-zones__hint {
+	margin: 0 0 12px;
+	color: #695b50;
+	font-size: 12px;
+}
+
+.shoroshi-zones--auto .shoroshi-zone {
+	pointer-events: none;
+	cursor: default;
+}
+
+.shoroshi-zones--auto .shoroshi-zone input {
+	pointer-events: none;
+}
+
+/* Dim the zones that are not the current auto-pick */
+.shoroshi-zones--auto .shoroshi-zone:not(:has(input:checked)) {
+	opacity: 0.55;
 }

@@ -4,6 +4,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
+from .bd_geo import DISTRICTS, DISTRICT_CHOICES
 from .models import DeliveryZone, Order
 
 
@@ -15,6 +16,26 @@ class CheckoutForm(forms.ModelForm):
         queryset=DeliveryZone.objects.none(),
         empty_label=None,
         widget=forms.RadioSelect,
+    )
+    payment_plan = forms.ChoiceField(
+        choices=Order.PAYMENT_PLANS,
+        initial=Order.PLAN_FULL,
+        required=False,
+        widget=forms.RadioSelect,
+    )
+    emi_months = forms.TypedChoiceField(
+        choices=Order.EMI_MONTHS_CHOICES,
+        coerce=int,
+        required=False,
+        widget=forms.RadioSelect,
+    )
+    district = forms.ChoiceField(
+        choices=[("", "Select district")] + DISTRICT_CHOICES,
+        label="District",
+    )
+    city = forms.ChoiceField(
+        choices=[("", "Select area")],
+        label="Area / Upazila",
     )
 
     class Meta:
@@ -29,6 +50,8 @@ class CheckoutForm(forms.ModelForm):
             "district",
             "postcode",
             "delivery_zone",
+            "payment_plan",
+            "emi_months",
             "notes",
         ]
         widgets = {
@@ -42,6 +65,11 @@ class CheckoutForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["delivery_zone"].queryset = DeliveryZone.objects.filter(is_active=True)
+        # Accept any valid area as a posted value; clean() checks it matches the district.
+        all_areas = sorted({a for areas in DISTRICTS.values() for a in areas})
+        self.fields["city"].choices = [("", "Select area")] + [(a, a) for a in all_areas]
+        self.fields["district"].widget.attrs.update({"class": "shoroshi-select", "data-district-select": "1"})
+        self.fields["city"].widget.attrs.update({"class": "shoroshi-select", "data-area-select": "1"})
         self.fields["phone"].widget.attrs.update(
             {"inputmode": "tel", "autocomplete": "tel", "placeholder": "01XXXXXXXXX"}
         )
@@ -62,6 +90,22 @@ class CheckoutForm(forms.ModelForm):
         if not BD_PHONE_RE.match(phone):
             raise forms.ValidationError("Enter a valid Bangladeshi mobile number, e.g. 01712345678.")
         return phone[-11:]
+
+    def clean(self):
+        cleaned = super().clean()
+        if not cleaned.get("payment_plan"):
+            cleaned["payment_plan"] = Order.PLAN_FULL
+        if cleaned["payment_plan"] == Order.PLAN_EMI:
+            if not cleaned.get("emi_months"):
+                self.add_error("emi_months", "Choose how many months you want to pay over.")
+        else:
+            cleaned["emi_months"] = None
+
+        district = cleaned.get("district")
+        city = cleaned.get("city")
+        if district and city and city not in DISTRICTS.get(district, []):
+            self.add_error("city", "Choose an area that belongs to the selected district.")
+        return cleaned
 
 
 class CustomerRegistrationForm(UserCreationForm):

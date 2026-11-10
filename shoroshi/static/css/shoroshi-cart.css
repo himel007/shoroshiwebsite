@@ -69,16 +69,47 @@ body.template-cart {
 	gap: 8px;
 }
 
-.shoroshi-cart-quantity input {
-	width: 68px;
-	min-height: 38px;
-	padding: 5px 8px;
+.shoroshi-qty-control {
+	display: inline-flex;
+	align-items: center;
 	border: 1px solid var(--shoroshi-line);
 	background: #fff;
 }
 
-.shoroshi-cart-quantity button,
-.shoroshi-cart-table .product-remove button {
+.shoroshi-qty-control input {
+	width: 48px;
+	min-height: 38px;
+	padding: 5px 4px;
+	border: 0;
+	border-left: 1px solid var(--shoroshi-line);
+	border-right: 1px solid var(--shoroshi-line);
+	text-align: center;
+	background: #fff;
+	-moz-appearance: textfield;
+}
+
+.shoroshi-qty-control input::-webkit-outer-spin-button,
+.shoroshi-qty-control input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.shoroshi-qty-btn {
+	width: 38px;
+	min-height: 38px;
+	border: 0;
+	color: var(--shoroshi-brown);
+	font-size: 18px;
+	line-height: 1;
+	background: transparent;
+	cursor: pointer;
+}
+
+.shoroshi-qty-btn:hover {
+	color: var(--shoroshi-wine);
+}
+
+.shoroshi-cart-quantity button.shoroshi-cart-update-btn {
 	border: 0;
 	color: var(--shoroshi-wine);
 	background: transparent;
@@ -133,10 +164,78 @@ body.template-cart {
 	.shoroshi-cart-summary {
 		margin-right: auto;
 	}
+
+	/* Stop horizontal scroll: render each cart row as a full-width card */
+	.shoroshi-cart-table.table-responsive {
+		overflow-x: visible;
+	}
+
+	.shoroshi-cart-table table,
+	.shoroshi-cart-table tbody,
+	.shoroshi-cart-table tr,
+	.shoroshi-cart-table td {
+		display: block;
+		width: 100%;
+	}
+
+	.shoroshi-cart-table thead {
+		display: none;
+	}
+
+	.shoroshi-cart-table tr {
+		margin-bottom: 20px;
+		padding: 12px 0;
+		border: 1px solid var(--shoroshi-line);
+	}
+
+	.shoroshi-cart-table td {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		padding: 10px 14px;
+		border-bottom: 1px solid var(--shoroshi-line);
+		text-align: right;
+	}
+
+	.shoroshi-cart-table tr td:last-child {
+		border-bottom: 0;
+	}
+
+	.shoroshi-cart-table td[data-label]::before {
+		content: attr(data-label);
+		font-weight: 600;
+		color: var(--shoroshi-brown);
+		text-align: left;
+	}
+
+	.shoroshi-cart-table td.product-name {
+		text-align: left;
+	}
+
+	.shoroshi-cart-product {
+		min-width: 0;
+		width: 100%;
+	}
 }
 .shoroshi-cart-summary .shoroshi-cart-delivery-note {
 	margin: -8px 0 16px;
 	font-size: 12px;
+}
+
+.shoroshi-cart-emi-note {
+	margin: 0 0 18px;
+	padding: 12px 14px;
+	border: 1px dashed var(--shoroshi-wine);
+	border-radius: 4px;
+	color: var(--shoroshi-brown);
+	font-size: 12.5px;
+	line-height: 1.5;
+	background: #fff;
+}
+
+.shoroshi-cart-emi-note strong {
+	color: var(--shoroshi-wine);
 }
 
 .shoroshi-cart-summary .btn--full {

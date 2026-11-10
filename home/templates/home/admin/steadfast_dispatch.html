@@ -1,0 +1,48 @@
+{% extends "wagtailadmin/base.html" %}
+{% load humanize %}
+{% block titletag %}Send {{ order.number }} to Steadfast{% endblock %}
+
+{% block content %}
+	{% include "wagtailadmin/shared/header.html" with title="Send to Steadfast" subtitle=order.number icon="download" %}
+
+	<div class="nice-padding">
+		{% if not configured %}
+			<div class="help-block help-warning">
+				<p><strong>Steadfast API keys are not configured.</strong> Set <code>STEADFAST_API_KEY</code> and <code>STEADFAST_SECRET_KEY</code> in the server environment before dispatching.</p>
+			</div>
+		{% endif %}
+
+		<p>This will create a consignment in Steadfast for order <strong>{{ order.number }}</strong> and hand it to the courier.</p>
+
+		<ul>
+			<li><strong>Customer:</strong> {{ order.full_name }} — {{ order.phone }}</li>
+			<li><strong>Address:</strong> {{ order.address_line1 }}{% if order.address_line2 %}, {{ order.address_line2 }}{% endif %}, {{ order.city }}, {{ order.district }}{% if order.postcode %} {{ order.postcode }}{% endif %}</li>
+			<li><strong>Order total:</strong> ৳{{ order.total|floatformat:2|intcomma }}</li>
+			<li><strong>Already paid:</strong> ৳{{ order.amount_paid|floatformat:2|intcomma }}{% if order.is_emi %} (EMI — {{ order.emi_months }} months){% endif %}</li>
+		</ul>
+
+		<form method="post" action="{% url 'steadfast_dispatch' order.pk %}">
+			{% csrf_token %}
+			<div class="w-mb-4">
+				<label for="cod_amount"><strong>COD amount to collect (৳)</strong></label>
+				<p class="help-block help-info">Order total minus what the customer has already paid. Adjust if needed.</p>
+				<input type="number" step="0.01" min="0" id="cod_amount" name="cod_amount" value="{{ cod_default }}">
+			</div>
+
+			<div class="w-mb-4">
+				<label for="item_description"><strong>Item description</strong></label>
+				<input type="text" id="item_description" name="item_description" value="{{ item_default }}" maxlength="250">
+			</div>
+
+			<div class="w-mb-4">
+				<label for="note"><strong>Delivery note (optional)</strong></label>
+				<input type="text" id="note" name="note" value="{{ order.notes }}" maxlength="250">
+			</div>
+
+			<button type="submit" class="button button-longrunning"{% if not configured %} disabled{% endif %}>
+				Confirm &amp; send to Steadfast
+			</button>
+			<a class="button button-secondary no" href="{% url 'wagtailsnippets_home_order:inspect' order.pk %}">Cancel</a>
+		</form>
+	</div>
+{% endblock %}

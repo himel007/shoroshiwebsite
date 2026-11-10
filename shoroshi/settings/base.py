@@ -17,6 +17,27 @@ PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 
+def _load_dotenv(path):
+    """Minimal .env loader (KEY=VALUE per line). No external dependency.
+
+    Values already present in the real environment are not overwritten.
+    """
+    if not os.path.exists(path):
+        return
+    with open(path, encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            os.environ.setdefault(key, value)
+
+
+_load_dotenv(os.path.join(BASE_DIR, ".env"))
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -190,3 +211,11 @@ WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'tx
 # Storefront customer accounts (Wagtail admin keeps its own login at /admin/login/).
 LOGIN_URL = "account_login"
 LOGIN_REDIRECT_URL = "shop"
+
+# Steadfast Courier API (https://portal.packzy.com/api/v1)
+# Set these in the environment; never commit real keys.
+STEADFAST_API_KEY = os.environ.get("STEADFAST_API_KEY", "")
+STEADFAST_SECRET_KEY = os.environ.get("STEADFAST_SECRET_KEY", "")
+STEADFAST_BASE_URL = os.environ.get(
+    "STEADFAST_BASE_URL", "https://portal.packzy.com/api/v1"
+)
