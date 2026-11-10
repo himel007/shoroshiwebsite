@@ -241,6 +241,39 @@ def checkout_complete(request, order_id):
     )
 
 
+def invoice(request, order_id):
+    """Printable invoice for a single order.
+
+    Staff may view any order's invoice; a signed-in customer may view only
+    their own. There is a Print button and print styles, so "download" is
+    Print -> Save as PDF in the browser.
+    """
+    if request.user.is_authenticated and request.user.is_staff:
+        order = get_object_or_404(Order, pk=order_id)
+    elif request.user.is_authenticated:
+        order = get_object_or_404(Order, pk=order_id, user=request.user)
+    else:
+        return redirect(f"{reverse('account_login')}?{urlencode({'next': request.path})}")
+
+    site_settings = None
+    try:
+        from .settings_models import SiteContactSettings
+
+        site_settings = SiteContactSettings.for_request(request)
+    except Exception:  # noqa: BLE001 - settings are optional on the invoice
+        site_settings = None
+
+    return TemplateResponse(
+        request,
+        "home/invoice.html",
+        {
+            "order": order,
+            "order_items": order.items.all(),
+            "site_settings": site_settings,
+        },
+    )
+
+
 @login_required
 def account_dashboard(request):
     orders = Order.objects.filter(user=request.user)

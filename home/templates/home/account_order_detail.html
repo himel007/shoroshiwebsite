@@ -9,5 +9,6 @@
 	<span class="shoroshi-status shoroshi-status--{{ order.status }}">{{ order.get_status_display }}</span>
 </div>
 <p>Placed on {{ order.created_at|date:"j F Y, g:i A" }}.</p>
+<p><a class="btn btn--md btn--black" href="{% url 'invoice' order.pk %}" target="_blank" rel="noopener">Download invoice</a></p>
 {% include "home/includes/order_summary.html" %}
 {% endblock %}

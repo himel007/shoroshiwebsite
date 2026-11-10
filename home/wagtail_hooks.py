@@ -11,6 +11,15 @@ from . import steadfast_admin
 class OrderIndexView(IndexView):
     def get_list_more_buttons(self, instance):
         buttons = super().get_list_more_buttons(instance)
+        buttons.append(
+            Button(
+                "Invoice",
+                url=reverse("invoice", args=[instance.pk]),
+                icon_name="doc-full",
+                priority=60,
+                attrs={"target": "_blank"},
+            )
+        )
         if instance.is_dispatched:
             buttons.append(
                 Button(

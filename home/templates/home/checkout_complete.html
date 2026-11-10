@@ -28,6 +28,7 @@
 			{% include "home/includes/order_summary.html" %}
 
 			<a class="btn btn--md btn--black" href="{% url 'shop' %}">Continue shopping <i class="icon-arrow-right"></i></a>
+			<a class="shoroshi-cart-continue shoroshi-complete__account" href="{% url 'invoice' order.pk %}" target="_blank" rel="noopener">Download invoice</a>
 			<a class="shoroshi-cart-continue shoroshi-complete__account" href="{% url 'account_orders' %}">View your orders</a>
 		</div>
 	</section>

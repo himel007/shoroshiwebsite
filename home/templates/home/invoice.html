@@ -1,0 +1,185 @@
+{% load static humanize %}<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Invoice {{ order.number }} | SHOROSHI</title>
+	<style>
+		:root { color-scheme: light; }
+		* { box-sizing: border-box; }
+		body {
+			margin: 0;
+			background: #f4efe9;
+			color: #241c17;
+			font-family: "Helvetica Neue", Arial, sans-serif;
+			font-size: 14px;
+			line-height: 1.5;
+		}
+		.invoice-toolbar {
+			max-width: 820px;
+			margin: 24px auto 0;
+			padding: 0 24px;
+			display: flex;
+			gap: 12px;
+			justify-content: flex-end;
+		}
+		.invoice-toolbar button,
+		.invoice-toolbar a {
+			border: 1px solid #241c17;
+			background: #241c17;
+			color: #fff;
+			padding: 9px 18px;
+			border-radius: 6px;
+			font: inherit;
+			font-size: 13px;
+			text-decoration: none;
+			cursor: pointer;
+		}
+		.invoice-toolbar a { background: #fff; color: #241c17; }
+		.invoice {
+			max-width: 820px;
+			margin: 16px auto 48px;
+			background: #fff;
+			padding: 40px 44px;
+			box-shadow: 0 10px 30px rgba(32, 24, 20, 0.12);
+		}
+		.invoice-head {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			gap: 24px;
+			border-bottom: 2px solid #241c17;
+			padding-bottom: 20px;
+		}
+		.invoice-brand strong { display: block; font-size: 22px; letter-spacing: 0.04em; }
+		.invoice-brand small { color: #6b5d52; }
+		.invoice-brand .bn { font-size: 15px; }
+		.invoice-meta { text-align: right; }
+		.invoice-meta h1 { margin: 0 0 6px; font-size: 20px; letter-spacing: 0.08em; }
+		.invoice-meta div { color: #6b5d52; font-size: 13px; }
+		.invoice-parties {
+			display: flex;
+			justify-content: space-between;
+			gap: 24px;
+			margin: 24px 0;
+		}
+		.invoice-parties h2 {
+			font-size: 12px;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			color: #6b5d52;
+			margin: 0 0 6px;
+		}
+		.invoice-parties address { font-style: normal; }
+		table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+		th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #e7ddd2; }
+		th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: #6b5d52; }
+		td.num, th.num { text-align: right; white-space: nowrap; }
+		.totals { margin-left: auto; margin-top: 16px; width: 320px; max-width: 100%; }
+		.totals td { border: 0; padding: 5px 8px; }
+		.totals .grand td { border-top: 2px solid #241c17; font-size: 16px; font-weight: 700; padding-top: 10px; }
+		.badge {
+			display: inline-block;
+			margin-top: 4px;
+			padding: 3px 10px;
+			border-radius: 999px;
+			background: #efe7dc;
+			font-size: 12px;
+		}
+		.invoice-note { margin-top: 24px; color: #6b5d52; font-size: 13px; }
+		.invoice-foot {
+			margin-top: 32px;
+			padding-top: 16px;
+			border-top: 1px solid #e7ddd2;
+			color: #6b5d52;
+			font-size: 12px;
+			text-align: center;
+		}
+		@media print {
+			.invoice-toolbar { display: none; }
+			body { background: #fff; }
+			.invoice { box-shadow: none; margin: 0; max-width: none; padding: 0; }
+		}
+	</style>
+</head>
+<body>
+	<div class="invoice-toolbar">
+		<a href="{% if request.user.is_staff %}/admin/snippets/home/order/{% else %}{% url 'account_orders' %}{% endif %}">← Back</a>
+		<button type="button" onclick="window.print()">Print / Save as PDF</button>
+	</div>
+
+	<div class="invoice">
+		<div class="invoice-head">
+			<div class="invoice-brand">
+				<strong>SHOROSHI</strong>
+				<span class="bn" lang="bn">ষোড়শী</span>
+				<small>Where Tradition Meets Timeless Elegance.</small>
+				{% if site_settings.contact_email %}<br><small>{{ site_settings.contact_email }}</small>{% endif %}
+				{% if site_settings.whatsapp_number %}<br><small>WhatsApp: {{ site_settings.whatsapp_number }}</small>{% endif %}
+			</div>
+			<div class="invoice-meta">
+				<h1>INVOICE</h1>
+				<div>No. <strong>{{ order.number }}</strong></div>
+				<div>Date: {{ order.created_at|date:"d M Y" }}</div>
+				<div>Status: {{ order.get_status_display }}</div>
+			</div>
+		</div>
+
+		<div class="invoice-parties">
+			<div>
+				<h2>Billed to</h2>
+				<address>
+					{{ order.full_name }}<br>
+					{{ order.address_line1 }}<br>
+					{% if order.address_line2 %}{{ order.address_line2 }}<br>{% endif %}
+					{{ order.city }}, {{ order.district }}{% if order.postcode %} {{ order.postcode }}{% endif %}<br>
+					{{ order.phone }}{% if order.email %}<br>{{ order.email }}{% endif %}
+				</address>
+			</div>
+			<div>
+				<h2>Payment</h2>
+				{% if order.is_emi %}EMI (installments){% else %}{{ order.get_payment_method_display }}{% endif %}
+				<br><span class="badge">COD due on delivery: ৳{{ order.cod_amount_due|floatformat:2|intcomma }}</span>
+				{% if order.delivery_zone_name %}<br><small>Delivery zone: {{ order.delivery_zone_name }}</small>{% endif %}
+			</div>
+		</div>
+
+		<table>
+			<thead>
+				<tr>
+					<th>Item</th>
+					<th>SKU</th>
+					<th class="num">Unit price</th>
+					<th class="num">Qty</th>
+					<th class="num">Amount</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in order_items %}
+					<tr>
+						<td>{{ item.product_title }}</td>
+						<td>{{ item.sku }}</td>
+						<td class="num">৳{{ item.unit_price|floatformat:2|intcomma }}</td>
+						<td class="num">{{ item.quantity }}</td>
+						<td class="num">৳{{ item.line_total|floatformat:2|intcomma }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<table class="totals">
+			<tr><td>Subtotal</td><td class="num">৳{{ order.subtotal|floatformat:2|intcomma }}</td></tr>
+			<tr><td>Delivery ({{ order.delivery_zone_name }})</td><td class="num">{% if order.delivery_charge %}৳{{ order.delivery_charge|floatformat:2|intcomma }}{% else %}Free{% endif %}</td></tr>
+			{% if order.is_emi %}
+				<tr><td>Advance paid (30%)</td><td class="num">৳{{ order.emi_advance|floatformat:2|intcomma }}</td></tr>
+				<tr><td>{{ order.emi_months }} monthly payments of</td><td class="num">৳{{ order.emi_monthly|floatformat:2|intcomma }}</td></tr>
+			{% endif %}
+			<tr class="grand"><td>Total</td><td class="num">৳{{ order.total|floatformat:2|intcomma }}</td></tr>
+		</table>
+
+		{% if order.notes %}<p class="invoice-note"><strong>Order note:</strong> {{ order.notes }}</p>{% endif %}
+
+		<p class="invoice-foot">Thank you for shopping with SHOROSHI. This is a computer-generated invoice.</p>
+	</div>
+</body>
+</html>
