@@ -28,6 +28,15 @@ from .models import (
 )
 
 
+class _OutOfStock(Exception):
+    """Raised inside the checkout transaction when a locked product no longer
+    has enough stock, so the whole order rolls back."""
+
+    def __init__(self, titles):
+        self.titles = titles
+        super().__init__(", ".join(titles))
+
+
 SORT_OPTIONS = [
     ("newest", "Newest"),
     ("price_low", "Price: low to high"),
@@ -71,14 +80,20 @@ def _cart_contents(request):
         product = products.get(str(product_id))
         if product is None:
             continue
-        quantity = _bounded_quantity(raw_quantity)
+        requested = _bounded_quantity(raw_quantity)
+        # Never let a line exceed what is actually in stock.
+        quantity = min(requested, product.stock) if product.is_available else 0
+        quantity = max(quantity, 0)
         line_total = product.price * quantity
         subtotal += line_total
         cart_items.append(
             {
                 "product": product,
                 "quantity": quantity,
+                "requested_quantity": requested,
                 "line_total": line_total,
+                "in_stock": product.in_stock,
+                "stock_limited": quantity < requested,
             }
         )
     return cart_items, subtotal
@@ -109,45 +124,80 @@ def checkout(request):
         messages.info(request, "Your bag is empty. Add an item before checking out.")
         return redirect("cart")
 
-    unavailable = [item["product"] for item in cart_items if not item["product"].is_available]
+    unavailable = [
+        item["product"]
+        for item in cart_items
+        if not item["product"].is_purchasable or item["quantity"] < 1
+    ]
     zones = DeliveryZone.objects.filter(is_active=True)
 
     if request.method == "POST" and not unavailable and zones.exists():
         form = CheckoutForm(request.POST)
         if form.is_valid():
             zone = form.cleaned_data["delivery_zone"]
-            with transaction.atomic():
-                order = form.save(commit=False)
-                order.user = request.user
-                order.delivery_zone_name = zone.name
-                order.delivery_charge = zone.charge
-                order.subtotal = subtotal
-                order.total = subtotal + zone.charge
-                order.payment_method = Order.PAYMENT_COD
-                if order.payment_plan == Order.PLAN_EMI and order.emi_months:
-                    order.emi_advance, order.emi_monthly = Order.calculate_emi(
-                        subtotal, order.emi_months
-                    )
-                else:
-                    order.payment_plan = Order.PLAN_FULL
-                    order.emi_months = None
-                    order.emi_advance = None
-                    order.emi_monthly = None
-                order.save()
-                OrderItem.objects.bulk_create(
-                    [
-                        OrderItem(
-                            order=order,
-                            product=item["product"],
-                            product_title=item["product"].title,
-                            sku=item["product"].sku,
-                            unit_price=item["product"].price,
-                            quantity=item["quantity"],
-                            line_total=item["line_total"],
+            try:
+                with transaction.atomic():
+                    # Lock the product rows and re-check stock so two shoppers
+                    # cannot buy the same last unit at the same time.
+                    locked = {
+                        p.pk: p
+                        for p in ProductPage.objects.select_for_update().filter(
+                            pk__in=[item["product"].pk for item in cart_items]
                         )
+                    }
+                    short = [
+                        item["product"].title
                         for item in cart_items
+                        if locked.get(item["product"].pk) is None
+                        or item["quantity"] > locked[item["product"].pk].stock
                     ]
-                )
+                    if short:
+                        raise _OutOfStock(short)
+                    order = form.save(commit=False)
+                    order.user = request.user
+                    order.delivery_zone_name = zone.name
+                    order.delivery_charge = zone.charge
+                    order.subtotal = subtotal
+                    order.total = subtotal + zone.charge
+                    order.payment_method = Order.PAYMENT_COD
+                    if order.payment_plan == Order.PLAN_EMI and order.emi_months:
+                        order.emi_advance, order.emi_monthly = Order.calculate_emi(
+                            subtotal, order.emi_months
+                        )
+                    else:
+                        order.payment_plan = Order.PLAN_FULL
+                        order.emi_months = None
+                        order.emi_advance = None
+                        order.emi_monthly = None
+                    order.save()
+                    OrderItem.objects.bulk_create(
+                        [
+                            OrderItem(
+                                order=order,
+                                product=item["product"],
+                                product_title=item["product"].title,
+                                sku=item["product"].sku,
+                                unit_price=item["product"].price,
+                                quantity=item["quantity"],
+                                line_total=item["line_total"],
+                            )
+                            for item in cart_items
+                        ]
+                    )
+                    # Deduct the purchased units from stock on the locked rows.
+                    for item in cart_items:
+                        product = locked[item["product"].pk]
+                        ProductPage.objects.filter(pk=product.pk).update(
+                            stock=product.stock - item["quantity"]
+                        )
+            except _OutOfStock as exc:
+                for title in exc.titles:
+                    messages.error(
+                        request,
+                        f"“{title}” sold out while you were checking out. "
+                        "Your bag has been updated.",
+                    )
+                return redirect("cart")
             request.session[CART_SESSION_KEY] = {}
             return redirect("checkout_complete", order_id=order.pk)
     else:
@@ -390,7 +440,8 @@ def cart_add(request, product_id):
         ProductPage.objects.live().public(),
         pk=product_id,
     )
-    if not product.is_available:
+    if not product.is_purchasable:
+        messages.info(request, f"Sorry, “{product.title}” is currently out of stock.")
         return redirect(product.url)
 
     session_cart = _session_cart(request)
@@ -400,19 +451,34 @@ def cart_add(request, product_id):
     except (TypeError, ValueError):
         current_quantity = 0
     quantity = _bounded_quantity(request.POST.get("quantity", 1))
-    session_cart[key] = min(99, current_quantity + quantity)
+    new_quantity = min(99, current_quantity + quantity, product.stock)
+    session_cart[key] = new_quantity
     request.session[CART_SESSION_KEY] = session_cart
+    if new_quantity < current_quantity + quantity:
+        messages.info(
+            request,
+            f"Only {product.stock} of “{product.title}” left — your bag was "
+            "capped to what is in stock.",
+        )
     return redirect("cart")
 
 
 @require_POST
 def cart_update(request, product_id):
-    get_object_or_404(ProductPage.objects.live().public(), pk=product_id)
+    product = get_object_or_404(ProductPage.objects.live().public(), pk=product_id)
     session_cart = _session_cart(request)
     key = str(product_id)
     if key in session_cart:
-        session_cart[key] = _bounded_quantity(request.POST.get("quantity", 1))
+        requested = _bounded_quantity(request.POST.get("quantity", 1))
+        capped = min(requested, product.stock)
+        session_cart[key] = max(capped, 0)
         request.session[CART_SESSION_KEY] = session_cart
+        if capped < requested:
+            messages.info(
+                request,
+                f"Only {product.stock} of “{product.title}” left — quantity "
+                "was adjusted to what is in stock.",
+            )
     return redirect("cart")
 
 

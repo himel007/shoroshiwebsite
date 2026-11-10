@@ -142,6 +142,7 @@ class WagtailSetupSmokeTests(TestCase):
             work_details="Test detailing",
             care_instructions="Test care instructions",
             is_available=True,
+            stock=10,
         )
         homepage.add_child(instance=product)
         product.save_revision().publish()
@@ -217,6 +218,7 @@ class WagtailSetupSmokeTests(TestCase):
             work_details="Test detailing",
             care_instructions="Test care instructions",
             is_available=True,
+            stock=10,
         )
         homepage.add_child(instance=product)
         product.save_revision().publish()
@@ -234,6 +236,7 @@ class WagtailSetupSmokeTests(TestCase):
             work_details="Test detailing",
             care_instructions="Test care instructions",
             is_available=True,
+            stock=10,
             is_featured=True,
         )
         homepage.add_child(instance=second_product)

@@ -1,2 +1,2 @@
-title,category,sku,price,image,description,fabric_details,colour,work_details,measurements,care_instructions,is_available,is_featured
-Example Muslin Saree,Muslin Silk,MUS-001,12500,muslin-saree-01.jpg,Soft handwoven muslin saree with fine detailing.,Pure muslin silk,Deep red,Hand embroidery on the border,"Length 5.5m, blouse 0.8m",Dry clean only,yes,no
+title,category,sku,price,image,description,fabric_details,colour,work_details,measurements,care_instructions,is_available,stock,is_featured
+Example Muslin Saree,Muslin Silk,MUS-001,12500,muslin-saree-01.jpg,Soft handwoven muslin saree with fine detailing.,Pure muslin silk,Deep red,Hand embroidery on the border,"Length 5.5m, blouse 0.8m",Dry clean only,yes,8,no

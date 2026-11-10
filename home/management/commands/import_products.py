@@ -45,6 +45,14 @@ def _as_bool(value):
     return str(value or "").strip().lower() in TRUE_VALUES
 
 
+def _as_int(value):
+    """Parse an optional non-negative integer column; blank/invalid -> 0."""
+    try:
+        return max(0, int(str(value or "").strip() or 0))
+    except (TypeError, ValueError):
+        return 0
+
+
 class Command(BaseCommand):
     help = "Bulk-import products from a CSV file and a folder of images."
 
@@ -166,6 +174,7 @@ class Command(BaseCommand):
             measurements=(row.get("measurements") or "").strip(),
             care_instructions=(row.get("care_instructions") or "").strip(),
             is_available=_as_bool(row.get("is_available")),
+            stock=_as_int(row.get("stock")),
             is_featured=_as_bool(row.get("is_featured")),
         )
 

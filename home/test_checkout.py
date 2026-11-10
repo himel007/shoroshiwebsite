@@ -35,6 +35,7 @@ class CheckoutTests(TestCase):
             work_details="Test detailing",
             care_instructions="Test care instructions",
             is_available=True,
+            stock=10,
         )
         homepage.add_child(instance=self.product)
         self.product.save_revision().publish()

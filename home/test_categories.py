@@ -27,6 +27,7 @@ class ProductCategoryTests(TestCase):
             price=Decimal("1000.00"), product_image=self.image,
             description="d", fabric_details="f", colour="c",
             work_details="w", care_instructions="care", is_available=True,
+            stock=10,
         )
         self.homepage.add_child(instance=p)
         p.save_revision().publish()

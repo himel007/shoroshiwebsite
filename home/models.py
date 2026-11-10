@@ -238,6 +238,13 @@ class ProductPage(Page):
     measurements = models.CharField(max_length=120, blank=True)
     care_instructions = models.TextField(max_length=300)
     is_available = models.BooleanField(default=False)
+    stock = models.PositiveIntegerField(
+        default=0,
+        help_text=(
+            "Units in stock. Add-to-bag and checkout are blocked for this "
+            "product once it reaches 0, even if it is marked available."
+        ),
+    )
     is_featured = models.BooleanField(default=False)
 
     search_fields = Page.search_fields + [
@@ -261,11 +268,22 @@ class ProductPage(Page):
                 FieldPanel("measurements"),
                 FieldPanel("care_instructions"),
                 FieldPanel("is_available"),
+                FieldPanel("stock"),
                 FieldPanel("is_featured"),
             ],
             heading="Product information",
         ),
     ]
+
+    @property
+    def in_stock(self):
+        return self.stock > 0
+
+    @property
+    def is_purchasable(self):
+        """A product can be bought only when staff marked it available
+        *and* there is at least one unit in stock."""
+        return self.is_available and self.stock > 0
 
     def get_category_display(self):
         """Backwards-compatible label used by the storefront templates."""

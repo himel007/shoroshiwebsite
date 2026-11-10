@@ -59,14 +59,16 @@
                         <h2 id="product-title" class="font-weight--reguler mb-10">{{ page.title }}</h2>
                         <p class="price shoroshi-detail-price">৳{{ page.price|floatformat:2|intcomma }}</p>
                         <div class="quickview-peragraph mt-10"><p>{{ page.description }}</p></div>
-                        <div class="stock {% if page.is_available %}in-stock{% else %}out-of-stock{% endif %}"><p>Availability: <span>{% if page.is_available %}Available{% else %}Currently unavailable{% endif %}</span></p></div>
-                        {% if page.is_available %}
+                        <div class="stock {% if page.is_purchasable %}in-stock{% else %}out-of-stock{% endif %}"><p>Availability: <span>{% if page.is_purchasable %}{% if page.stock <= 5 %}Only {{ page.stock }} left{% else %}In stock{% endif %}{% elif not page.is_available %}Currently unavailable{% else %}Out of stock{% endif %}</span></p></div>
+                        {% if page.is_purchasable %}
                             <form class="shoroshi-add-to-bag" action="{% url 'cart_add' page.pk %}" method="post">
                                 {% csrf_token %}
                                 <label for="product-quantity">Quantity</label>
-                                <input id="product-quantity" type="number" name="quantity" value="1" min="1" max="99">
+                                <input id="product-quantity" type="number" name="quantity" value="1" min="1" max="{{ page.stock }}">
                                 <button class="btn btn--md btn--black" type="submit">Add to bag</button>
                             </form>
+                        {% else %}
+                            <button class="btn btn--md btn--black" type="button" disabled>Out of stock</button>
                         {% endif %}
                         {% include "home/includes/wishlist_button.html" with product=page variant="detail" %}
                         <div class="product_meta mt-30">
