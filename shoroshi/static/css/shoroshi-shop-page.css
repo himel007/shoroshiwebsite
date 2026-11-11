@@ -271,10 +271,24 @@ body.template-shop {
 	grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.shoroshi-shop-product-grid .products-images {
+	overflow: hidden;
+	border-radius: 14px;
+	box-shadow: 0 10px 28px rgba(48, 37, 31, 0.14);
+	transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.shoroshi-shop-product-grid .single-product-item:hover .products-images {
+	transform: translateY(-4px);
+	box-shadow: 0 16px 36px rgba(48, 37, 31, 0.2);
+}
+
 .shoroshi-shop-product-grid .products-images img {
+	display: block;
 	width: 100%;
 	aspect-ratio: 4 / 5;
 	object-fit: cover;
+	border-radius: 14px;
 }
 
 .shoroshi-shop-product-grid .prodect-title {
